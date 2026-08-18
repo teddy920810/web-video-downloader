@@ -1,0 +1,14 @@
+[
+  {
+    "AllowedOrigins": [
+      "https://watermarkgemini.com",
+      "https://www.watermarkgemini.com",
+      "https://ai-watermark-remover-peach.vercel.app",
+      "http://localhost:4321"
+    ],
+    "AllowedMethods": ["PUT"],
+    "AllowedHeaders": ["Content-Type"],
+    "ExposeHeaders": ["ETag"],
+    "MaxAgeSeconds": 3600
+  }
+]
