@@ -6,7 +6,7 @@ async function waitForDownloaderHydration(page: import('@playwright/test').Page)
   await page.waitForFunction(() => {
     const input = document.querySelector('#video-url');
     const island = input?.closest('astro-island');
-    return island !== null && !island.hasAttribute('ssr');
+    return island != null && !island.hasAttribute('ssr');
   });
 }
 
