@@ -1,7 +1,7 @@
 {
   "framework": "astro",
   "trailingSlash": false,
-  "buildCommand": "npm run verify:deploy",
+  "buildCommand": "npm run build",
   "redirects": [
     {
       "source": "/index.html",
