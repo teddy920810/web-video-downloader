@@ -82,6 +82,10 @@
       {
         "label": "Supported platforms",
         "href": "/#tool"
+      },
+      {
+        "label": "Desktop App",
+        "href": "/#desktop-app"
       }
     ]
   },
