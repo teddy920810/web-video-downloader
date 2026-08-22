@@ -4,14 +4,15 @@ import { z } from 'zod';
 import { getSession } from '../../../lib/auth';
 import { inspectDownloadUrl } from '../../../lib/download/policy';
 import { json, readJson } from '../../../lib/api/response';
-import { TrialAlreadyUsedError, createTrial, markTrialFailed, markTrialReady } from '../../../lib/trials/trial-store';
+import { fetchWithPolicy } from '../../../lib/api/service-client';
+import { TrialAlreadyUsedError, createTrial, markTrialFailed } from '../../../lib/trials/trial-store';
 
 export const prerender = false;
 
 const requestSchema = z.object({ url: z.string().min(1).max(4_000), formatId: z.string().min(1).max(100) }).strict();
 
 type Inspection = { sourceUrl: string; title: string; formats: Array<{ formatId: string; hasAudio: boolean }> };
-type ServiceDownload = { objectKey: string; downloadUrl: string; sizeBytes: number };
+type ServiceDownload = { jobId: string; status: 'queued' | 'processing' | 'ready' | 'failed'; detail?: string };
 
 export const POST: APIRoute = async ({ request }) => {
   const session = await getSession(request);
@@ -32,7 +33,7 @@ export const POST: APIRoute = async ({ request }) => {
 
   let inspection: Inspection;
   try {
-    const response = await fetch(new URL('/v1/inspect', serviceUrl), { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Internal-Service-Token': serviceToken }, body: JSON.stringify({ url: checked.url }) });
+    const response = await fetchWithPolicy(new URL('/v1/inspect', serviceUrl), { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Internal-Service-Token': serviceToken }, body: JSON.stringify({ url: checked.url }) }, { timeoutMs: 12_000, retries: 1 });
     if (!response.ok) return json({ error: 'This link is no longer available for download.' }, { status: 400 });
     inspection = await response.json() as Inspection;
   } catch {
@@ -51,15 +52,14 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   try {
-    const response = await fetch(new URL('/v1/downloads', serviceUrl), {
+    const response = await fetchWithPolicy(new URL('/v1/downloads', serviceUrl), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-Internal-Service-Token': serviceToken },
       body: JSON.stringify({ jobId: trial.id, url: inspection.sourceUrl, formatId: input.formatId }),
-    });
-    const result = await response.json() as ServiceDownload & { detail?: string };
+    }, { timeoutMs: 5_000, retries: 1 });
+    const result = await response.json() as ServiceDownload;
     if (!response.ok) throw new Error(result.detail ?? 'Unable to prepare the selected file.');
-    await markTrialReady(trial.id, result.objectKey);
-    return json({ downloadUrl: result.downloadUrl, sizeBytes: result.sizeBytes });
+    return json({ jobId: trial.id, status: result.status }, { status: 202 });
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unable to prepare the selected file.';
     await markTrialFailed(trial.id, message);

@@ -1,5 +1,7 @@
 # 从当前项目复制新站
 
+> 模板由通用建站层和独立产品模块组成。初始化新站不会隐式启用 `uploader`、`jobs`、`providers` 等去水印运行时代码；当前下载站只导入 downloader 模块。边界说明见 `docs/ARCHITECTURE.md`。
+
 本仓库同时承担两个角色：`main` 保存并持续发布 WatermarkGemini；任何新站从整个仓库 fork 或使用 GitHub Template 创建自己的仓库。新站拥有独立内容、提交历史、Pages CMS、Vercel 项目、域名、OAuth 和存储，不与 WatermarkGemini 共用生产数据。
 
 ## 1. 创建新仓库

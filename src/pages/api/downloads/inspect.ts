@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { getSession } from '../../../lib/auth';
 import { inspectDownloadUrl } from '../../../lib/download/policy';
 import { json, readJson } from '../../../lib/api/response';
+import { fetchWithPolicy } from '../../../lib/api/service-client';
 
 export const prerender = false;
 
@@ -32,11 +33,11 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   try {
-    const response = await fetch(new URL('/v1/inspect', serviceUrl), {
+    const response = await fetchWithPolicy(new URL('/v1/inspect', serviceUrl), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-Internal-Service-Token': serviceToken },
       body: JSON.stringify({ url: result.url }),
-    });
+    }, { timeoutMs: 12_000, retries: 1 });
     const body: unknown = await response.json();
     if (!response.ok) {
       const error = typeof body === 'object' && body !== null && 'detail' in body ? (body as { detail?: unknown }).detail : undefined;

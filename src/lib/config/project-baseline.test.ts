@@ -28,5 +28,16 @@ describe('project baseline configuration', () => {
     expect(e2e).toContain("page.locator('main h1')");
     expect(e2e).toContain('new AxeBuilder({ page }).analyze()');
   });
+
+  it('runs browser tests on an isolated server and retains CI failure artifacts', () => {
+    const playwright = readProjectFile('playwright.config.ts');
+    const workflow = readProjectFile('.github/workflows/ci.yml');
+    expect(playwright).toContain("baseURL: 'http://127.0.0.1:4391'");
+    expect(playwright).toContain('node ./node_modules/astro/bin/astro.mjs dev');
+    expect(playwright).toContain('reuseExistingServer: false');
+    expect(playwright).toContain("ASTRO_DEV_BACKGROUND: '1'");
+    expect(workflow).toContain('actions/upload-artifact@v4');
+    expect(workflow).toContain('if: failure()');
+  });
 });
 
