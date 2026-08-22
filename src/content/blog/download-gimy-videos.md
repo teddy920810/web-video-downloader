@@ -5,6 +5,8 @@ description: A rights-first checklist for evaluating Gimy pages, embedded player
 publishedAt: 2026-08-18
 readTime: 5 min read
 category: Platform Guides
+coverImage: /assets/blog/download-gimy-videos.webp
+coverAlt: A video page being inspected through a magnifying glass beside a security shield.
 contentMode: markdown
 featured: false
 draft: false

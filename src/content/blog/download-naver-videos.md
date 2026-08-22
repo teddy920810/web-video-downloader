@@ -5,6 +5,8 @@ description: Learn how to identify a public Naver video, verify download rights,
 publishedAt: 2026-08-21
 readTime: 5 min read
 category: Platform Guides
+coverImage: /assets/blog/download-naver-videos.webp
+coverAlt: A green video player transferring an eligible file to a phone against a night skyline.
 contentMode: markdown
 featured: false
 draft: false

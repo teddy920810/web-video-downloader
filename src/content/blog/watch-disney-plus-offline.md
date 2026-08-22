@@ -5,6 +5,8 @@ description: Use Disney+'s official offline download, choose a sensible quality,
 publishedAt: 2026-08-19
 readTime: 5 min read
 category: Offline Viewing
+coverImage: /assets/blog/watch-disney-plus-offline.webp
+coverAlt: A starry movie screen transferring an approved film to a tablet for offline viewing.
 contentMode: markdown
 featured: true
 draft: false

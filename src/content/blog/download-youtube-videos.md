@@ -5,6 +5,8 @@ description: A practical workflow for checking permission, choosing a useful for
 publishedAt: 2026-08-22
 readTime: 6 min read
 category: YouTube Guides
+coverImage: /assets/blog/download-youtube-videos.webp
+coverAlt: A public video passing through a permission shield into a clean download file.
 contentMode: markdown
 featured: true
 draft: false

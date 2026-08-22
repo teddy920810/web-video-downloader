@@ -5,6 +5,8 @@ description: A clear guide to Hulu offline viewing, device requirements, expirat
 publishedAt: 2026-08-20
 readTime: 5 min read
 category: Offline Viewing
+coverImage: /assets/blog/watch-hulu-offline.webp
+coverAlt: A green cinematic screen transferring an approved episode to a phone with an offline check.
 contentMode: markdown
 featured: false
 draft: false

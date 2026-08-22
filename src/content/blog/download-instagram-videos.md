@@ -5,6 +5,8 @@ description: Save your own or permitted public Instagram video with a clean URL,
 publishedAt: 2026-08-14
 readTime: 5 min read
 category: Instagram Guides
+coverImage: /assets/blog/download-instagram-videos.webp
+coverAlt: A permitted vertical video moving from a phone through a rights check into a saved file.
 contentMode: markdown
 featured: false
 draft: false
