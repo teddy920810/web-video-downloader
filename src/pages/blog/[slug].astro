@@ -1,0 +1,95 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import { buildArticleSchema } from '../../lib/content/seo-schema';
+import { resolveBlogMetadata } from '../../lib/content/blog-metadata';
+import { buildArticleToc, selectRelatedPosts } from '../../lib/content/blog-layout';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  return posts.map((post) => ({ params: { slug: post.data.slug }, props: { post } }));
+}
+
+interface Props { post: CollectionEntry<'blog'> }
+const { post } = Astro.props as Props;
+const [allPosts, siteEntries, blogSettingsEntries] = await Promise.all([
+  getCollection('blog'),
+  getCollection('siteSettings'),
+  getCollection('blogIndexSettings'),
+]);
+const [siteEntry] = siteEntries;
+const [blogSettings] = blogSettingsEntries;
+if (!siteEntry || !blogSettings) throw new Error('Site or blog CMS settings are missing.');
+
+const { Content, headings } = await render(post);
+const metadata = resolveBlogMetadata(post.data, siteEntry.data.contentDefaults, siteEntry.data.name);
+const toc = buildArticleToc(headings);
+const relatedPosts = selectRelatedPosts(
+  allPosts.map((entry) => ({ ...entry, slug: entry.data.slug })),
+  { slug: post.data.slug, category: post.data.category },
+);
+const publishedDate = new Intl.DateTimeFormat(siteEntry.data.locale, { dateStyle: 'medium', timeZone: 'UTC' })
+  .format(new Date(`${post.data.publishedAt}T00:00:00Z`));
+const schema = buildArticleSchema({
+  canonicalOrigin: siteEntry.data.canonicalOrigin,
+  path: `/blog/${post.data.slug}`,
+  title: post.data.title,
+  description: post.data.description,
+  publishedAt: post.data.publishedAt,
+  updatedAt: post.data.updatedAt,
+  author: metadata.author,
+  publisherName: siteEntry.data.name,
+  logo: siteEntry.data.logo,
+  image: post.data.coverImage,
+});
+---
+
+<SiteLayout title={metadata.title} description={post.data.description} image={post.data.coverImage ?? blogSettings.data.shareImage} type="article" schema={schema}>
+  <div class="article-page">
+    <header class="article-page-header">
+      <span class="article-category">{metadata.category}</span>
+      <h1>{post.data.title}</h1>
+      <p>{post.data.description}</p>
+      <div class="article-meta"><span>By {metadata.author}</span><span>{publishedDate}</span><span>{post.data.readTime}</span></div>
+    </header>
+
+    <nav class="article-breadcrumbs" aria-label="Breadcrumb">
+      <a href="/">Home</a><span aria-hidden="true">/</span><a href="/blog">Guides</a><span aria-hidden="true">/</span><span>{post.data.title}</span>
+    </nav>
+
+    <div class="article-layout-grid">
+      <aside class="article-toc-column">
+        <nav class="article-toc-card" aria-label="Table of contents">
+          <strong>On this page</strong>
+          {toc.length > 0 ? <ol>{toc.map((heading) => <li class:list={{ 'is-subheading': heading.depth === 3 }}><a href={`#${heading.slug}`}>{heading.text}</a></li>)}</ol> : <p>Article sections appear here.</p>}
+        </nav>
+      </aside>
+
+      <article class="article-content">
+        {post.data.coverImage && <img class="article-cover" src={post.data.coverImage} alt={post.data.coverAlt ?? ''} width="960" height="540" />}
+        {post.data.contentMode === 'html' && post.data.bodyHtml ? <Fragment set:html={post.data.bodyHtml} /> : <Content />}
+        <footer class="article-end-card">
+          <span class="eyebrow">Try it online</span>
+          <h2>Ready to download a public video?</h2>
+          <p>Paste one supported link and use your free web trial—no desktop install required.</p>
+          <a class="button button-primary" href="/#tool">Open the downloader</a>
+        </footer>
+      </article>
+
+      <aside class="article-related-column">
+        <section class="article-related-card" aria-labelledby="related-guides-title">
+          <h2 id="related-guides-title">Related guides</h2>
+          {relatedPosts.length > 0 ? <ul>{relatedPosts.map((related) => <li><a href={`/blog/${related.data.slug}`}>{related.data.title}</a><small>{related.data.readTime}</small></li>)}</ul> : <p>More practical guides are coming soon.</p>}
+        </section>
+        <section class="article-product-card">
+          <span>Free web trial</span>
+          <h2>Download public videos simply.</h2>
+          <p>Up to 720p, 10 minutes, and 500 MB.</p>
+          <a href="/#tool">Try the web downloader</a>
+        </section>
+      </aside>
+    </div>
+  </div>
+</SiteLayout>

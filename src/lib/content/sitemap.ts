@@ -32,6 +32,7 @@ export function buildSitemapEntries({
 }): SitemapEntry[] {
   const entries: SitemapEntry[] = [
     withRule('/', settings.lastmod, settings.groups.homepage),
+    withRule('/blog', settings.lastmod, settings.groups.blogIndex),
     withRule('/privacy', settings.lastmod, settings.groups.legalPages),
     withRule('/terms', settings.lastmod, settings.groups.legalPages),
     ...posts

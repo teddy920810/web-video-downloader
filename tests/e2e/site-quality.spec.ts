@@ -35,6 +35,7 @@ test('mobile visitors can open navigation', async ({ page }) => {
 });
 
 test('all public content routes and 404 have one H1 and no serious accessibility violations', async ({ page, request }) => {
+  test.setTimeout(90_000);
   const sitemap = await (await request.get('/sitemap.xml')).text();
   const routes = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => new URL(match[1]).pathname);
   routes.push('/missing-page-for-404-check');

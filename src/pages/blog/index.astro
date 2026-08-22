@@ -1,0 +1,48 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { getCollection } from 'astro:content';
+import { buildCollectionPageSchema } from '../../lib/content/seo-schema';
+
+export const prerender = true;
+
+const [posts, blogSettingsEntries, siteEntries] = await Promise.all([
+  getCollection('blog', ({ data }) => !data.draft),
+  getCollection('blogIndexSettings'),
+  getCollection('siteSettings'),
+]);
+const [blogSettings] = blogSettingsEntries;
+const [siteEntry] = siteEntries;
+if (!blogSettings || !siteEntry) throw new Error('Blog or site CMS settings are missing.');
+
+const publishedPosts = posts.sort((left, right) => right.data.publishedAt.localeCompare(left.data.publishedAt));
+const schema = buildCollectionPageSchema({
+  canonicalOrigin: siteEntry.data.canonicalOrigin,
+  path: '/blog',
+  name: blogSettings.data.heading,
+  description: blogSettings.data.description,
+});
+---
+
+<SiteLayout title={blogSettings.data.title} description={blogSettings.data.description} image={blogSettings.data.shareImage} schema={schema}>
+  <header class="blog-hero">
+    <span class="eyebrow">{blogSettings.data.eyebrow}</span>
+    <h1>{blogSettings.data.heading}</h1>
+    <p>{blogSettings.data.intro}</p>
+  </header>
+
+  <section class="blog-list" aria-label="Published guides">
+    {publishedPosts.length > 0 ? publishedPosts.slice(0, blogSettings.data.postsPerPage).map((post) => (
+      <article class:list={{ 'blog-card': true, 'has-cover': Boolean(post.data.coverImage) }}>
+        {post.data.coverImage && <img class="blog-card-image" src={post.data.coverImage} alt={post.data.coverAlt ?? ''} width="360" height="240" loading="lazy" />}
+        <div class="blog-card-copy">
+          <span class="article-category">{post.data.category ?? siteEntry.data.contentDefaults.category}</span>
+          <h2><a href={`/blog/${post.data.slug}`}>{post.data.title}</a></h2>
+          <p>{post.data.description}</p>
+          <small>{post.data.publishedAt} · {post.data.readTime}</small>
+        </div>
+      </article>
+    )) : (
+      <div class="blog-empty"><strong>New guides are on the way.</strong><p>Check back soon for practical video downloading tips.</p></div>
+    )}
+  </section>
+</SiteLayout>
