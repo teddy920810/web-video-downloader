@@ -1,4 +1,11 @@
 import { useEffect, useRef, useState, type ComponentProps } from 'react';
+import { ClockIcon } from '@phosphor-icons/react/Clock';
+import { DownloadSimpleIcon } from '@phosphor-icons/react/DownloadSimple';
+import { FileIcon } from '@phosphor-icons/react/File';
+import { LinkSimpleIcon } from '@phosphor-icons/react/LinkSimple';
+import { MonitorIcon } from '@phosphor-icons/react/Monitor';
+import { ShieldCheckIcon } from '@phosphor-icons/react/ShieldCheck';
+import { UserCircleIcon } from '@phosphor-icons/react/UserCircle';
 import type { DownloadUrlInspection } from '../../lib/download/policy';
 import { fetchWithPolicy } from '../../lib/api/service-client';
 import { authClient } from '../auth/auth-client';
@@ -129,8 +136,8 @@ export default function UrlDownloader() {
 
   return (
     <section className="download-card" aria-labelledby="download-tool-title">
-      <div className="download-card-heading"><span className="download-card-icon" aria-hidden="true">↓</span><div><p>Free web trial</p><h2 id="download-tool-title">Paste a video link</h2></div></div>
-      <form onSubmit={submit}><label className="sr-only" htmlFor="video-url">Video URL</label><div className="url-entry"><input id="video-url" value={url} onChange={(event) => setUrl(event.target.value)} type="url" placeholder="Paste a YouTube, TikTok, or Instagram URL" required /><button className="button button-primary" type="submit" disabled={pending}>{pending ? 'Analyzing…' : 'Analyze'}</button></div></form>
+      <div className="download-card-heading"><span className="download-card-icon" aria-hidden="true"><DownloadSimpleIcon size={24} weight="bold" /></span><div><p>Free web trial</p><h2 id="download-tool-title">Paste a video link</h2></div></div>
+      <form onSubmit={submit}><label className="sr-only" htmlFor="video-url">Video URL</label><div className="url-entry"><span className="url-entry-icon" aria-hidden="true"><LinkSimpleIcon size={20} /></span><input id="video-url" value={url} onChange={(event) => setUrl(event.target.value)} type="url" placeholder="Paste a YouTube, TikTok, or Instagram URL" required /><button className="button button-primary" type="submit" disabled={pending}>{pending ? 'Analyzing…' : 'Analyze'}</button></div></form>
       {result && !result.ok ? <p className="error-message" role="alert">{result.message}</p> : null}
       {result?.ok ? <div className="analysis-result" role="status"><span className="analysis-result-badge">{result.platform}</span><div><strong>Link supported</strong><small>{session?.user ? 'Your account is ready for format analysis.' : 'Sign in to analyze available formats.'}</small></div></div> : null}
       {result?.ok && !session?.user ? <button className="button button-primary download-sign-in" type="button" onClick={() => void signInToContinue()}>Sign in to analyze formats</button> : null}
@@ -138,7 +145,8 @@ export default function UrlDownloader() {
       {analysis ? <div className="analysis-result media-analysis" role="status">{analysis.thumbnail ? <img src={analysis.thumbnail} alt="" loading="lazy" referrerPolicy="no-referrer" /> : null}<div><strong>{analysis.title}</strong><small>{Math.ceil(analysis.durationSeconds / 60)} min · choose an audio-ready format below</small></div></div> : null}
       {analysis?.formats.filter((format) => format.hasAudio).map((format) => <button className="button button-ghost download-format" type="button" disabled={pending} key={format.formatId} onClick={() => void prepareDownload(format.formatId)}>Download {format.label} · {format.container.toUpperCase()}</button>)}
       {downloadUrl ? <a className="button button-primary download-sign-in" href={downloadUrl} rel="noreferrer">Download your file</a> : null}
-      <div className="trial-limits"><span>1 free trial / account</span><span>Up to 720p</span><span>10 min · 500 MB</span></div>
+      <div className="trial-limits"><span><UserCircleIcon size={19} aria-hidden="true" />1 free trial / account</span><span><MonitorIcon size={19} aria-hidden="true" />Up to 720p</span><span><ClockIcon size={19} aria-hidden="true" />10 min</span><span><FileIcon size={19} aria-hidden="true" />500 MB</span></div>
+      <p className="download-policy-note"><ShieldCheckIcon size={22} aria-hidden="true" /><span>One trial per account. Public, individual videos only.<br />Files are delivered through a temporary private link.</span></p>
       <p className="supported-platforms">Supported today: {platforms.map((platform) => <b key={platform}>{platform}</b>)}</p>
     </section>
   );
