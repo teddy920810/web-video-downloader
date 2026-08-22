@@ -1,18 +1,17 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { getSecret, getSession, createTrial, markTrialFailed, markTrialReady } = vi.hoisted(() => ({
+const { getSecret, getSession, createTrial, markTrialFailed } = vi.hoisted(() => ({
   getSecret: vi.fn(),
   getSession: vi.fn(),
   createTrial: vi.fn(),
   markTrialFailed: vi.fn(),
-  markTrialReady: vi.fn(),
 }));
 
 vi.mock('astro:env/server', () => ({ getSecret }));
 vi.mock('../../../lib/auth', () => ({ getSession }));
 vi.mock('../../../lib/trials/trial-store', async (importOriginal) => {
   const original = await importOriginal<typeof import('../../../lib/trials/trial-store')>();
-  return { ...original, createTrial, markTrialFailed, markTrialReady };
+  return { ...original, createTrial, markTrialFailed };
 });
 
 import { TrialAlreadyUsedError } from '../../../lib/trials/trial-store';
@@ -37,10 +36,9 @@ describe('POST /api/downloads', () => {
     getSecret.mockImplementation((name: string) => name === 'DOWNLOAD_SERVICE_URL' ? 'http://download-service.test' : 'private-token');
     createTrial.mockResolvedValue({ id: 'trial-1' });
     markTrialFailed.mockResolvedValue(undefined);
-    markTrialReady.mockResolvedValue(undefined);
     vi.stubGlobal('fetch', vi.fn()
       .mockResolvedValueOnce(new Response(JSON.stringify(inspection), { status: 200 }))
-      .mockResolvedValueOnce(new Response(JSON.stringify({ objectKey: 'trials/trial-1/video.mp4', downloadUrl: 'https://signed.example/video', sizeBytes: 123 }), { status: 200 })));
+      .mockResolvedValueOnce(new Response(JSON.stringify({ jobId: 'trial-1', status: 'queued' }), { status: 202 })));
   });
 
   it('requires a Google account with an email address', async () => {
@@ -71,17 +69,16 @@ describe('POST /api/downloads', () => {
     expect(response.status).toBe(409);
   });
 
-  it('creates the trial, prepares the file, and records readiness', async () => {
+  it('creates the trial and returns a queued job without waiting for the file', async () => {
     const response = await POST(context(requestBody));
-    expect(response.status).toBe(200);
-    await expect(response.json()).resolves.toEqual({ downloadUrl: 'https://signed.example/video', sizeBytes: 123 });
-    expect(markTrialReady).toHaveBeenCalledWith('trial-1', 'trials/trial-1/video.mp4');
+    expect(response.status).toBe(202);
+    await expect(response.json()).resolves.toEqual({ jobId: 'trial-1', status: 'queued' });
   });
 
   it('marks a reserved trial failed when preparation fails', async () => {
     vi.mocked(fetch).mockReset()
       .mockResolvedValueOnce(new Response(JSON.stringify(inspection), { status: 200 }))
-      .mockResolvedValueOnce(new Response(JSON.stringify({ detail: 'source unavailable' }), { status: 502 }));
+      .mockResolvedValue(new Response(JSON.stringify({ detail: 'source unavailable' }), { status: 502 }));
     const response = await POST(context(requestBody));
     expect(response.status).toBe(502);
     expect(markTrialFailed).toHaveBeenCalledWith('trial-1', 'source unavailable');

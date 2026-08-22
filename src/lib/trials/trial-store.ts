@@ -70,12 +70,40 @@ export async function markTrialReady(id: string, objectKey: string): Promise<voi
   `;
 }
 
+export async function markTrialProcessing(id: string): Promise<void> {
+  await sql()`
+    UPDATE trial_downloads
+    SET status = 'processing', updated_at = NOW()
+    WHERE id = ${id} AND status = 'queued';
+  `;
+}
+
 export async function markTrialFailed(id: string, reason: string): Promise<void> {
   await sql()`
     UPDATE trial_downloads
     SET status = 'failed', failure_reason = ${reason}, updated_at = NOW()
     WHERE id = ${id};
   `;
+}
+
+export async function getTrialForUser(id: string, userId: string): Promise<TrialDownload | null> {
+  const rows = await sql()`
+    SELECT
+      id,
+      user_id AS "userId",
+      user_email AS "userEmail",
+      source_url AS "sourceUrl",
+      format_id AS "formatId",
+      title,
+      status,
+      object_key AS "objectKey",
+      failure_reason AS "failureReason",
+      created_at AS "createdAt"
+    FROM trial_downloads
+    WHERE id = ${id} AND user_id = ${userId}
+    LIMIT 1;
+  `;
+  return (rows[0] as TrialDownload | undefined) ?? null;
 }
 
 function isUniqueViolation(error: unknown): boolean {

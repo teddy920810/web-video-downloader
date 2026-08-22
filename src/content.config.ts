@@ -1,5 +1,6 @@
 import { defineCollection } from 'astro:content';
-import { glob } from 'astro/loaders';
+import { glob, type Loader } from 'astro/loaders';
+import { existsSync, readdirSync } from 'node:fs';
 import { z } from 'zod';
 import { publishedAtSchema } from './lib/content/published-date';
 import { homepageSchema } from './lib/content/homepage';
@@ -13,6 +14,14 @@ import {
   legalPageSchema,
   notFoundSettingsSchema,
 } from './lib/content/marketing-settings';
+
+function optionalGlob(base: string, pattern: string, extensions: string[], name: string): Loader {
+  const directory = new URL(`../${base.replace(/^\.\//, '')}`, import.meta.url);
+  const hasEntries = existsSync(directory)
+    && readdirSync(directory, { recursive: true }).some((entry) => extensions.some((extension) => String(entry).endsWith(extension)));
+  if (hasEntries) return glob({ base, pattern });
+  return { name: `empty-${name}`, async load({ store }) { store.clear(); } };
+}
 
 const siteSettings = defineCollection({
   loader: glob({ base: './src/content/settings', pattern: 'site.json' }),
@@ -76,7 +85,7 @@ const blogEntrySchema = z.object({
   });
 
 const blog = defineCollection({
-  loader: glob({ base: './src/content/blog', pattern: '**/*.{md,mdx}' }),
+  loader: optionalGlob('./src/content/blog', '**/*.{md,mdx}', ['.md', '.mdx'], 'blog'),
   schema: blogEntrySchema,
 });
 
@@ -103,7 +112,7 @@ const landingFeaturesSchema = z.object({
 });
 
 const landingPages = defineCollection({
-  loader: glob({ base: './src/content/landing-pages', pattern: '**/*.json' }),
+  loader: optionalGlob('./src/content/landing-pages', '**/*.json', ['.json'], 'landing-pages'),
   schema: z.object({
     slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
     title: z.string().min(1),

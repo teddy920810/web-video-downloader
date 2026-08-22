@@ -9,7 +9,7 @@ const { getSecret, query, neon } = vi.hoisted(() => ({
 vi.mock('astro:env/server', () => ({ getSecret }));
 vi.mock('@neondatabase/serverless', () => ({ neon }));
 
-import { createTrial, markTrialFailed, markTrialReady, TrialAlreadyUsedError } from './trial-store';
+import { createTrial, getTrialForUser, markTrialFailed, markTrialProcessing, markTrialReady, TrialAlreadyUsedError } from './trial-store';
 
 const input = {
   userId: 'google-user-1',
@@ -52,10 +52,16 @@ describe('trial store', () => {
     await expect(createTrial(input)).rejects.toThrow('DATABASE_URL is not configured.');
   });
 
-  it('records ready and failed terminal states', async () => {
+  it('records processing, ready, and failed states', async () => {
     query.mockResolvedValue([]);
+    await markTrialProcessing('trial-0');
     await markTrialReady('trial-1', 'trials/trial-1/video.mp4');
     await markTrialFailed('trial-2', 'source unavailable');
-    expect(query).toHaveBeenCalledTimes(2);
+    expect(query).toHaveBeenCalledTimes(3);
+  });
+
+  it('scopes a job lookup to its owner', async () => {
+    query.mockResolvedValue([{ id: 'trial-1', userId: input.userId, status: 'queued' }]);
+    await expect(getTrialForUser('trial-1', input.userId)).resolves.toMatchObject({ id: 'trial-1' });
   });
 });

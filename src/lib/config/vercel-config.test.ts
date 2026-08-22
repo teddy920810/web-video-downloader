@@ -3,7 +3,11 @@ import { describe, expect, it } from 'vitest';
 
 const config = JSON.parse(
   readFileSync(new URL('../../../vercel.json', import.meta.url), 'utf8'),
-) as { trailingSlash?: boolean; redirects?: Array<{ source: string; destination: string; permanent: boolean }> };
+) as {
+  trailingSlash?: boolean;
+  redirects?: Array<{ source: string; destination: string; permanent: boolean }>;
+  headers?: Array<{ source: string; headers: Array<{ key: string; value: string }> }>;
+};
 
 describe('Vercel canonical URL redirects', () => {
   it('keeps clean public and API routes in the no-trailing-slash form', () => {
@@ -23,5 +27,12 @@ describe('Vercel canonical URL redirects', () => {
       destination: '/:path*',
       permanent: true,
     });
+  });
+
+  it('sets browser hardening headers without blocking the Google popup flow', () => {
+    const headers = config.headers?.find((entry) => entry.source === '/(.*)')?.headers ?? [];
+    expect(headers).toContainEqual({ key: 'X-Frame-Options', value: 'DENY' });
+    expect(headers).toContainEqual({ key: 'Cross-Origin-Opener-Policy', value: 'same-origin-allow-popups' });
+    expect(headers).toContainEqual({ key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains' });
   });
 });

@@ -22,7 +22,8 @@ test('analyzes and prepares a signed download for a signed-in user', async ({ pa
     contentType: 'application/json',
     body: JSON.stringify({ platform: 'youtube', sourceUrl, title: 'Test video', thumbnail: null, durationSeconds: 30, formats: [{ formatId: '18', label: '360p', container: 'mp4', height: 360, hasAudio: true, estimatedSizeBytes: 1_024 }] }),
   }));
-  await page.route('**/api/downloads', (route) => route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ downloadUrl: 'https://download.example.test/signed', sizeBytes: 1_024 }) }));
+  await page.route('**/api/downloads', (route) => route.fulfill({ status: 202, contentType: 'application/json', body: JSON.stringify({ jobId: '2d05763e-faa5-495f-979f-8852b16ea0c1', status: 'queued' }) }));
+  await page.route('**/api/downloads/2d05763e-faa5-495f-979f-8852b16ea0c1', (route) => route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ status: 'ready', downloadUrl: 'https://download.example.test/signed', sizeBytes: 1_024 }) }));
 
   await page.goto('/');
   await waitForDownloaderHydration(page);
