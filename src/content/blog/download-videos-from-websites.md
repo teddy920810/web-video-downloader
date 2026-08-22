@@ -5,6 +5,8 @@ description: A universal checklist for public video URLs, supported platforms, f
 publishedAt: 2026-08-11
 readTime: 7 min read
 category: Downloading Basics
+coverImage: /assets/blog/download-videos-from-websites.webp
+coverAlt: Video windows from around the globe passing through a privacy shield into one media file.
 contentMode: markdown
 featured: true
 draft: false

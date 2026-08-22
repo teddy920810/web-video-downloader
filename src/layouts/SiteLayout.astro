@@ -28,6 +28,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
 const socialImage = new URL(image, Astro.site);
 const analyticsId = site.analytics.googleMeasurementId;
 const isDownloaderHome = Astro.url.pathname === '/';
+const isDownloaderTheme = isDownloaderHome || Astro.url.pathname.startsWith('/blog');
 const defaultSchema = {
   '@type': 'WebApplication',
   name: site.name,
@@ -77,7 +78,7 @@ const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultS
     <link rel="icon" href={site.favicon} />
     {schemas.map((item) => <script is:inline type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', ...item })} />)}
   </head>
-  <body class:list={{ 'download-site': isDownloaderHome }} style={`--theme-color: ${site.themeColor}; --theme-color-fallback: ${site.themeColorFallback};`}>
+  <body class:list={{ 'download-site': isDownloaderTheme }} style={`--theme-color: ${site.themeColor}; --theme-color-fallback: ${site.themeColorFallback};`}>
     {site.announcement.enabled && (
       <aside class="site-announcement" aria-label="Site announcement">
         <span>{site.announcement.text}</span>

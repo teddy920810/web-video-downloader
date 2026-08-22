@@ -5,6 +5,8 @@ description: A straightforward guide to eligible Netflix downloads, quality and 
 publishedAt: 2026-08-16
 readTime: 5 min read
 category: Offline Viewing
+coverImage: /assets/blog/watch-netflix-offline.webp
+coverAlt: A red cinematic catalog transferring an approved film to a phone with a storage meter.
 contentMode: markdown
 featured: false
 draft: false

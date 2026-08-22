@@ -34,6 +34,24 @@ test('mobile visitors can open navigation', async ({ page }) => {
   await expect(page.locator('#site-navigation')).toBeVisible();
 });
 
+test('blog visitors can filter guides by category and preserve the selection in the URL', async ({ page }) => {
+  await page.goto('/blog');
+
+  const allCards = page.locator('[data-blog-card]');
+  const offlineFilter = page.locator('[data-blog-filter="Offline Viewing"]');
+  await expect(allCards).toHaveCount(12);
+
+  await offlineFilter.click();
+  await expect(offlineFilter).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('[data-blog-card]:visible')).toHaveCount(4);
+  await expect(page.locator('[data-blog-results]')).toHaveText('4 guides');
+  await expect(page).toHaveURL(/category=Offline(?:\+|%20)Viewing/);
+
+  await page.reload();
+  await expect(page.locator('[data-blog-filter="Offline Viewing"]')).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('[data-blog-card]:visible')).toHaveCount(4);
+});
+
 test('all public content routes and 404 have one H1 and no serious accessibility violations', async ({ page, request }) => {
   test.setTimeout(90_000);
   const sitemap = await (await request.get('/sitemap.xml')).text();

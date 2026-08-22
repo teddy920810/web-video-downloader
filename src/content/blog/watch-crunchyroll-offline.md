@@ -5,6 +5,8 @@ description: Prepare anime episodes for offline viewing through Crunchyroll's su
 publishedAt: 2026-08-17
 readTime: 5 min read
 category: Offline Viewing
+coverImage: /assets/blog/watch-crunchyroll-offline.webp
+coverAlt: An animated scene and subtitle layers transferring to a phone for approved offline viewing.
 contentMode: markdown
 featured: false
 draft: false

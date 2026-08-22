@@ -5,6 +5,8 @@ description: Plan an authorized live-stream archive, wait for processing, verify
 publishedAt: 2026-08-15
 readTime: 6 min read
 category: YouTube Guides
+coverImage: /assets/blog/save-youtube-live-streams.webp
+coverAlt: A live waveform and processing timeline becoming a verified replay video file.
 contentMode: markdown
 featured: true
 draft: false

@@ -5,6 +5,8 @@ description: Turn a permitted playlist into an organized offline collection whil
 publishedAt: 2026-08-13
 readTime: 6 min read
 category: YouTube Guides
+coverImage: /assets/blog/download-youtube-playlists.webp
+coverAlt: An ordered stack of video cards passing permission checks into an organized folder.
 contentMode: markdown
 featured: false
 draft: false

@@ -5,6 +5,8 @@ description: Build a rights-checked queue, estimate storage, use bounded retries
 publishedAt: 2026-08-12
 readTime: 6 min read
 category: Downloading Basics
+coverImage: /assets/blog/download-multiple-videos.webp
+coverAlt: Multiple video files moving through an organized queue into separate folders.
 contentMode: markdown
 featured: false
 draft: false
