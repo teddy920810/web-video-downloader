@@ -84,6 +84,10 @@
         "href": "/#tool"
       },
       {
+        "label": "Guides",
+        "href": "/blog"
+      },
+      {
         "label": "Desktop App",
         "href": "/#desktop-app"
       }
