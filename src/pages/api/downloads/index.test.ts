@@ -27,11 +27,14 @@ const requestBody = { url: 'https://www.youtube.com/watch?v=abc123', formatId: '
 const inspection = {
   sourceUrl: requestBody.url,
   title: 'Example video',
-  formats: [{ formatId: '18', hasAudio: true }],
+  durationSeconds: 30,
+  formats: [{ formatId: '18', height: 360, hasAudio: true }],
 };
 
 describe('POST /api/downloads', () => {
   beforeEach(() => {
+    createTrial.mockClear();
+    markTrialFailed.mockClear();
     getSession.mockResolvedValue({ user: { id: 'google-user-1', email: 'person@example.com' } });
     getSecret.mockImplementation((name: string) => name === 'DOWNLOAD_SERVICE_URL' ? 'http://download-service.test' : 'private-token');
     createTrial.mockResolvedValue({ id: 'trial-1' });
@@ -49,7 +52,7 @@ describe('POST /api/downloads', () => {
 
   it('validates the selected format and source URL', async () => {
     expect((await POST(context({ url: requestBody.url }))).status).toBe(400);
-    expect((await POST(context({ ...requestBody, url: 'https://example.com/video' }))).status).toBe(400);
+    expect((await POST(context({ ...requestBody, url: 'https://localhost/video' }))).status).toBe(400);
   });
 
   it('requires the private download service configuration', async () => {
@@ -61,6 +64,18 @@ describe('POST /api/downloads', () => {
     vi.mocked(fetch).mockReset().mockResolvedValue(new Response(JSON.stringify({ ...inspection, formats: [] }), { status: 200 }));
     const response = await POST(context(requestBody));
     expect(response.status).toBe(400);
+  });
+
+  it.each([
+    { durationSeconds: 601, formats: inspection.formats },
+    { durationSeconds: 30, formats: [{ formatId: '18', height: 1080, hasAudio: true }] },
+  ])('does not reserve a web trial for a desktop-only selection', async (outsidePolicy) => {
+    vi.mocked(fetch).mockReset().mockResolvedValue(new Response(JSON.stringify({ ...inspection, ...outsidePolicy }), { status: 200 }));
+
+    const response = await POST(context(requestBody));
+
+    expect(response.status).toBe(400);
+    expect(createTrial).not.toHaveBeenCalled();
   });
 
   it('enforces one completed trial per account', async () => {
