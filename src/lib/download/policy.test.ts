@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { inspectDownloadUrl } from './policy';
+import { inspectDownloadUrl, isDesktopOnly } from './policy';
 
 describe('inspectDownloadUrl', () => {
   it.each([
@@ -11,10 +11,10 @@ describe('inspectDownloadUrl', () => {
     expect(inspectDownloadUrl(url)).toMatchObject({ ok: true });
   });
 
-  it('rejects unsupported platforms', () => {
-    expect(inspectDownloadUrl('https://example.com/video.mp4')).toEqual({
-      ok: false,
-      message: 'This platform is not supported yet.',
+  it('allows other public HTTPS links to reach provider inspection', () => {
+    expect(inspectDownloadUrl('https://example.com/video.mp4')).toMatchObject({
+      ok: true,
+      platform: 'other',
     });
   });
 
@@ -30,5 +30,18 @@ describe('inspectDownloadUrl', () => {
       ok: false,
       message: 'Playlists are not available in the free trial.',
     });
+  });
+});
+
+describe('isDesktopOnly', () => {
+  it('keeps a 720p ten-minute format eligible for the web trial', () => {
+    expect(isDesktopOnly({ durationSeconds: 600, height: 720 })).toBe(false);
+  });
+
+  it.each([
+    { durationSeconds: 601, height: 360 },
+    { durationSeconds: 60, height: 1080 },
+  ])('routes formats outside the web limits to desktop', (selection) => {
+    expect(isDesktopOnly(selection)).toBe(true);
   });
 });

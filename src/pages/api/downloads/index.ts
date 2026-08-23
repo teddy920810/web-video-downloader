@@ -2,7 +2,7 @@ import type { APIRoute } from 'astro';
 import { getSecret } from 'astro:env/server';
 import { z } from 'zod';
 import { getSession } from '../../../lib/auth';
-import { inspectDownloadUrl } from '../../../lib/download/policy';
+import { inspectDownloadUrl, isDesktopOnly } from '../../../lib/download/policy';
 import { json, readJson } from '../../../lib/api/response';
 import { fetchWithPolicy } from '../../../lib/api/service-client';
 import { TrialAlreadyUsedError, createTrial, markTrialFailed } from '../../../lib/trials/trial-store';
@@ -11,7 +11,12 @@ export const prerender = false;
 
 const requestSchema = z.object({ url: z.string().min(1).max(4_000), formatId: z.string().min(1).max(100) }).strict();
 
-type Inspection = { sourceUrl: string; title: string; formats: Array<{ formatId: string; hasAudio: boolean }> };
+type Inspection = {
+  sourceUrl: string;
+  title: string;
+  durationSeconds: number | null;
+  formats: Array<{ formatId: string; height: number | null; hasAudio: boolean }>;
+};
 type ServiceDownload = { jobId: string; status: 'queued' | 'processing' | 'ready' | 'failed'; detail?: string };
 
 export const POST: APIRoute = async ({ request }) => {
@@ -39,8 +44,10 @@ export const POST: APIRoute = async ({ request }) => {
   } catch {
     return json({ error: 'The download service is temporarily unavailable.' }, { status: 503 });
   }
-  if (!inspection.formats.some((format) => format.formatId === input.formatId && format.hasAudio)) {
-    return json({ error: 'Choose an available format that includes audio.' }, { status: 400 });
+  const selectedFormat = inspection.formats.find((format) => format.formatId === input.formatId);
+  if (!selectedFormat) return json({ error: 'Choose an available media format.' }, { status: 400 });
+  if (isDesktopOnly({ durationSeconds: inspection.durationSeconds, height: selectedFormat.height })) {
+    return json({ error: 'This selection requires the desktop app.' }, { status: 400 });
   }
 
   let trial;

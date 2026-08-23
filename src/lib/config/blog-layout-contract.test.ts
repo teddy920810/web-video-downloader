@@ -68,8 +68,8 @@ describe('blog layout contract', () => {
 
     for (const file of blogFiles) {
       const content = readProjectFile(`src/content/blog/${file}`);
-      expect(content).toMatch(/\ncoverImage: \/assets\/blog\/[a-z0-9-]+\.webp\n/);
-      expect(content).toMatch(/\ncoverAlt: .+\n/);
+      expect(content).toMatch(/\r?\ncoverImage: \/assets\/blog\/[a-z0-9-]+\.webp\r?\n/);
+      expect(content).toMatch(/\r?\ncoverAlt: .+\r?\n/);
     }
   });
 });
