@@ -1,48 +1,13 @@
 ---
-import UrlDownloader from '../components/downloader/UrlDownloader';
+import DownloaderHome from '../components/products/DownloaderHome.astro';
+import UtilitiesHome from '../components/products/UtilitiesHome.astro';
 import SiteLayout from '../layouts/SiteLayout.astro';
 
-export const prerender = true;
+export const prerender = false;
+const mode = Astro.locals.siteMode;
+const utilities = mode === 'utilities';
 ---
 
-<SiteLayout title="Video Downloader – Download public videos in 720p" description="Analyze public YouTube, TikTok, and Instagram videos, then download one trial file in up to 720p.">
-  <div class="download-home">
-    <section class="download-aurora" aria-labelledby="download-hero-title">
-      <div class="download-aurora-content">
-        <span class="eyebrow">Simple · Private · One free trial</span>
-        <h1 id="download-hero-title">Save public videos.<br /><em>Simply.</em></h1>
-        <p>Paste a link from YouTube, TikTok, or Instagram. We’ll analyze the available formats, then let you download one file after signing in.</p>
-        <div id="tool" class="hero-tool"><UrlDownloader client:load /></div>
-      </div>
-    </section>
-
-    <section class="desktop-coming-soon" id="desktop-app" aria-labelledby="desktop-coming-soon-title">
-      <div class="desktop-coming-soon-visual">
-        <img src="/assets/downloader/desktop-coming-soon.png" alt="Concept preview of the desktop application in development" width="1536" height="1024" loading="lazy" />
-      </div>
-      <div class="desktop-coming-soon-copy">
-        <span class="eyebrow">Coming soon</span>
-        <h2 id="desktop-coming-soon-title">Desktop power is on the way</h2>
-        <p>A focused desktop experience is in development. Until it is ready, the web trial remains the fastest way to try the downloader.</p>
-        <button class="desktop-coming-soon-cta" type="button" disabled>Early access coming soon</button>
-      </div>
-    </section>
-
-    <section class="download-proof" id="how-it-works" aria-labelledby="how-it-works-title">
-      <div class="download-proof-heading">
-        <span class="eyebrow">How it works</span>
-        <h2 id="how-it-works-title">Three steps from link to file</h2>
-      </div>
-      <div class="download-proof-steps">
-        <article><span>01</span><h3>Paste a link</h3><p>Start with a public, individual video URL from a supported platform.</p></article>
-        <article><span>02</span><h3>Choose a format</h3><p>Sign in to see permitted video or audio options within the free-trial limits.</p></article>
-        <article><span>03</span><h3>Download safely</h3><p>Your finished file is delivered through a temporary private link.</p></article>
-      </div>
-    </section>
-
-    <section class="section trial-section">
-      <div><span class="eyebrow">Built for a quick try</span><h2>A focused web trial, not an unlimited downloader.</h2><p>Each account gets one download, limited to public video, 720p, 10 minutes, and 500 MB. This keeps the service quick, fair, and easy to use.</p></div>
-      <ul><li>Only content you have the right to download</li><li>No playlists, private posts, accounts, or DRM content</li><li>Automatic deletion after 24 hours</li></ul>
-    </section>
-  </div>
+<SiteLayout siteMode={mode} showAuth={!utilities} title={utilities ? 'Streamnest Video Tools – Local Converter and Compressor' : 'Video Downloader – Download public videos in 720p'} description={utilities ? 'Convert and compress local video files directly in your browser without uploading them to a server.' : 'Analyze public YouTube, TikTok, and Instagram videos, then download one trial file in up to 720p.'}>
+  {utilities ? <UtilitiesHome /> : <DownloaderHome />}
 </SiteLayout>

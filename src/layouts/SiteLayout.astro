@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import AuthControls from '../components/auth/AuthControls';
 import { getCollection } from 'astro:content';
+import type { SiteMode } from '../lib/config/site-mode';
 
 interface Props {
   title?: string;
@@ -10,6 +11,8 @@ interface Props {
   type?: 'website' | 'article';
   schema?: Record<string, unknown> | Array<Record<string, unknown>>;
   noindex?: boolean;
+  showAuth?: boolean;
+  siteMode?: SiteMode;
 }
 
 const [siteEntry] = await getCollection('siteSettings');
@@ -23,7 +26,32 @@ const {
   type = 'website',
   schema,
   noindex = false,
+  showAuth = true,
+  siteMode = Astro.locals.siteMode ?? 'downloader',
 } = Astro.props;
+const utilitiesMode = siteMode === 'utilities';
+const displayName = utilitiesMode ? 'Streamnest Video Tools' : site.name;
+type NavigationItem = {
+  label: string;
+  href: string;
+  children?: Array<{ label: string; href: string }>;
+};
+const navigation: NavigationItem[] = utilitiesMode ? [
+  { label: 'Video Converter', href: '/video-converter' },
+  { label: 'Video Compressor', href: '/video-compressor' },
+  { label: 'Privacy', href: '/privacy' },
+] : site.header.navigation;
+const footerLinks = utilitiesMode
+  ? [
+      { label: 'Video Converter', href: '/video-converter' },
+      { label: 'Video Compressor', href: '/video-compressor' },
+      { label: 'Privacy', href: '/privacy' },
+      { label: 'Terms', href: '/terms' },
+    ]
+  : site.footer.links;
+const footerTagline = utilitiesMode
+  ? 'Private video conversion and compression that runs locally in your browser.'
+  : site.footer.tagline;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const socialImage = new URL(image, Astro.site);
 const analyticsId = site.analytics.googleMeasurementId;
@@ -31,9 +59,9 @@ const isDownloaderHome = Astro.url.pathname === '/';
 const isDownloaderTheme = isDownloaderHome || Astro.url.pathname.startsWith('/blog');
 const defaultSchema = {
   '@type': 'WebApplication',
-  name: site.name,
-  applicationCategory: site.structuredData.applicationCategory,
-  operatingSystem: site.structuredData.operatingSystem,
+  name: displayName,
+  applicationCategory: utilitiesMode ? 'UtilitiesApplication' : site.structuredData.applicationCategory,
+  operatingSystem: utilitiesMode ? 'Any browser with WebAssembly support' : site.structuredData.operatingSystem,
   url: canonical.toString(),
   description,
   offers: {
@@ -65,7 +93,7 @@ const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultS
     {noindex && <meta name="robots" content="noindex, follow" />}
     <link rel="canonical" href={canonical} />
     <meta property="og:type" content={type} />
-    <meta property="og:site_name" content={site.name} />
+    <meta property="og:site_name" content={displayName} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
@@ -78,20 +106,20 @@ const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultS
     <link rel="icon" href={site.favicon} />
     {schemas.map((item) => <script is:inline type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', ...item })} />)}
   </head>
-  <body class:list={{ 'download-site': isDownloaderTheme }} style={`--theme-color: ${site.themeColor}; --theme-color-fallback: ${site.themeColorFallback};`}>
-    {site.announcement.enabled && (
+  <body class:list={{ 'download-site': isDownloaderTheme, 'utility-site': utilitiesMode }} style={`--theme-color: ${site.themeColor}; --theme-color-fallback: ${site.themeColorFallback};`}>
+    {!utilitiesMode && site.announcement.enabled && (
       <aside class="site-announcement" aria-label="Site announcement">
         <span>{site.announcement.text}</span>
         {site.announcement.linkLabel && site.announcement.linkHref && <a href={site.announcement.linkHref}>{site.announcement.linkLabel} →</a>}
       </aside>
     )}
     <header class="site-header">
-      <a class="brand" href="/" aria-label={`${site.name} home`}><img class="brand-logo" src={site.logo} alt="" /><span>{site.name}</span></a>
+      <a class="brand" href="/" aria-label={`${displayName} home`}><img class="brand-logo" src={site.logo} alt="" /><span>{displayName}</span></a>
       <button class="mobile-menu-toggle" type="button" aria-label="Open navigation" aria-controls="site-navigation" aria-expanded="false" data-mobile-menu-toggle>
         <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
       </button>
       <nav id="site-navigation" aria-label="Main navigation">
-        {site.header.navigation.map((item, index) => (item.children?.length ?? 0) > 0 ? (
+        {navigation.map((item, index) => (item.children?.length ?? 0) > 0 ? (
           <div class="nav-dropdown">
             <button class="nav-dropdown-trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls={`nav-dropdown-${index}`} data-nav-dropdown-trigger>{item.label}<span aria-hidden="true">⌄</span></button>
             <div class="nav-dropdown-panel" id={`nav-dropdown-${index}`}>
@@ -100,13 +128,13 @@ const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultS
           </div>
         ) : <a href={item.href}>{item.label}{item.href.endsWith('#desktop-app') && <span class="nav-coming-soon">Coming soon</span>}</a>)}
       </nav>
-      <div class="header-auth"><AuthControls client:load /></div>
+      {showAuth && !utilitiesMode && <div class="header-auth"><AuthControls client:load /></div>}
     </header>
     <main><slot /></main>
     <footer class="site-footer">
-      <div><a class="brand" href="/"><img class="brand-logo" src={site.logo} alt="" /><span>{site.name}</span></a><p>{site.footer.tagline}</p></div>
-      <div class="footer-links">{site.footer.links.map((item) => <a href={item.href}>{item.label}</a>)}</div>
-      <p>© {new Date().getFullYear()} {site.name}</p>
+      <div><a class="brand" href="/"><img class="brand-logo" src={site.logo} alt="" /><span>{displayName}</span></a><p>{footerTagline}</p></div>
+      <div class="footer-links">{footerLinks.map((item) => <a href={item.href}>{item.label}</a>)}</div>
+      <p>© {new Date().getFullYear()} {displayName}</p>
     </footer>
     <script>
       const header = document.querySelector<HTMLElement>('.site-header');

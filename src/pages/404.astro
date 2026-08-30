@@ -1,9 +1,17 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
 import { getCollection } from 'astro:content';
-export const prerender = true;
+export const prerender = false;
 const [settingsEntry] = await getCollection('notFoundSettings');
 if (!settingsEntry) throw new Error('404 CMS settings are missing.');
 const settings = settingsEntry.data;
+const utilities = Astro.locals.siteMode === 'utilities';
 ---
-<SiteLayout title={settings.title} description={settings.description} noindex={true}><header class="legal-page"><span class="eyebrow">{settings.eyebrow}</span><h1>{settings.heading}</h1><p>{settings.intro}</p><p><a class="button button-primary" href={settings.buttonHref}>{settings.buttonLabel}</a></p></header></SiteLayout>
+<SiteLayout siteMode={Astro.locals.siteMode} title={utilities ? 'Page Not Found | Streamnest Video Tools' : settings.title} description={utilities ? 'The requested Streamnest Video Tools page could not be found.' : settings.description} noindex={true}>
+  <header class="legal-page">
+    <span class="eyebrow">{utilities ? '404' : settings.eyebrow}</span>
+    <h1>{utilities ? 'This page is not available' : settings.heading}</h1>
+    <p>{utilities ? 'Return to the local video tools and choose a converter or compressor.' : settings.intro}</p>
+    <p><a class="button button-primary" href={utilities ? '/' : settings.buttonHref}>{utilities ? 'View video tools' : settings.buttonLabel}</a></p>
+  </header>
+</SiteLayout>

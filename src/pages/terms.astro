@@ -2,15 +2,24 @@
 import SiteLayout from '../layouts/SiteLayout.astro';
 import { getCollection, render } from 'astro:content';
 import { buildWebPageSchema } from '../lib/content/seo-schema';
-export const prerender = true;
+import { utilityLegalPages } from '../lib/content/mode-public-content';
+export const prerender = false;
 const page = (await getCollection('legalPages')).find((entry) => entry.data.slug === 'terms');
 if (!page) throw new Error('Terms CMS content is missing.');
 const { Content } = await render(page);
 const [siteEntry] = await getCollection('siteSettings');
 if (!siteEntry) throw new Error('Site settings CMS content is missing.');
-const schema = buildWebPageSchema({ canonicalOrigin: siteEntry.data.canonicalOrigin, path: '/terms', name: page.data.heading, description: page.data.description });
+const utilityPage = utilityLegalPages.terms;
+const utilities = Astro.locals.siteMode === 'utilities';
+const metadata = utilities ? utilityPage : page.data;
+const schema = buildWebPageSchema({ canonicalOrigin: siteEntry.data.canonicalOrigin, path: '/terms', name: metadata.heading, description: metadata.description });
 ---
-<SiteLayout title={page.data.title} description={page.data.description} schema={schema}>
-  <header class="legal-page"><span class="eyebrow">{page.data.eyebrow}</span><h1>{page.data.heading}</h1></header>
-  <article class="legal-body"><Content /></article>
+<SiteLayout siteMode={Astro.locals.siteMode} title={metadata.title} description={metadata.description} schema={schema}>
+  <header class="legal-page"><span class="eyebrow">{metadata.eyebrow}</span><h1>{metadata.heading}</h1></header>
+  {utilities ? (
+    <article class="legal-body">
+      <p>{utilityPage.introduction}</p>
+      {utilityPage.sections.map((section) => <section><h2>{section.heading}</h2><p>{section.body}</p></section>)}
+    </article>
+  ) : <article class="legal-body"><Content /></article>}
 </SiteLayout>

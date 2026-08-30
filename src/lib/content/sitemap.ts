@@ -45,6 +45,16 @@ export function buildSitemapEntries({
   return entries.map((entry) => ({ ...entry, ...overrides.get(entry.path), path: entry.path }));
 }
 
+export function buildUtilitiesSitemapEntries(settings: SitemapSettings): SitemapEntry[] {
+  return [
+    withRule('/', settings.lastmod, settings.groups.homepage),
+    withRule('/video-converter', settings.lastmod, settings.groups.landingPages),
+    withRule('/video-compressor', settings.lastmod, settings.groups.landingPages),
+    withRule('/privacy', settings.lastmod, settings.groups.legalPages),
+    withRule('/terms', settings.lastmod, settings.groups.legalPages),
+  ];
+}
+
 function escapeXml(value: string) {
   return value
     .replaceAll('&', '&amp;')

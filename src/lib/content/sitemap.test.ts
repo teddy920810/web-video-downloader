@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildSitemapEntries, renderSitemapXml } from './sitemap';
+import { buildSitemapEntries, buildUtilitiesSitemapEntries, renderSitemapXml } from './sitemap';
 
 describe('automatic sitemap', () => {
   const settings = {
@@ -47,6 +47,16 @@ describe('automatic sitemap', () => {
     expect(xml).toContain('<changefreq>weekly</changefreq>');
     expect(xml).toContain('<priority>1.0</priority>');
     expect(xml).not.toContain('<sitemapindex');
+  });
+
+  it('publishes only local utility and legal routes in utilities mode', () => {
+    expect(buildUtilitiesSitemapEntries(settings)).toEqual([
+      { path: '/', lastmod: '2026-08-15', changefreq: 'weekly', priority: 1 },
+      { path: '/video-converter', lastmod: '2026-08-15', changefreq: 'weekly', priority: 0.8 },
+      { path: '/video-compressor', lastmod: '2026-08-15', changefreq: 'weekly', priority: 0.8 },
+      { path: '/privacy', lastmod: '2026-08-15', changefreq: 'yearly', priority: 0.3 },
+      { path: '/terms', lastmod: '2026-08-15', changefreq: 'yearly', priority: 0.3 },
+    ]);
   });
 });
 
