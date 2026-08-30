@@ -23,6 +23,10 @@ function normalizeRoute(value) {
   return route.length > 1 ? route.replace(/\/$/, '') : route;
 }
 
+export function isPublishedContentDocument(path) {
+  return !path.startsWith('src/content/homepage/') && path !== 'src/content/settings/images.json';
+}
+
 export function collectSiteValidationIssues(input) {
   const issues = [];
   const siteUrl = envValue(input.envExample, 'SITE_URL');
@@ -66,6 +70,7 @@ export function collectSiteValidationIssues(input) {
       internalLinks.forEach((link) => {
         if (link.startsWith('/uploads/') || link.startsWith('/api/')) return;
         const route = normalizeRoute(link);
+        if (availableAssets.has(route)) return;
         if (!allowedRoutes.has(route)) issues.push(`${document.path}: internal link ${link} does not match a public route.`);
       });
     });

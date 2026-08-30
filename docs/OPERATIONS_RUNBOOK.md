@@ -2,19 +2,19 @@
 
 ## 生产资源
 
-- 正式域名：`https://www.watermarkgemini.com`
-- 备用 Vercel 域名：`https://ai-watermark-remover-peach.vercel.app`
-- GitHub：`teddy920810/ai-watermark-remover`
-- Cloudflare R2 Bucket：`watermark`
-- Google Analytics：`G-52ZWCGEZ7R`
+- 正式域名：`https://www.streamnest.io`
+- 备用 Vercel 域名：`https://web-video-downloader-ten.vercel.app`
+- GitHub：`teddy920810/web-video-downloader`
+- Cloudflare R2 Bucket：`download`
+- Google Analytics：尚未配置
 
 ## Vercel 必要配置
 
-Production 环境至少配置 `SITE_URL=https://www.watermarkgemini.com`、所有 `R2_*` 变量、`GOOGLE_CLIENT_ID`、`GOOGLE_CLIENT_SECRET`、`BETTER_AUTH_SECRET` 和 `BETTER_AUTH_URL=https://www.watermarkgemini.com`。Preview/Development 如需上传或登录功能，也应单独配置对应变量。密钥变更后需要重新部署才能生效。
+Production 环境至少配置 `SITE_URL=https://www.streamnest.io`、所有 `R2_*` 变量、`GOOGLE_CLIENT_ID`、`GOOGLE_CLIENT_SECRET`、`BETTER_AUTH_SECRET` 和 `BETTER_AUTH_URL=https://www.streamnest.io`。Preview/Development 如需下载或登录功能，也应单独配置对应变量。密钥变更后需要重新部署才能生效。
 
-Google Cloud OAuth Web Client 必须包含正式回调 `https://www.watermarkgemini.com/api/auth/callback/google`。根域名 `https://watermarkgemini.com` 应使用 308 重定向到 `www`。OAuth 修改部署后必须使用真实测试用户完成一次登录、确认回调成功、会话建立、退出登录和处理任务；仅检查按钮或接口 200 不代表集成完成。
+Google Cloud OAuth Web Client 必须包含正式回调 `https://www.streamnest.io/api/auth/callback/google`。根域名 `https://streamnest.io` 应使用 308 重定向到 `www`。OAuth 修改部署后必须使用真实测试用户完成一次登录、确认回调成功、会话建立和退出登录；仅检查按钮或接口 200 不代表集成完成。
 
-Git 页面应保持仓库连接到 `main`；域名页面应确保根域名为 Production，`www` 以 308 重定向到根域名。正常情况下 Vercel 自动管理 HTTPS 证书。
+Git 页面应保持仓库连接到 `main`；域名页面应确保 `www` 为 Production，根域名以 308 重定向到 `www`。正常情况下 Vercel 自动管理 HTTPS 证书。
 
 ## Cloudflare R2
 

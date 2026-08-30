@@ -1,10 +1,10 @@
 [
   {
     "AllowedOrigins": [
-      "https://watermarkgemini.com",
-      "https://www.watermarkgemini.com",
-      "https://ai-watermark-remover-peach.vercel.app",
-      "http://localhost:4321"
+      "https://streamnest.io",
+      "https://www.streamnest.io",
+      "https://web-video-downloader-ten.vercel.app",
+      "http://localhost:4322"
     ],
     "AllowedMethods": ["PUT"],
     "AllowedHeaders": ["Content-Type"],
