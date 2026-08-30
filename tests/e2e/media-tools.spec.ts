@@ -18,7 +18,7 @@ test('media tools remain private, responsive, and accessible before processing',
   await page.goto('/video-compressor');
 
   await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
-  await expect(page.getByText('Your selected video stays on this device')).toBeVisible();
+  await expect(page.locator('.local-media-privacy')).toContainText('Your selected video stays on this device');
   await expect(page.locator('input[type=file]')).toHaveAttribute('accept', 'video/*');
   expect(apiRequests).toEqual([]);
   const results = await new AxeBuilder({ page }).analyze();
