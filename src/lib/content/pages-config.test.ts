@@ -164,7 +164,7 @@ describe('Pages CMS maintenance safeguards', () => {
 
   it('shows the blog URL path in the collection list', () => {
     const blog = config.content.find((entry) => entry.name === 'blog');
-    expect(blog?.view?.fields).toEqual(['title', 'slug', 'category', 'publishedAt', 'draft']);
+    expect(blog?.view?.fields).toEqual(['title', 'slug', 'productArea', 'category', 'publishedAt', 'draft']);
   });
 
   it('exposes blog cover, author, category, featured, and draft fields', () => {

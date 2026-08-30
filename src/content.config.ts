@@ -2,11 +2,11 @@ import { defineCollection } from 'astro:content';
 import { glob, type Loader } from 'astro/loaders';
 import { existsSync, readdirSync } from 'node:fs';
 import { z } from 'zod';
-import { publishedAtSchema } from './lib/content/published-date';
 import { homepageSchema } from './lib/content/homepage';
 import { siteSettingsSchema } from './lib/content/site-settings';
 import { imageSettingsSchema } from './lib/content/image-metadata';
-import { trustedHtmlSchema } from './lib/content/trusted-html';
+import { blogEntrySchema } from './lib/content/blog-entry';
+import { utilitiesSettingsSchema } from './lib/content/utilities-settings';
 import { sitemapSettingsSchema } from './lib/content/sitemap-settings';
 import {
   blogIndexSettingsSchema,
@@ -38,6 +38,11 @@ const blogIndexSettings = defineCollection({
   schema: blogIndexSettingsSchema,
 });
 
+const utilitiesSettings = defineCollection({
+  loader: glob({ base: './src/content/settings', pattern: 'utilities.json' }),
+  schema: utilitiesSettingsSchema,
+});
+
 const landingCommonSettings = defineCollection({
   loader: glob({ base: './src/content/settings', pattern: 'landing.json' }),
   schema: landingCommonSettingsSchema,
@@ -62,27 +67,6 @@ const homepage = defineCollection({
   loader: glob({ base: './src/content/homepage', pattern: '**/*.json' }),
   schema: homepageSchema,
 });
-
-const blogEntrySchema = z.object({
-    slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
-    title: z.string().min(1),
-    description: z.string().min(1),
-    publishedAt: publishedAtSchema,
-    updatedAt: publishedAtSchema.optional(),
-    readTime: z.string().min(1),
-    coverImage: z.string().min(1).optional(),
-    coverAlt: z.string().min(1).optional(),
-    author: z.string().min(1).optional(),
-    category: z.string().min(1).optional(),
-    contentMode: z.enum(['markdown', 'html']).default('markdown'),
-    bodyHtml: trustedHtmlSchema.optional(),
-    featured: z.boolean().default(false),
-    draft: z.boolean().default(false),
-  }).superRefine((post, context) => {
-    if (post.contentMode === 'html' && !post.bodyHtml) {
-      context.addIssue({ code: 'custom', path: ['bodyHtml'], message: 'HTML content is required in HTML mode.' });
-    }
-  });
 
 const blog = defineCollection({
   loader: optionalGlob('./src/content/blog', '**/*.{md,mdx}', ['.md', '.mdx'], 'blog'),
@@ -130,6 +114,7 @@ export const collections = {
   siteSettings,
   imageSettings,
   blogIndexSettings,
+  utilitiesSettings,
   landingCommonSettings,
   notFoundSettings,
   sitemapSettings,

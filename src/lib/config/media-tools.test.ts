@@ -31,7 +31,23 @@ describe('browser-local media tools', () => {
     const page = readProjectFile('src/pages/index.astro');
     expect(page).toContain('export const prerender = false');
     expect(page).toContain('<DownloaderHome />');
-    expect(page).toContain('<UtilitiesHome />');
+    expect(page).toContain('<UtilitiesHome primaryHeading={utilities} />');
+    expect(page).toContain('!utilities && <DownloaderHome />');
+  });
+
+  it('uses product icons inside the tools instead of as the shared brand', () => {
+    const component = readProjectFile('src/components/media/LocalVideoTool.tsx');
+    expect(component).toContain("mode === 'converter' ? '/assets/tools/converter-logo.svg' : '/assets/tools/compressor-logo.svg'");
+    expect(component).toContain('className="local-media-product-icon"');
+  });
+
+  it('manages utility page and form copy through Pages CMS', () => {
+    const pages = readProjectFile('.pages.yml');
+    const config = readProjectFile('src/content.config.ts');
+    expect(pages).toContain('name: utilities-settings');
+    expect(pages).toContain('path: src/content/settings/utilities.json');
+    expect(config).toContain('utilitiesSettingsSchema');
+    expect(config).toContain('utilitiesSettings,');
   });
 
   it('exposes progress, cancellation, errors, and same-origin FFmpeg assets', () => {

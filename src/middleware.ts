@@ -18,16 +18,6 @@ export function createModeMiddleware(readMode: ModeReader): MiddlewareHandler {
         headers: { 'Cache-Control': 'private, no-store' },
       });
     }
-    if (mode === 'utilities' && (
-      context.url.pathname === '/blog'
-      || context.url.pathname.startsWith('/blog/')
-    )) {
-      const rendered = await context.rewrite('/404');
-      return new Response(rendered.body, {
-        status: 404,
-        headers: rendered.headers,
-      });
-    }
     const response = await next();
     if (mode === 'utilities') response.headers.set('Cache-Control', 'private, no-store');
     return response;

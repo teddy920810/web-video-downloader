@@ -1,4 +1,15 @@
 import type { SiteMode } from '../config/site-mode';
+import type { ProductArea } from './blog-entry';
+
+export type { ProductArea } from './blog-entry';
+
+export function isPostVisibleInMode(post: { productArea?: ProductArea }, mode: SiteMode) {
+  return mode === 'downloader' || (post.productArea ?? 'downloader') !== 'downloader';
+}
+
+export function filterPostsForMode<T extends { data: { productArea?: ProductArea } }>(posts: T[], mode: SiteMode) {
+  return posts.filter((post) => isPostVisibleInMode(post.data, mode));
+}
 
 export interface UtilityLegalPage {
   title: string;
@@ -24,6 +35,10 @@ export const utilityLegalPages: Record<'privacy' | 'terms', UtilityLegalPage> = 
       {
         heading: 'Technical data',
         body: 'Our hosting provider may process standard request logs for security and reliability. Those requests deliver the website code and media engine, not the local media file you select.',
+      },
+      {
+        heading: 'Account information',
+        body: 'If you use Google sign-in, we store the account identifier and email address needed to provide and protect your Streamnest account.',
       },
       {
         heading: 'Your choices',
@@ -54,12 +69,11 @@ export const utilityLegalPages: Record<'privacy' | 'terms', UtilityLegalPage> = 
   },
 };
 
-export function buildRobotsText(mode: SiteMode, site: URL): string {
+export function buildRobotsText(_mode: SiteMode, site: URL): string {
   const rules = [
     'User-agent: *',
     'Allow: /',
     'Disallow: /api/',
-    ...(mode === 'utilities' ? ['Disallow: /blog'] : []),
     `Sitemap: ${new URL('/sitemap.xml', site)}`,
     '',
   ];

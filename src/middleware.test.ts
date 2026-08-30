@@ -45,13 +45,11 @@ describe('site mode middleware', () => {
     expect(next).toHaveBeenCalledOnce();
   });
 
-  it.each(['/blog', '/blog/download-youtube-videos'])('renders %s as a real 404 in utilities mode', async (path) => {
-    const next = vi.fn();
-    const current = context(path);
-    const response = asResponse(await createModeMiddleware(async () => 'utilities')(current as never, next));
+  it.each(['/blog', '/blog/converter-guide'])('keeps %s available for product-aware filtering in utilities mode', async (path) => {
+    const next = vi.fn().mockResolvedValue(new Response('ok'));
+    const response = asResponse(await createModeMiddleware(async () => 'utilities')(context(path) as never, next));
 
-    expect(response.status).toBe(404);
-    expect(current.rewrite).toHaveBeenCalledOnce();
-    expect(next).not.toHaveBeenCalled();
+    expect(response.status).toBe(200);
+    expect(next).toHaveBeenCalledOnce();
   });
 });

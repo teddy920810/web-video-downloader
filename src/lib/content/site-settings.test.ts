@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { siteSettingsSchema } from './site-settings';
+import { blogEntrySchema } from './blog-entry';
 
 const settings = JSON.parse(
   readFileSync(new URL('../../content/settings/site.json', import.meta.url), 'utf8'),
@@ -30,6 +31,16 @@ describe('site settings CMS content', () => {
     expect(parsed.uploader.dropzone.fileInputLabel).toBeTruthy();
   });
 
+  it('keeps the shared brand neutral across every product mode', () => {
+    const parsed = siteSettingsSchema.parse(settings);
+    expect(parsed.name).toBe('Streamnest');
+    expect(parsed.logo).toBe('/brand-logo.svg');
+    expect(parsed.favicon).toBe('/brand-logo.svg');
+    expect(parsed.defaultShareImage).toBe('/brand-og-card.svg');
+    expect(`${parsed.defaultTitle} ${parsed.defaultDescription} ${parsed.footer.tagline}`)
+      .not.toMatch(/download(er|ing)?/i);
+  });
+
   it('requires a canonical HTTPS origin without a path', () => {
     const invalid = structuredClone(settings);
     invalid.canonicalOrigin = 'https://www.watermarkgemini.com/blog';
@@ -55,6 +66,14 @@ describe('site settings CMS content', () => {
 
     const parsed = siteSettingsSchema.parse(dropdownSettings);
     expect(parsed.header.navigation[0].children).toHaveLength(2);
+  });
+
+  it('defaults legacy blog entries to the downloader product area', () => {
+    const parsed = blogEntrySchema.parse({
+      slug: 'legacy-guide', title: 'Legacy guide', description: 'Description',
+      publishedAt: '2026-08-30', readTime: '5 min read',
+    });
+    expect(parsed.productArea).toBe('downloader');
   });
 });
 

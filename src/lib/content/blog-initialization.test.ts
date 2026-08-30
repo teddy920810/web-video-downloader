@@ -36,7 +36,7 @@ describe('download guide initialization', () => {
     expect(corpus).toMatch(/currently supports YouTube, TikTok, and Instagram/i);
   });
 
-  it('presents the collection as downloader guidance instead of legacy product content', () => {
+  it('presents the shared collection as neutral Streamnest guidance', () => {
     const settings = JSON.parse(readFileSync(resolve(process.cwd(), 'src/content/settings/blog.json'), 'utf8')) as {
       title: string;
       description: string;
@@ -47,9 +47,10 @@ describe('download guide initialization', () => {
     };
     const visibleCopy = `${settings.title} ${settings.description} ${settings.eyebrow} ${settings.heading} ${settings.intro}`;
 
-    expect(visibleCopy).toMatch(/video|download/i);
+    expect(visibleCopy).toMatch(/streamnest|video/i);
+    expect(visibleCopy).not.toMatch(/download(er|ing)?/i);
     expect(visibleCopy).not.toMatch(/watermark|image cleanup/i);
-    expect(settings.shareImage).toBe('/og-card.svg');
+    expect(settings.shareImage).toBe('/brand-og-card.svg');
   });
 
   it('makes the initialized blog discoverable from the primary navigation', () => {

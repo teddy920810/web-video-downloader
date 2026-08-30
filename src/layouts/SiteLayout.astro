@@ -3,6 +3,7 @@ import '../styles/global.css';
 import AuthControls from '../components/auth/AuthControls';
 import { getCollection } from 'astro:content';
 import type { SiteMode } from '../lib/config/site-mode';
+import { filterPostsForMode } from '../lib/content/mode-public-content';
 
 interface Props {
   title?: string;
@@ -15,7 +16,11 @@ interface Props {
   siteMode?: SiteMode;
 }
 
-const [siteEntry] = await getCollection('siteSettings');
+const [siteEntries, allPosts] = await Promise.all([
+  getCollection('siteSettings'),
+  getCollection('blog'),
+]);
+const [siteEntry] = siteEntries;
 if (!siteEntry) throw new Error('Site settings CMS content is missing.');
 const site = siteEntry.data;
 
@@ -30,7 +35,8 @@ const {
   siteMode = Astro.locals.siteMode ?? 'downloader',
 } = Astro.props;
 const utilitiesMode = siteMode === 'utilities';
-const displayName = utilitiesMode ? 'Streamnest Video Tools' : site.name;
+const displayName = site.name;
+const hasVisibleBlogPosts = filterPostsForMode(allPosts, siteMode).some((post) => !post.data.draft);
 type NavigationItem = {
   label: string;
   href: string;
@@ -39,24 +45,26 @@ type NavigationItem = {
 const navigation: NavigationItem[] = utilitiesMode ? [
   { label: 'Video Converter', href: '/video-converter' },
   { label: 'Video Compressor', href: '/video-compressor' },
+  ...(hasVisibleBlogPosts ? [{ label: 'Guides', href: '/blog' }] : []),
+  { label: 'Desktop App', href: '/#desktop-app' },
   { label: 'Privacy', href: '/privacy' },
-] : site.header.navigation;
-const footerLinks = utilitiesMode
-  ? [
-      { label: 'Video Converter', href: '/video-converter' },
-      { label: 'Video Compressor', href: '/video-compressor' },
-      { label: 'Privacy', href: '/privacy' },
-      { label: 'Terms', href: '/terms' },
-    ]
-  : site.footer.links;
-const footerTagline = utilitiesMode
-  ? 'Private video conversion and compression that runs locally in your browser.'
-  : site.footer.tagline;
+] : [
+  ...site.header.navigation,
+  { label: 'Video Converter', href: '/video-converter' },
+  { label: 'Video Compressor', href: '/video-compressor' },
+];
+const footerLinks = [
+  { label: 'Video Converter', href: '/video-converter' },
+  { label: 'Video Compressor', href: '/video-compressor' },
+  ...(hasVisibleBlogPosts ? [{ label: 'Guides', href: '/blog' }] : []),
+  ...site.footer.links,
+];
+const footerTagline = site.footer.tagline;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const socialImage = new URL(image, Astro.site);
 const analyticsId = site.analytics.googleMeasurementId;
 const isDownloaderHome = Astro.url.pathname === '/';
-const isDownloaderTheme = isDownloaderHome || Astro.url.pathname.startsWith('/blog');
+const isDownloaderTheme = !utilitiesMode && (isDownloaderHome || Astro.url.pathname.startsWith('/blog'));
 const defaultSchema = {
   '@type': 'WebApplication',
   name: displayName,
@@ -128,7 +136,7 @@ const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultS
           </div>
         ) : <a href={item.href}>{item.label}{item.href.endsWith('#desktop-app') && <span class="nav-coming-soon">Coming soon</span>}</a>)}
       </nav>
-      {showAuth && !utilitiesMode && <div class="header-auth"><AuthControls client:load /></div>}
+      {showAuth && <div class="header-auth"><AuthControls client:load /></div>}
     </header>
     <main><slot /></main>
     <footer class="site-footer">

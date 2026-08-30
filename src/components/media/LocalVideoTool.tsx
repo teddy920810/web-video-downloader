@@ -7,21 +7,23 @@ import { StopCircleIcon } from '@phosphor-icons/react/StopCircle';
 import {
   buildCompressionPlan,
   buildConversionPlan,
+  describeBrowserMediaError,
   validateLocalVideo,
   type CompressionPreset,
   type ConversionTarget,
   type MediaPlan,
 } from '../../lib/media/browser-media';
 import type { BrowserMediaRuntime } from '../../lib/media/ffmpeg-runtime';
+import type { LocalMediaToolCopy } from '../../lib/content/utilities-settings';
 
-type Props = { mode: 'converter' | 'compressor' };
+type Props = { mode: 'converter' | 'compressor'; copy: LocalMediaToolCopy };
 type Phase = 'idle' | 'loading' | 'processing' | 'ready' | 'failed';
 
 function formatBytes(bytes: number) {
   return `${(bytes / 1024 / 1024).toFixed(bytes >= 10 * 1024 * 1024 ? 0 : 1)} MB`;
 }
 
-export default function LocalVideoTool({ mode }: Props) {
+export default function LocalVideoTool({ mode, copy }: Props) {
   const [file, setFile] = useState<File | null>(null);
   const [target, setTarget] = useState<ConversionTarget>('mp4');
   const [compressionPreset, setCompressionPreset] = useState<CompressionPreset>('balanced');
@@ -79,10 +81,7 @@ export default function LocalVideoTool({ mode }: Props) {
       setProgress(1);
       setPhase('ready');
     } catch (cause) {
-      const detail = cause instanceof Error ? cause.message : String(cause ?? '');
-      setError(detail && detail !== '[object Event]'
-        ? detail
-        : 'The local media engine could not start in this browser.');
+      setError(describeBrowserMediaError(cause));
       setPhase('failed');
     } finally {
       runtime.current?.terminate();
@@ -98,47 +97,48 @@ export default function LocalVideoTool({ mode }: Props) {
   }
 
   const busy = phase === 'loading' || phase === 'processing';
+  const productIcon = mode === 'converter' ? '/assets/tools/converter-logo.svg' : '/assets/tools/compressor-logo.svg';
 
   return (
     <section className="local-media-tool" aria-labelledby={`${mode}-tool-title`}>
       <div className="local-media-heading">
-        <span className="local-media-icon" aria-hidden="true"><FileVideoIcon size={28} weight="duotone" /></span>
+        <span className="local-media-icon" aria-hidden="true"><img className="local-media-product-icon" src={productIcon} alt="" /></span>
         <div>
-          <p>Private browser tool</p>
-          <h2 id={`${mode}-tool-title`}>{mode === 'converter' ? 'Convert a local video' : 'Compress a local video'}</h2>
+          <p>{copy.privateLabel}</p>
+          <h2 id={`${mode}-tool-title`}>{mode === 'converter' ? copy.converterHeading : copy.compressorHeading}</h2>
         </div>
       </div>
 
       <label className="local-file-picker">
         <FileVideoIcon size={34} aria-hidden="true" />
-        <strong>{file ? file.name : 'Choose a video file'}</strong>
-        <span>{file ? formatBytes(file.size) : 'MP4, MOV, WebM, MKV and other browser-readable video files'}</span>
+        <strong>{file ? file.name : copy.chooseFile}</strong>
+        <span>{file ? formatBytes(file.size) : copy.formatHelp}</span>
         <input type="file" accept="video/*" disabled={busy} onChange={selectFile} />
       </label>
 
       {mode === 'converter' ? (
         <label className="local-media-field">
-          <span>Output format</span>
+          <span>{copy.outputFormatLabel}</span>
           <select value={target} disabled={busy} onChange={(event) => setTarget(event.target.value as ConversionTarget)}>
-            <option value="mp4">MP4 video</option>
-            <option value="webm">WebM video</option>
-            <option value="mp3">MP3 audio</option>
+            <option value="mp4">{copy.mp4Label}</option>
+            <option value="webm">{copy.webmLabel}</option>
+            <option value="mp3">{copy.mp3Label}</option>
           </select>
         </label>
       ) : (
         <label className="local-media-field">
-          <span>Compression level</span>
+          <span>{copy.compressionLevelLabel}</span>
           <select value={compressionPreset} disabled={busy} onChange={(event) => setCompressionPreset(event.target.value as CompressionPreset)}>
-            <option value="small">Small file · up to 480p</option>
-            <option value="balanced">Balanced · up to 720p</option>
-            <option value="quality">Higher quality · up to 1080p</option>
+            <option value="small">{copy.smallLabel}</option>
+            <option value="balanced">{copy.balancedLabel}</option>
+            <option value="quality">{copy.qualityLabel}</option>
           </select>
         </label>
       )}
 
       {busy ? (
         <div className="local-media-progress" aria-live="polite">
-          <div><span>{phase === 'loading' ? 'Loading the local media engine…' : 'Processing in this browser…'}</span><strong>{Math.round(progress * 100)}%</strong></div>
+          <div><span>{phase === 'loading' ? copy.loadingLabel : copy.processingLabel}</span><strong>{Math.round(progress * 100)}%</strong></div>
           <progress max="1" value={progress} />
         </div>
       ) : null}
@@ -146,16 +146,16 @@ export default function LocalVideoTool({ mode }: Props) {
 
       <div className="local-media-actions">
         {busy ? (
-          <button className="button button-ghost" type="button" onClick={cancel}><StopCircleIcon size={18} />Cancel</button>
+          <button className="button button-ghost" type="button" onClick={cancel}><StopCircleIcon size={18} />{copy.cancelLabel}</button>
         ) : (
           <button className="button button-primary" type="button" disabled={!file} onClick={processVideo}>
-            <ArrowCounterClockwiseIcon size={18} />{mode === 'converter' ? 'Convert locally' : 'Compress locally'}
+            <ArrowCounterClockwiseIcon size={18} />{mode === 'converter' ? copy.convertLabel : copy.compressLabel}
           </button>
         )}
-        {result ? <a className="button button-primary" href={result.url} download={result.name}><DownloadSimpleIcon size={18} />Save {result.name}</a> : null}
+        {result ? <a className="button button-primary" href={result.url} download={result.name}><DownloadSimpleIcon size={18} />{copy.saveLabel} {result.name}</a> : null}
       </div>
 
-      <p className="local-media-privacy"><ShieldCheckIcon size={20} aria-hidden="true" />Your selected video stays on this device and is not uploaded to our servers.</p>
+      <p className="local-media-privacy"><ShieldCheckIcon size={20} aria-hidden="true" />{copy.privacyLabel}</p>
     </section>
   );
 }

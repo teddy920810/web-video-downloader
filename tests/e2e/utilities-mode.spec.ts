@@ -8,9 +8,9 @@ test('utilities home exposes only local converter and compressor surfaces', asyn
   await expect(page.getByRole('link', { name: 'Video Compressor' }).first()).toBeVisible();
   const html = await page.locator('body').innerHTML();
   expect(html).not.toContain('Paste a video link');
-  expect(html).not.toContain('Sign in with Google');
+  await expect(page.getByRole('button', { name: /Sign in with Google/i })).toBeVisible();
   expect(html).not.toContain('href="/blog');
-  expect(html).not.toContain('#desktop-app');
+  await expect(page.locator('#desktop-app')).toBeVisible();
   const results = await new AxeBuilder({ page }).analyze();
   expect(results.violations.filter((violation) => ['serious', 'critical'].includes(violation.impact ?? ''))).toEqual([]);
 });
@@ -33,12 +33,12 @@ test('utilities discovery files and legal pages exclude downloader content', asy
   expect(sitemap).not.toContain('/blog');
 
   const robots = await (await request.get('/robots.txt')).text();
-  expect(robots).toContain('Disallow: /blog');
+  expect(robots).not.toContain('Disallow: /blog');
 
   const privacy = await (await request.get('/privacy')).text();
   expect(privacy).toContain('Your selected video stays on your device');
   expect(privacy).not.toContain('Cloudflare R2');
-  expect(privacy).not.toContain('Google sign-in');
+  expect(privacy).toContain('Google sign-in');
 });
 
 test('utilities mode remains usable on a mobile viewport', async ({ page }) => {

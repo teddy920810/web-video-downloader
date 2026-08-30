@@ -14,7 +14,7 @@ export const GET: APIRoute = async ({ site, locals }) => {
   const [settings] = sitemapSettingsEntries;
   if (!settings) throw new Error('Sitemap CMS settings are missing.');
   const entries = locals.siteMode === 'utilities'
-    ? buildUtilitiesSitemapEntries(settings.data)
+    ? buildUtilitiesSitemapEntries(settings.data, posts.map(({ data }) => data))
     : buildSitemapEntries({
         posts: posts.map(({ data }) => data),
         landingPages: landingPages.map(({ data }) => data),

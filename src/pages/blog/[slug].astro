@@ -4,6 +4,7 @@ import { getCollection, render, type CollectionEntry } from 'astro:content';
 import { buildArticleSchema } from '../../lib/content/seo-schema';
 import { resolveBlogMetadata } from '../../lib/content/blog-metadata';
 import { buildArticleToc, selectRelatedPosts } from '../../lib/content/blog-layout';
+import { filterPostsForMode } from '../../lib/content/mode-public-content';
 
 const [allPosts, siteEntries, blogSettingsEntries] = await Promise.all([
   getCollection('blog'),
@@ -11,7 +12,8 @@ const [allPosts, siteEntries, blogSettingsEntries] = await Promise.all([
   getCollection('blogIndexSettings'),
 ]);
 export const prerender = false;
-const post = allPosts.find((entry) => !entry.data.draft && entry.data.slug === Astro.params.slug) as CollectionEntry<'blog'> | undefined;
+const visiblePosts = filterPostsForMode(allPosts, Astro.locals.siteMode);
+const post = visiblePosts.find((entry) => !entry.data.draft && entry.data.slug === Astro.params.slug) as CollectionEntry<'blog'> | undefined;
 if (!post) return Astro.rewrite('/404');
 const [siteEntry] = siteEntries;
 const [blogSettings] = blogSettingsEntries;
@@ -21,7 +23,7 @@ const { Content, headings } = await render(post);
 const metadata = resolveBlogMetadata(post.data, siteEntry.data.contentDefaults, siteEntry.data.name);
 const toc = buildArticleToc(headings);
 const relatedPosts = selectRelatedPosts(
-  allPosts.map((entry) => ({ ...entry, slug: entry.data.slug })),
+  visiblePosts.map((entry) => ({ ...entry, slug: entry.data.slug })),
   { slug: post.data.slug, category: post.data.category },
 );
 const publishedDate = new Intl.DateTimeFormat(siteEntry.data.locale, { dateStyle: 'medium', timeZone: 'UTC' })
@@ -64,12 +66,21 @@ const schema = buildArticleSchema({
       <article class="article-content">
         {post.data.coverImage && <img class="article-cover" src={post.data.coverImage} alt={post.data.coverAlt ?? ''} width="960" height="540" />}
         {post.data.contentMode === 'html' && post.data.bodyHtml ? <Fragment set:html={post.data.bodyHtml} /> : <Content />}
-        <footer class="article-end-card">
-          <span class="eyebrow">Try it online</span>
-          <h2>Ready to download a public video?</h2>
-          <p>Paste one supported link and use your free web trial—no desktop install required.</p>
-          <a class="button button-primary" href="/#tool">Open the downloader</a>
-        </footer>
+        {post.data.productArea === 'downloader' ? (
+          <footer class="article-end-card">
+            <span class="eyebrow">Try it online</span>
+            <h2>Ready to download a public video?</h2>
+            <p>Paste one supported link and use your free web trial—no desktop install required.</p>
+            <a class="button button-primary" href="/#tool">Open the downloader</a>
+          </footer>
+        ) : (
+          <footer class="article-end-card">
+            <span class="eyebrow">Try Streamnest tools</span>
+            <h2>Work with a local video in your browser.</h2>
+            <p>Choose the converter or compressor for a private, on-device workflow.</p>
+            <a class="button button-primary" href="/">View video tools</a>
+          </footer>
+        )}
       </article>
 
       <aside class="article-related-column">
@@ -77,12 +88,21 @@ const schema = buildArticleSchema({
           <h2 id="related-guides-title">Related guides</h2>
           {relatedPosts.length > 0 ? <ul>{relatedPosts.map((related) => <li><a href={`/blog/${related.data.slug}`}>{related.data.title}</a><small>{related.data.readTime}</small></li>)}</ul> : <p>More practical guides are coming soon.</p>}
         </section>
-        <section class="article-product-card">
-          <span>Free web trial</span>
-          <h2>Download public videos simply.</h2>
-          <p>Up to 720p, 10 minutes, and 500 MB.</p>
-          <a href="/#tool">Try the web downloader</a>
-        </section>
+        {post.data.productArea === 'downloader' ? (
+          <section class="article-product-card">
+            <span>Free web trial</span>
+            <h2>Download public videos simply.</h2>
+            <p>Up to 720p, 10 minutes, and 500 MB.</p>
+            <a href="/#tool">Try the web downloader</a>
+          </section>
+        ) : (
+          <section class="article-product-card">
+            <span>Private browser tools</span>
+            <h2>Convert or compress locally.</h2>
+            <p>Your selected video stays on your device.</p>
+            <a href="/video-converter">Open the converter</a>
+          </section>
+        )}
       </aside>
     </div>
   </div>

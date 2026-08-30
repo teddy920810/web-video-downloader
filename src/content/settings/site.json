@@ -1,13 +1,13 @@
 {
-  "name": "Video Downloader",
+  "name": "Streamnest",
   "canonicalOrigin": "https://www.streamnest.io",
   "locale": "en",
   "themeColor": "#a06dff",
-  "logo": "/logo.svg",
-  "defaultTitle": "Video Downloader – Download public videos in 720p",
-  "defaultDescription": "Analyze public YouTube, TikTok, and Instagram videos and download one trial file in up to 720p.",
-  "favicon": "/logo.svg",
-  "defaultShareImage": "/og-card.svg",
+  "logo": "/brand-logo.svg",
+  "defaultTitle": "Streamnest Video Tools",
+  "defaultDescription": "Private browser-based video tools for converting, compressing, and working with video files.",
+  "favicon": "/brand-logo.svg",
+  "defaultShareImage": "/brand-og-card.svg",
   "analytics": {
     "googleMeasurementId": ""
   },
@@ -18,7 +18,7 @@
     "priceCurrency": "USD"
   },
   "contentDefaults": {
-    "author": "Video Downloader Editorial Team",
+    "author": "Streamnest Editorial Team",
     "category": "Guides"
   },
   "uploader": {
@@ -94,7 +94,7 @@
     ]
   },
   "footer": {
-    "tagline": "A focused trial for downloading public videos you have the right to save.",
+    "tagline": "Private video tools for practical browser and desktop workflows.",
     "links": [
       {
         "label": "Privacy",
