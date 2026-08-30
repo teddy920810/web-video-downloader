@@ -31,7 +31,7 @@ export const POST: APIRoute = async ({ request }) => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-Internal-Service-Token': serviceToken },
       body: JSON.stringify({ url: result.url }),
-    }, { timeoutMs: 12_000, retries: 1 });
+    }, { timeoutMs: 45_000 });
     const body: unknown = await response.json();
     if (!response.ok) {
       const error = typeof body === 'object' && body !== null && 'detail' in body ? (body as { detail?: unknown }).detail : undefined;
