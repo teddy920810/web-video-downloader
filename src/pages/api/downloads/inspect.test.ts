@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const { getSecret } = vi.hoisted(() => ({ getSecret: vi.fn() }));
 vi.mock('astro:env/server', () => ({ getSecret }));
@@ -16,6 +16,8 @@ describe('POST /api/downloads/inspect', () => {
     vi.stubGlobal('fetch', vi.fn());
   });
 
+  afterEach(() => vi.useRealTimers());
+
   it('passes a valid link to the private parsing service without requiring sign-in', async () => {
     vi.mocked(fetch).mockResolvedValue(new Response(JSON.stringify({ platform: 'youtube', title: 'Video', durationSeconds: 30, formats: [] }), { status: 200 }));
     const response = await POST(context({ url: 'https://www.youtube.com/watch?v=abc123' }));
@@ -28,6 +30,26 @@ describe('POST /api/downloads/inspect', () => {
   it('passes other public HTTPS links to provider inspection', async () => {
     vi.mocked(fetch).mockResolvedValue(new Response(JSON.stringify({ platform: 'other', title: 'Video', durationSeconds: 30, formats: [] }), { status: 200 }));
     const response = await POST(context({ url: 'https://example.com/video.mp4' }));
+    expect(response.status).toBe(200);
+    expect(fetch).toHaveBeenCalledOnce();
+  });
+
+  it('allows one cold-started inspection to finish without duplicating the request', async () => {
+    vi.useFakeTimers();
+    vi.mocked(fetch).mockImplementation((_input, init) => new Promise((resolve, reject) => {
+      const timer = setTimeout(() => resolve(new Response(JSON.stringify({
+        platform: 'youtube', title: 'Video', durationSeconds: 30, formats: [],
+      }), { status: 200 })), 20_000);
+      init?.signal?.addEventListener('abort', () => {
+        clearTimeout(timer);
+        reject(init.signal?.reason);
+      }, { once: true });
+    }));
+
+    const pending = POST(context({ url: 'https://www.youtube.com/watch?v=abc123' }));
+    await vi.advanceTimersByTimeAsync(24_000);
+    const response = await pending;
+
     expect(response.status).toBe(200);
     expect(fetch).toHaveBeenCalledOnce();
   });
