@@ -5,20 +5,14 @@ import { buildArticleSchema } from '../../lib/content/seo-schema';
 import { resolveBlogMetadata } from '../../lib/content/blog-metadata';
 import { buildArticleToc, selectRelatedPosts } from '../../lib/content/blog-layout';
 
-export const prerender = true;
-
-export async function getStaticPaths() {
-  const posts = await getCollection('blog', ({ data }) => !data.draft);
-  return posts.map((post) => ({ params: { slug: post.data.slug }, props: { post } }));
-}
-
-interface Props { post: CollectionEntry<'blog'> }
-const { post } = Astro.props as Props;
 const [allPosts, siteEntries, blogSettingsEntries] = await Promise.all([
   getCollection('blog'),
   getCollection('siteSettings'),
   getCollection('blogIndexSettings'),
 ]);
+export const prerender = false;
+const post = allPosts.find((entry) => !entry.data.draft && entry.data.slug === Astro.params.slug) as CollectionEntry<'blog'> | undefined;
+if (!post) return Astro.rewrite('/404');
 const [siteEntry] = siteEntries;
 const [blogSettings] = blogSettingsEntries;
 if (!siteEntry || !blogSettings) throw new Error('Site or blog CMS settings are missing.');

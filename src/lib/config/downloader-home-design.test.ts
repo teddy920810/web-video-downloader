@@ -5,7 +5,7 @@ const readProjectFile = (path: string) => readFileSync(new URL(`../../../${path}
 
 describe('downloader homepage visual contract', () => {
   it('keeps the real online downloader as the primary hero action', () => {
-    const page = readProjectFile('src/pages/index.astro');
+    const page = readProjectFile('src/components/products/DownloaderHome.astro');
 
     expect(page).toContain('class="download-home"');
     expect(page).toContain('Save public videos.');
@@ -15,7 +15,7 @@ describe('downloader homepage visual contract', () => {
   });
 
   it('presents the desktop product honestly as coming soon', () => {
-    const page = readProjectFile('src/pages/index.astro');
+    const page = readProjectFile('src/components/products/DownloaderHome.astro');
     const desktopSection = page.slice(page.indexOf('id="desktop-app"'));
 
     expect(desktopSection).toContain('Desktop power is on the way');

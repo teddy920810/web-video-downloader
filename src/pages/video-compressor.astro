@@ -1,0 +1,28 @@
+---
+import LocalVideoTool from '../components/media/LocalVideoTool';
+import SiteLayout from '../layouts/SiteLayout.astro';
+
+export const prerender = false;
+---
+
+<SiteLayout siteMode={Astro.locals.siteMode} showAuth={false} title="Free Local Video Compressor – Compress Video in Your Browser" description="Reduce a local video file in your browser with practical quality presets and no server upload.">
+  <div class="utility-page">
+    <section class="utility-hero" aria-labelledby="compressor-heading">
+      <div>
+        <span class="eyebrow">Local video utility</span>
+        <h1 id="compressor-heading">Make video files<br /><em>easier to share.</em></h1>
+        <p>Choose a practical size and quality balance, then compress the video directly on this device without sending it to a server.</p>
+      </div>
+      <LocalVideoTool client:only="react" mode="compressor" />
+    </section>
+    <section class="utility-notes" aria-labelledby="compressor-notes-heading">
+      <div><span class="eyebrow">Three presets</span><h2 id="compressor-notes-heading">Choose the result you need</h2></div>
+      <ul>
+        <li>Small: compact 480p output for quick sharing</li>
+        <li>Balanced: practical 720p output for everyday use</li>
+        <li>Higher quality: preserves up to 1080p</li>
+        <li>The result depends on the source codec, motion, duration, and original bitrate</li>
+      </ul>
+    </section>
+  </div>
+</SiteLayout>
