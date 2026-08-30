@@ -288,6 +288,95 @@ content:
                 required: true
                 description: 链接目标；站内链接使用以 / 开头的路径。
 
+  - name: utilities-settings
+    label: 视频工具 / Video tools
+    type: file
+    path: src/content/settings/utilities.json
+    format: json
+    fields:
+      - name: home
+        label: 工具首页 / Tools home
+        type: object
+        fields:
+          - name: meta
+            label: SEO
+            type: object
+            fields:
+              - { name: title, label: SEO 标题, type: string, required: true }
+              - { name: description, label: SEO 描述, type: text, required: true }
+          - name: hero
+            label: 首屏
+            type: object
+            fields:
+              - { name: eyebrow, label: 小标题, type: string, required: true }
+              - { name: heading, label: 主标题, type: string, required: true }
+              - { name: accent, label: 强调标题, type: string, required: true }
+              - { name: intro, label: 简介, type: text, required: true }
+          - name: tools
+            label: 工具卡片
+            type: object
+            list:
+              min: 2
+              collapsible: { collapsed: true, summary: "{title}" }
+            fields:
+              - { name: number, label: 编号, type: string, required: true }
+              - { name: title, label: 工具名称, type: string, required: true }
+              - { name: description, label: 工具说明, type: text, required: true }
+              - { name: linkLabel, label: 链接文字, type: string, required: true }
+              - { name: href, label: 链接地址, type: string, required: true }
+          - { name: privacyEyebrow, label: 隐私模块小标题, type: string, required: true }
+          - { name: privacyHeading, label: 隐私模块标题, type: string, required: true }
+          - { name: privacyBody, label: 隐私模块正文, type: text, required: true }
+      - name: converter
+        label: 视频转换页 / Converter
+        type: object
+        fields: &utility_page_fields
+          - name: meta
+            label: SEO
+            type: object
+            fields:
+              - { name: title, label: SEO 标题, type: string, required: true }
+              - { name: description, label: SEO 描述, type: text, required: true }
+          - name: hero
+            label: 首屏
+            type: object
+            fields:
+              - { name: eyebrow, label: 小标题, type: string, required: true }
+              - { name: heading, label: 主标题, type: string, required: true }
+              - { name: accent, label: 强调标题, type: string, required: true }
+              - { name: intro, label: 简介, type: text, required: true }
+          - { name: notesEyebrow, label: 说明模块小标题, type: string, required: true }
+          - { name: notesHeading, label: 说明模块标题, type: string, required: true }
+          - { name: notes, label: 说明列表, type: string, list: { min: 1 }, required: true }
+      - name: compressor
+        label: 视频压缩页 / Compressor
+        type: object
+        fields: *utility_page_fields
+      - name: tool
+        label: 本地处理表单 / Local tool form
+        type: object
+        fields:
+          - { name: privateLabel, label: 隐私标签, type: string, required: true }
+          - { name: converterHeading, label: 转换表单标题, type: string, required: true }
+          - { name: compressorHeading, label: 压缩表单标题, type: string, required: true }
+          - { name: chooseFile, label: 选择文件提示, type: string, required: true }
+          - { name: formatHelp, label: 格式帮助, type: text, required: true }
+          - { name: outputFormatLabel, label: 输出格式标签, type: string, required: true }
+          - { name: compressionLevelLabel, label: 压缩级别标签, type: string, required: true }
+          - { name: mp4Label, label: MP4 选项, type: string, required: true }
+          - { name: webmLabel, label: WebM 选项, type: string, required: true }
+          - { name: mp3Label, label: MP3 选项, type: string, required: true }
+          - { name: smallLabel, label: Small 选项, type: string, required: true }
+          - { name: balancedLabel, label: Balanced 选项, type: string, required: true }
+          - { name: qualityLabel, label: Quality 选项, type: string, required: true }
+          - { name: loadingLabel, label: 加载提示, type: string, required: true }
+          - { name: processingLabel, label: 处理提示, type: string, required: true }
+          - { name: cancelLabel, label: 取消按钮, type: string, required: true }
+          - { name: convertLabel, label: 转换按钮, type: string, required: true }
+          - { name: compressLabel, label: 压缩按钮, type: string, required: true }
+          - { name: saveLabel, label: 保存按钮, type: string, required: true }
+          - { name: privacyLabel, label: 本地隐私说明, type: text, required: true }
+
   - name: image-metadata
     label: 图片信息 / Image metadata
     type: file
@@ -847,7 +936,7 @@ content:
       rename: false
       delete: true
     view:
-      fields: [title, slug, category, publishedAt, draft]
+      fields: [title, slug, productArea, category, publishedAt, draft]
       primary: title
       sort: [publishedAt, title]
       search: [title, description]
@@ -909,6 +998,18 @@ content:
         label: 分类｜SPAN
         type: string
         description: 文章列表和详情页中的短分类标签；留空使用“站点设置”里的默认分类。
+      - name: productArea
+        label: 所属产品 / Product area
+        type: select
+        required: true
+        default: downloader
+        description: 三好学生模式仅发布 general、converter 和 compressor；旧文章默认归为 downloader。
+        options:
+          values:
+            - { name: general, label: 通用 / General }
+            - { name: converter, label: 视频转换 / Converter }
+            - { name: compressor, label: 视频压缩 / Compressor }
+            - { name: downloader, label: 视频下载 / Downloader }
       - name: featured
         label: 置顶文章 / Featured
         type: boolean

@@ -10,13 +10,14 @@ The production site supports two explicit modes. The internal mode key is `siteM
 | `/video-converter` | Available | Available |
 | `/video-compressor` | Available | Available |
 | `/api/downloads/**` | Available under the existing policy | `404` before any upstream request |
-| `/blog` and `/blog/**` | Available | `404` and omitted from discovery |
-| Downloader navigation, CTA, sign-in | Visible where currently defined | Not rendered |
-| `robots.txt` | Current public policy | Download and blog routes disallowed |
-| `sitemap.xml` | Current public routes | Utilities, privacy, and terms only |
+| `/blog` and `/blog/**` | All published posts | Only `general`, `converter`, and `compressor` posts; downloader posts return `404` |
+| Downloader navigation and CTA | Visible where currently defined | Not rendered |
+| Google sign-in | Available | Available |
+| `robots.txt` | Current public policy | Download APIs disallowed; product-safe Blog content remains crawlable |
+| `sitemap.xml` | Current public routes | Utilities, legal pages, and product-safe Blog content |
 | Cloud Run, Decodo, download R2 flow | Reachable through private web APIs | Never called by a public request |
 
-The legal, privacy, and not-found pages remain available in both modes. Static downloader source files are retained; the public runtime boundary is enforced by route handling rather than destructive content changes.
+The shared Streamnest brand, Google authentication, legal, privacy, and not-found pages remain available in both modes. Static downloader source files are retained; the public runtime boundary is enforced by route handling and product-area filtering rather than destructive content changes.
 
 ## Resolution and safe fallback
 
@@ -45,4 +46,4 @@ Keep separate read tokens for Production and Preview. The `EDGE_CONFIG` variable
 
 ## Release contract
 
-Both modes have separate automated browser coverage. A utilities-mode release must prove that downloader HTML and discovery links are absent, every `/api/downloads/**` route is blocked before fetch, local conversion/compression pages remain usable, and no trial download is consumed during verification.
+Both modes have separate automated browser coverage. A utilities-mode release must prove that downloader HTML and discovery links are absent, every `/api/downloads/**` route is blocked before fetch, downloader Blog posts are unavailable, product-safe Blog posts remain eligible, local conversion/compression pages and Google sign-in remain usable, and no trial download is consumed during verification.

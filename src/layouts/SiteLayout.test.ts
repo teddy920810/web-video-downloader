@@ -55,6 +55,15 @@ describe('SiteLayout Google Analytics integration', () => {
     expect(popupSource).toContain('<img class="brand-logo"');
   });
 
+  it('uses one neutral CMS brand and keeps authentication in both modes', () => {
+    expect(layoutSource).not.toContain('displayLogo');
+    expect(layoutSource.match(/src=\{site\.logo\}/g)).toHaveLength(2);
+    expect(layoutSource).toContain('showAuth && <div class="header-auth"');
+    expect(layoutSource).not.toContain('showAuth && !utilitiesMode');
+    expect(globalCss).toMatch(/\.utility-site \.site-header\s*\{[^}]*max-width:\s*none/);
+    expect(globalCss).toMatch(/\.utility-site \.site-footer\s*\{[^}]*max-width:\s*none/);
+  });
+
   it('provides an accessible mobile navigation toggle and dropdown state', () => {
     expect(layoutSource).toContain('data-mobile-menu-toggle');
     expect(layoutSource).toContain('aria-controls="site-navigation"');

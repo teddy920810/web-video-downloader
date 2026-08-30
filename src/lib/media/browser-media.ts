@@ -18,6 +18,8 @@ export type MediaPlan = {
 
 export type LocalVideoValidation = { ok: true } | { ok: false; message: string };
 
+const BROWSER_MEMORY_ERROR = /memory access out of bounds|out of memory|memory allocation/i;
+
 const VIDEO_EXTENSIONS = new Set(['avi', 'm4v', 'mkv', 'mov', 'mp4', 'mpeg', 'mpg', 'webm']);
 
 function extensionOf(name: string) {
@@ -35,6 +37,16 @@ export function validateLocalVideo(file: LocalVideoMetadata): LocalVideoValidati
     return { ok: false, message: 'Browser processing supports files up to 250 MB.' };
   }
   return { ok: true };
+}
+
+export function describeBrowserMediaError(cause: unknown) {
+  const detail = cause instanceof Error ? cause.message : String(cause ?? '');
+  if (BROWSER_MEMORY_ERROR.test(detail)) {
+    return 'This video is too demanding for browser conversion. Try a shorter or lower-resolution file, or choose MP3.';
+  }
+  return detail && detail !== '[object Event]'
+    ? detail
+    : 'The local media engine could not start in this browser.';
 }
 
 function safeInputName(name: string) {
@@ -62,7 +74,8 @@ export function buildConversionPlan(inputFileName: string, target: ConversionTar
       args: [
         '-i', inputName,
         '-map', '0:v:0', '-map', '0:a?',
-        '-c:v', 'libvpx-vp9', '-deadline', 'realtime', '-cpu-used', '8',
+        '-vf', 'scale=min(1280\\,iw):-2',
+        '-c:v', 'libvpx', '-deadline', 'realtime', '-cpu-used', '8', '-threads', '1',
         '-c:a', 'libopus',
         outputName,
       ],

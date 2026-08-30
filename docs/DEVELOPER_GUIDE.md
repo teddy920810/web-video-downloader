@@ -1,6 +1,6 @@
 # 开发者指南
 
-> 产品边界：当前首页运行视频下载模块。通用建站层、下载模块与保留的可选去水印模块见 `docs/ARCHITECTURE.md`。下方涉及去水印的说明只适用于明确启用该可选模块的站点，不是当前下载站的运行依赖。
+> 产品边界：Streamnest 共享品牌、Google 登录、视频转换和视频压缩属于公共能力；下载器是由站点模式控制的可选产品模块。完整边界见 `docs/ARCHITECTURE.md` 和 `docs/SITE_MODES.md`。
 
 ## 环境准备
 
@@ -12,11 +12,10 @@
 ```sh
 git pull --ff-only origin main
 npm ci
-copy .env.example .env.local
 npm run dev
 ```
 
-`.env.local` 只保存本机密钥且已被 Git 忽略。真实凭据由管理员通过密码管理器等安全渠道提供。
+按操作系统习惯从 `.env.example` 创建 `.env.local`。该文件只保存本机密钥且已被 Git 忽略；真实凭据由管理员通过密码管理器等安全渠道提供。
 
 Google 登录还需要：
 
@@ -29,25 +28,22 @@ Google 登录还需要：
 
 ## 应用结构
 
-Astro 负责内容路由和服务端 API；React 只用于上传交互岛。浏览器先请求预签名地址，再直接上传到私有 R2，避免图片经过 Vercel 函数。任务状态保存在 R2，处理能力通过 `WatermarkProvider` 接口隔离。
-
-当前 `MockWatermarkProvider` 仅复制对象。接入真实服务时，实现 `src/lib/providers/watermark-provider.ts` 的契约并在 `src/lib/services.ts` 注入，不要改变公开 API 响应格式。选择和预览图片无需登录；创建与查询任务必须有有效会话，并且任务只能由其 `ownerId` 对应的用户读取。
+Astro 负责内容路由、模式边界和服务端 API；React 用于 Google 登录、下载交互以及本地媒体处理。视频转换和压缩通过同源加载的 FFmpeg WebAssembly 在浏览器中完成，不上传用户媒体。下载器 API 仅在 `downloader` 模式开放，并继续使用独立的媒体下载服务。
 
 ## 内容模型
 
-- 博客 schema：`src/content.config.ts`，文件位于 `src/content/blog/`。
+- 博客 schema：`src/lib/content/blog-entry.ts`，文件位于 `src/content/blog/`；`productArea` 决定内容在两种站点模式下是否公开。
 - 落地页 schema：同上，文件位于 `src/content/landing-pages/`。
+- 转换器、压缩器和工具首页文案：`src/content/settings/utilities.json`。
 - CMS 表单：`.pages.yml`。
 
 新增或调整字段必须同步修改 Astro schema、Pages CMS 配置、页面渲染组件及测试。Pages CMS 的 `merge: true` 会保留表单未管理的字段；不要移除这一设置。
 
-## R2 约束
+## 数据边界
 
-- Bucket：`watermark`，保持私有。
-- 客户端只接收短期预签名 URL，不得获得 R2 密钥。
-- CORS 只允许明确的生产/预览/本地来源及必要方法。
-- `uploads/`、`results/`、`jobs/` 配置 1 天生命周期删除规则。
-- 日志不得输出签名 URL、密钥或完整用户图片内容。
+- 本地转换和压缩不得请求处理 API，也不得上传选中的媒体文件。
+- 下载器的对象存储和代理凭据只存在于独立后端及生产环境，不得进入浏览器代码或仓库。
+- 日志不得输出签名 URL、密钥、代理凭据或完整用户媒体内容。
 
 ## 测试与发布
 

@@ -11,12 +11,11 @@ describe('downloader homepage visual contract', () => {
     expect(page).toContain('Save public videos.');
     expect(page).toContain('<em>Simply.</em>');
     expect(page).toContain('<UrlDownloader client:load />');
-    expect(page.indexOf('<UrlDownloader client:load />')).toBeLessThan(page.indexOf('id="desktop-app"'));
+    expect(page).not.toContain('id="desktop-app"');
   });
 
   it('presents the desktop product honestly as coming soon', () => {
-    const page = readProjectFile('src/components/products/DownloaderHome.astro');
-    const desktopSection = page.slice(page.indexOf('id="desktop-app"'));
+    const desktopSection = readProjectFile('src/components/products/DesktopComingSoon.astro');
 
     expect(desktopSection).toContain('Desktop power is on the way');
     expect(desktopSection).toContain('Coming soon');
@@ -32,7 +31,7 @@ describe('downloader homepage visual contract', () => {
     expect(css).toContain('--download-night: #07153f');
     expect(css).toContain('.download-aurora');
     expect(css).toContain('.desktop-coming-soon');
-    expect(css).toContain('.download-site .header-auth { display: none; }');
+    expect(css).not.toContain('.download-site .header-auth { display: none; }');
     expect(css).toContain('@media (max-width: 900px)');
   });
 });

@@ -3,16 +3,22 @@ import { expect, test } from '@playwright/test';
 
 const tinyWebm = Buffer.from('GkXfo59ChoEBQveBAULygQRC84EIQoKEd2VibUKHgQJChYECGFOAZwEAAAAAAANXEU2bdLpNu4tTq4QVSalmU6yBoU27i1OrhBZUrmtTrIHYTbuMU6uEElTDZ1OsggElTbuMU6uEHFO7a1OsggNB7AEAAAAAAABZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVSalmsirXsYMPQkBNgI1MYXZmNjIuMTMuMTAyV0GNTGF2ZjYyLjEzLjEwMkSJiEBxgAAAAAAAFlSua8iuAQAAAAAAAD/XgQFzxYghnd5Mt4yKdZyBACK1nIN1bmSIgQCGhVZfVlA4g4EBI+ODhAJiWgDgkLCBoLqBWpqBAlWwhFW5gQESVMNn/HNzoGPAgGfImkWjh0VOQ09ERVJEh41MYXZmNjIuMTMuMTAyc3PWY8CLY8WIIZ3eTLeMinVnyKFFo4dFTkNPREVSRIeUTGF2YzYyLjMwLjEwMCBsaWJ2cHhnyKFFo4hEVVJBVElPTkSHkzAwOjAwOjAwLjI4MDAwMDAwMAAfQ7Z1QZXngQCj1oEAAIAwBgCdASqgAFoAAEcIhYWImYSIAgICdaoD+AP6AgbKlqTnr0ZeI569GXiOevRl4jnr0ZeI569GXiOUAP7+wOv/8KVkoB7/wpr/6OJYrSZ/6LgAo7SBACgAsQMABRCsABgHT/gagfMNAAVsCsAFYAKwAVgArABWACD+8DhD22bZtjP/q7UOjRYAo7KBAFAAcQMABRCsABgAGLf0DAAEGgALAAWAAsABYACwAFf4/vA4Q9tm2bYz/6u1Do0WAKOygQB4AHEDAAUQrAAYABi39AwABBoACwAFgALAAWAAsABX+P7wOEPbZtm2M/+rtQ6NFgCjsoEAoABxAwAFEKwAGAAYt/QMAAQaAAsABYACwAFgALAAV/j+8DhD22bZtjP/q7UOjRYAo7KBAMgAcQMABRCsABgAGLf0DAAEGgALAAWAAsABYACwAFf4/vA4Q9tm2bYz/6u1Do0WAKOygQDwAHEDAAUQrAAYABi39AwABBoACwAFgALAAWAAsABX+P7wOEPbZtm2M/+rtQ6NFgAcU7trkbuPs4EAt4r3gQHxggGm8IED', 'base64');
 
-test('media tools remain private, responsive, and accessible before processing', async ({ page }) => {
-  const apiRequests: string[] = [];
+function trackProcessingApiRequests(page: import('@playwright/test').Page) {
+  const requests: string[] = [];
   page.on('request', (request) => {
-    if (new URL(request.url()).pathname.startsWith('/api/')) apiRequests.push(request.url());
+    const path = new URL(request.url()).pathname;
+    if (path.startsWith('/api/') && !path.startsWith('/api/auth/')) requests.push(request.url());
   });
+  return requests;
+}
+
+test('media tools remain private, responsive, and accessible before processing', async ({ page }) => {
+  const apiRequests = trackProcessingApiRequests(page);
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/video-compressor');
 
   await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
-  await expect(page.getByText('Your selected video stays on this device')).toBeVisible();
+  await expect(page.locator('.local-media-privacy')).toContainText('Your selected video stays on this device');
   await expect(page.locator('input[type=file]')).toHaveAttribute('accept', 'video/*');
   expect(apiRequests).toEqual([]);
   const results = await new AxeBuilder({ page }).analyze();
@@ -20,10 +26,7 @@ test('media tools remain private, responsive, and accessible before processing',
 });
 
 test('rejects a non-video locally without making an API request', async ({ page }) => {
-  const apiRequests: string[] = [];
-  page.on('request', (request) => {
-    if (new URL(request.url()).pathname.startsWith('/api/')) apiRequests.push(request.url());
-  });
+  const apiRequests = trackProcessingApiRequests(page);
   await page.goto('/video-converter');
   await page.locator('input[type=file]').setInputFiles({ name: 'notes.txt', mimeType: 'text/plain', buffer: Buffer.from('not a video') });
 
@@ -33,10 +36,7 @@ test('rejects a non-video locally without making an API request', async ({ page 
 
 test('converts and compresses a tiny generated video entirely in the browser', async ({ page }) => {
   test.setTimeout(120_000);
-  const apiRequests: string[] = [];
-  page.on('request', (request) => {
-    if (new URL(request.url()).pathname.startsWith('/api/')) apiRequests.push(request.url());
-  });
+  const apiRequests = trackProcessingApiRequests(page);
   await page.goto('/video-converter');
   await page.locator('input[type=file]').setInputFiles({ name: 'tiny.webm', mimeType: 'video/webm', buffer: tinyWebm });
   await page.getByRole('button', { name: 'Convert locally' }).click();

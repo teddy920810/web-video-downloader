@@ -49,11 +49,15 @@ describe('automatic sitemap', () => {
     expect(xml).not.toContain('<sitemapindex');
   });
 
-  it('publishes only local utility and legal routes in utilities mode', () => {
-    expect(buildUtilitiesSitemapEntries(settings)).toEqual([
+  it('publishes local tools and visible blog content in utilities mode', () => {
+    expect(buildUtilitiesSitemapEntries(settings, [
+      { slug: 'converter-guide', publishedAt: '2026-08-20', productArea: 'converter' },
+    ])).toEqual([
       { path: '/', lastmod: '2026-08-15', changefreq: 'weekly', priority: 1 },
       { path: '/video-converter', lastmod: '2026-08-15', changefreq: 'weekly', priority: 0.8 },
       { path: '/video-compressor', lastmod: '2026-08-15', changefreq: 'weekly', priority: 0.8 },
+      { path: '/blog', lastmod: '2026-08-15', changefreq: 'weekly', priority: 0.7 },
+      { path: '/blog/converter-guide', lastmod: '2026-08-20', changefreq: 'monthly', priority: 0.6 },
       { path: '/privacy', lastmod: '2026-08-15', changefreq: 'yearly', priority: 0.3 },
       { path: '/terms', lastmod: '2026-08-15', changefreq: 'yearly', priority: 0.3 },
     ]);

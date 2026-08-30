@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" role="img" aria-label="Streamnest Video Tools">
+  <defs><linearGradient id="card" x1="80" y1="30" x2="1120" y2="600" gradientUnits="userSpaceOnUse"><stop stop-color="#07153f"/><stop offset="1" stop-color="#211052"/></linearGradient><linearGradient id="mark" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#7357f6"/><stop offset="1" stop-color="#c75df2"/></linearGradient></defs>
+  <rect width="1200" height="630" fill="url(#card)"/>
+  <circle cx="1060" cy="80" r="240" fill="none" stroke="#d66cff" stroke-opacity=".14" stroke-width="72"/>
+  <rect x="90" y="82" width="78" height="78" rx="22" fill="url(#mark)"/>
+  <path d="M108 111c8-8 34-8 42 0M104 122c12-9 40-9 50 0M112 135c10-6 28-6 36 0" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
+  <text x="90" y="285" fill="#fff" font-family="Arial, sans-serif" font-size="84" font-weight="700">Streamnest</text>
+  <text x="90" y="382" fill="#d66cff" font-family="Arial, sans-serif" font-size="72" font-weight="700">Video tools, simply.</text>
+  <text x="94" y="468" fill="#cbd5f5" font-family="Arial, sans-serif" font-size="30">Convert · Compress · Work with video on your device</text>
+</svg>

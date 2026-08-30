@@ -1,13 +1,20 @@
 ---
 import DownloaderHome from '../components/products/DownloaderHome.astro';
 import UtilitiesHome from '../components/products/UtilitiesHome.astro';
+import DesktopComingSoon from '../components/products/DesktopComingSoon.astro';
 import SiteLayout from '../layouts/SiteLayout.astro';
+import { getCollection } from 'astro:content';
 
 export const prerender = false;
 const mode = Astro.locals.siteMode;
 const utilities = mode === 'utilities';
+const [utilitiesEntry] = await getCollection('utilitiesSettings');
+if (!utilitiesEntry) throw new Error('Utilities CMS settings are missing.');
+const utilityMeta = utilitiesEntry.data.home.meta;
 ---
 
-<SiteLayout siteMode={mode} showAuth={!utilities} title={utilities ? 'Streamnest Video Tools – Local Converter and Compressor' : 'Video Downloader – Download public videos in 720p'} description={utilities ? 'Convert and compress local video files directly in your browser without uploading them to a server.' : 'Analyze public YouTube, TikTok, and Instagram videos, then download one trial file in up to 720p.'}>
-  {utilities ? <UtilitiesHome /> : <DownloaderHome />}
+<SiteLayout siteMode={mode} title={utilities ? utilityMeta.title : 'Video Downloader – Download public videos in 720p'} description={utilities ? utilityMeta.description : 'Analyze public YouTube, TikTok, and Instagram videos, then download one trial file in up to 720p.'}>
+  {!utilities && <DownloaderHome />}
+  <UtilitiesHome primaryHeading={utilities} />
+  <DesktopComingSoon />
 </SiteLayout>

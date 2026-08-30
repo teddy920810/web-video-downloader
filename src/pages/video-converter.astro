@@ -1,28 +1,27 @@
 ---
 import LocalVideoTool from '../components/media/LocalVideoTool';
 import SiteLayout from '../layouts/SiteLayout.astro';
+import { getCollection } from 'astro:content';
 
 export const prerender = false;
+const [entry] = await getCollection('utilitiesSettings');
+if (!entry) throw new Error('Utilities CMS settings are missing.');
+const { converter, tool } = entry.data;
 ---
 
-<SiteLayout siteMode={Astro.locals.siteMode} showAuth={false} title="Free Local Video Converter – Convert Video in Your Browser" description="Convert a local video to MP4, WebM, or MP3 in your browser without uploading the file to a server.">
+<SiteLayout siteMode={Astro.locals.siteMode} title={converter.meta.title} description={converter.meta.description}>
   <div class="utility-page">
     <section class="utility-hero" aria-labelledby="converter-heading">
       <div>
-        <span class="eyebrow">Local video utility</span>
-        <h1 id="converter-heading">Convert video formats<br /><em>on your device.</em></h1>
-        <p>Choose a video from your computer and convert it in this browser. The file stays on your device throughout processing.</p>
+        <span class="eyebrow">{converter.hero.eyebrow}</span>
+        <h1 id="converter-heading">{converter.hero.heading}<br /><em>{converter.hero.accent}</em></h1>
+        <p>{converter.hero.intro}</p>
       </div>
-      <LocalVideoTool client:only="react" mode="converter" />
+      <LocalVideoTool client:only="react" mode="converter" copy={tool} />
     </section>
     <section class="utility-notes" aria-labelledby="converter-notes-heading">
-      <div><span class="eyebrow">Before you start</span><h2 id="converter-notes-heading">Designed for practical, local jobs</h2></div>
-      <ul>
-        <li>Files up to 250 MB</li>
-        <li>MP4, WebM, and MP3 output</li>
-        <li>Processing stops if this tab closes</li>
-        <li>Large, batch, or 4K workflows are better suited to the future desktop app</li>
-      </ul>
+      <div><span class="eyebrow">{converter.notesEyebrow}</span><h2 id="converter-notes-heading">{converter.notesHeading}</h2></div>
+      <ul>{converter.notes.map((note) => <li>{note}</li>)}</ul>
     </section>
   </div>
 </SiteLayout>

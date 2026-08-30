@@ -1,25 +1,26 @@
+---
+import { getCollection } from 'astro:content';
+interface Props {
+  primaryHeading?: boolean;
+}
+const { primaryHeading = true } = Astro.props;
+const [entry] = await getCollection('utilitiesSettings');
+if (!entry) throw new Error('Utilities CMS settings are missing.');
+const { home } = entry.data;
+---
 <div class="utility-page utility-home">
   <section class="utility-home-hero" aria-labelledby="utilities-heading">
-    <span class="eyebrow">Private local video tools</span>
-    <h1 id="utilities-heading">Work with video<br /><em>on your device.</em></h1>
-    <p>Convert formats or reduce file size directly in your browser. Your selected video stays on this device.</p>
+    <span class="eyebrow">{home.hero.eyebrow}</span>
+    {primaryHeading
+      ? <h1 id="utilities-heading">{home.hero.heading}<br /><em>{home.hero.accent}</em></h1>
+      : <h2 id="utilities-heading">{home.hero.heading}<br /><em>{home.hero.accent}</em></h2>}
+    <p>{home.hero.intro}</p>
   </section>
   <section class="utility-tool-grid" aria-label="Video tools">
-    <a href="/video-converter">
-      <span>01</span>
-      <h2>Video Converter</h2>
-      <p>Convert a local video to MP4, WebM, or MP3 with a browser-based media engine.</p>
-      <strong>Open converter →</strong>
-    </a>
-    <a href="/video-compressor">
-      <span>02</span>
-      <h2>Video Compressor</h2>
-      <p>Choose a practical 480p, 720p, or 1080p quality preset and reduce a local file.</p>
-      <strong>Open compressor →</strong>
-    </a>
+    {home.tools.map((tool) => <a href={tool.href}><span>{tool.number}</span><h2>{tool.title}</h2><p>{tool.description}</p><strong>{tool.linkLabel}</strong></a>)}
   </section>
   <section class="utility-privacy-strip">
-    <div><span class="eyebrow">Local by design</span><h2>No account. No media upload.</h2></div>
-    <p>The processing engine loads only when you start a task. Closing this tab stops the work and releases the local result.</p>
+    <div><span class="eyebrow">{home.privacyEyebrow}</span><h2>{home.privacyHeading}</h2></div>
+    <p>{home.privacyBody}</p>
   </section>
 </div>

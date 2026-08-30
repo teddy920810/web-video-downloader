@@ -1,0 +1,35 @@
+{
+  "home": {
+    "meta": { "title": "Streamnest Video Tools – Local Converter and Compressor", "description": "Convert and compress local video files directly in your browser without uploading them to a server." },
+    "hero": { "eyebrow": "Private local video tools", "heading": "Work with video", "accent": "on your device.", "intro": "Convert formats or reduce file size directly in your browser. Your selected video stays on this device." },
+    "tools": [
+      { "number": "01", "title": "Video Converter", "description": "Convert a local video to MP4, WebM, or MP3 with a browser-based media engine.", "linkLabel": "Open converter →", "href": "/video-converter" },
+      { "number": "02", "title": "Video Compressor", "description": "Choose a practical 480p, 720p, or 1080p quality preset and reduce a local file.", "linkLabel": "Open compressor →", "href": "/video-compressor" }
+    ],
+    "privacyEyebrow": "Local by design",
+    "privacyHeading": "No media upload.",
+    "privacyBody": "The processing engine loads only when you start a task. Closing this tab stops the work and releases the local result."
+  },
+  "converter": {
+    "meta": { "title": "Free Local Video Converter – Convert Video in Your Browser", "description": "Convert a local video to MP4, WebM, or MP3 in your browser without uploading the file to a server." },
+    "hero": { "eyebrow": "Local video utility", "heading": "Convert video formats", "accent": "on your device.", "intro": "Choose a video from your computer and convert it in this browser. The file stays on your device throughout processing." },
+    "notesEyebrow": "Before you start", "notesHeading": "Designed for practical, local jobs",
+    "notes": ["Files up to 250 MB", "MP4, WebM, and MP3 output", "Processing stops if this tab closes", "Large, batch, or 4K workflows are better suited to the future desktop app"]
+  },
+  "compressor": {
+    "meta": { "title": "Free Local Video Compressor – Compress Video in Your Browser", "description": "Reduce a local video file in your browser with practical quality presets and no server upload." },
+    "hero": { "eyebrow": "Local video utility", "heading": "Make video files", "accent": "easier to share.", "intro": "Choose a practical size and quality balance, then compress the video directly on this device without sending it to a server." },
+    "notesEyebrow": "Three presets", "notesHeading": "Choose the result you need",
+    "notes": ["Small: compact 480p output for quick sharing", "Balanced: practical 720p output for everyday use", "Higher quality: preserves up to 1080p", "The result depends on the source codec, motion, duration, and original bitrate"]
+  },
+  "tool": {
+    "privateLabel": "Private browser tool", "converterHeading": "Convert a local video", "compressorHeading": "Compress a local video",
+    "chooseFile": "Choose a video file", "formatHelp": "MP4, MOV, WebM, MKV and other browser-readable video files",
+    "outputFormatLabel": "Output format", "compressionLevelLabel": "Compression level",
+    "mp4Label": "MP4 video", "webmLabel": "WebM video", "mp3Label": "MP3 audio",
+    "smallLabel": "Small file · up to 480p", "balancedLabel": "Balanced · up to 720p", "qualityLabel": "Higher quality · up to 1080p",
+    "loadingLabel": "Loading the local media engine…", "processingLabel": "Processing in this browser…", "cancelLabel": "Cancel",
+    "convertLabel": "Convert locally", "compressLabel": "Compress locally", "saveLabel": "Save",
+    "privacyLabel": "Your selected video stays on this device and is not uploaded to our servers."
+  }
+}

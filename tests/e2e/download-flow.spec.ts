@@ -32,7 +32,7 @@ test('analyzes immediately, lists resources, and prepares an eligible web downlo
   await page.locator('#video-url').fill(sourceUrl);
   await page.getByRole('button', { name: 'Analyze', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Available downloads' })).toBeVisible();
-  await expect(page.getByText('1080p')).toBeVisible();
+  await expect(page.getByText('1080p', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Download 360p MP4' }).click();
 
   await expect(page.getByRole('link', { name: 'Download your file' })).toHaveAttribute('href', 'https://download.example.test/signed');

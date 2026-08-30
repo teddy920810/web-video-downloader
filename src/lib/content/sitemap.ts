@@ -4,6 +4,7 @@ interface BlogSitemapSource {
   slug: string;
   publishedAt: string;
   draft?: boolean;
+  productArea?: 'general' | 'converter' | 'compressor' | 'downloader';
 }
 
 interface LandingSitemapSource {
@@ -45,11 +46,14 @@ export function buildSitemapEntries({
   return entries.map((entry) => ({ ...entry, ...overrides.get(entry.path), path: entry.path }));
 }
 
-export function buildUtilitiesSitemapEntries(settings: SitemapSettings): SitemapEntry[] {
+export function buildUtilitiesSitemapEntries(settings: SitemapSettings, posts: BlogSitemapSource[] = []): SitemapEntry[] {
+  const visiblePosts = posts.filter((post) => !post.draft && post.productArea !== 'downloader');
   return [
     withRule('/', settings.lastmod, settings.groups.homepage),
     withRule('/video-converter', settings.lastmod, settings.groups.landingPages),
     withRule('/video-compressor', settings.lastmod, settings.groups.landingPages),
+    ...(visiblePosts.length > 0 ? [withRule('/blog', settings.lastmod, settings.groups.blogIndex)] : []),
+    ...visiblePosts.map((post) => withRule(`/blog/${post.slug}`, post.publishedAt, settings.groups.blogPosts)),
     withRule('/privacy', settings.lastmod, settings.groups.legalPages),
     withRule('/terms', settings.lastmod, settings.groups.legalPages),
   ];

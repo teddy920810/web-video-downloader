@@ -2,6 +2,7 @@
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import { getCollection } from 'astro:content';
 import { buildCollectionPageSchema } from '../../lib/content/seo-schema';
+import { filterPostsForMode } from '../../lib/content/mode-public-content';
 
 export const prerender = false;
 
@@ -14,7 +15,9 @@ const [blogSettings] = blogSettingsEntries;
 const [siteEntry] = siteEntries;
 if (!blogSettings || !siteEntry) throw new Error('Blog or site CMS settings are missing.');
 
-const publishedPosts = posts.sort((left, right) => right.data.publishedAt.localeCompare(left.data.publishedAt));
+const publishedPosts = filterPostsForMode(posts, Astro.locals.siteMode)
+  .sort((left, right) => right.data.publishedAt.localeCompare(left.data.publishedAt));
+if (publishedPosts.length === 0) return Astro.rewrite('/404');
 const visiblePosts = publishedPosts.slice(0, blogSettings.data.postsPerPage);
 const categories = [...new Set(visiblePosts.map((post) => post.data.category ?? siteEntry.data.contentDefaults.category))]
   .sort((left, right) => left.localeCompare(right));

@@ -62,6 +62,14 @@ describe('site content validation', () => {
     expect(issues).toEqual([]);
   });
 
+  it('accepts links to the fixed local video tool routes', () => {
+    const issues = collectSiteValidationIssues({
+      ...validInput,
+      contentDocuments: [{ path: 'utilities.json', value: { converter: '/video-converter', compressor: '/video-compressor' } }],
+    });
+    expect(issues).toEqual([]);
+  });
+
   it('excludes retained optional watermark content from downloader release validation', () => {
     expect(isPublishedContentDocument('src/content/homepage/home.json')).toBe(false);
     expect(isPublishedContentDocument('src/content/settings/images.json')).toBe(false);
