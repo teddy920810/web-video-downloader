@@ -11,6 +11,10 @@ describe('site settings CMS content', () => {
     expect(siteSettingsSchema.safeParse(settings).success).toBe(true);
   });
 
+  it('uses the production downloader domain as its canonical origin', () => {
+    expect(siteSettingsSchema.parse(settings).canonicalOrigin).toBe('https://www.streamnest.io');
+  });
+
   it('contains the CMS-managed site sections required to render the shared layout', () => {
     const parsed = siteSettingsSchema.parse(settings);
     expect(parsed.locale).toMatch(/\S/);

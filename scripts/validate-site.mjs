@@ -1,7 +1,7 @@
 import { readFile, readdir } from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
-import { collectSiteValidationIssues } from './site-validator.mjs';
+import { collectSiteValidationIssues, isPublishedContentDocument } from './site-validator.mjs';
 
 const root = process.cwd();
 
@@ -16,10 +16,11 @@ async function walkFiles(relativeDirectory) {
 }
 
 const contentPaths = (await walkFiles('src/content')).filter((file) => /\.(?:json|md|mdx)$/.test(file));
-const contentDocuments = await Promise.all(contentPaths.map(async (file) => {
+const allContentDocuments = await Promise.all(contentPaths.map(async (file) => {
   const source = await readFile(path.join(root, file), 'utf8');
   return { path: file, value: file.endsWith('.json') ? JSON.parse(source) : source };
 }));
+const contentDocuments = allContentDocuments.filter(({ path: file }) => isPublishedContentDocument(file));
 
 const landingDocuments = contentDocuments.filter(({ path: file }) => file.startsWith('src/content/landing-pages/') && file.endsWith('.json'));
 const landingSlugs = landingDocuments.map(({ value }) => value.slug);
@@ -29,8 +30,8 @@ const blogSlugs = blogDocuments.map(({ value, path: file }) => {
   if (!slug) throw new Error(`${file}: slug frontmatter is missing.`);
   return slug;
 });
-const uploadPaths = await walkFiles('public/uploads');
-const availableAssets = uploadPaths.map((file) => `/${file.replace(/^public\//, '')}`);
+const publicPaths = await walkFiles('public');
+const availableAssets = publicPaths.map((file) => `/${file.replace(/^public\//, '')}`);
 const envExample = await readFile(path.join(root, '.env.example'), 'utf8');
 const siteDocument = contentDocuments.find(({ path: file }) => file === 'src/content/settings/site.json');
 if (!siteDocument || typeof siteDocument.value !== 'object' || !siteDocument.value) {

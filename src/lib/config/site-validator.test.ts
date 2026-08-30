@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { collectSiteValidationIssues } from '../../../scripts/site-validator.mjs';
+import { collectSiteValidationIssues, isPublishedContentDocument } from '../../../scripts/site-validator.mjs';
 
 const validInput = {
   envExample: 'SITE_URL=https://www.example.com\nBETTER_AUTH_URL=https://www.example.com\n',
@@ -51,5 +51,21 @@ describe('site content validation', () => {
       contentDocuments: [{ path: 'home.json', value: { href: '/missing-page' } }],
     });
     expect(issues).toContain('home.json: internal link /missing-page does not match a public route.');
+  });
+
+  it('accepts links to public root assets', () => {
+    const issues = collectSiteValidationIssues({
+      ...validInput,
+      contentDocuments: [{ path: 'site.json', value: { logo: '/logo.svg' } }],
+      availableAssets: [...validInput.availableAssets, '/logo.svg'],
+    });
+    expect(issues).toEqual([]);
+  });
+
+  it('excludes retained optional watermark content from downloader release validation', () => {
+    expect(isPublishedContentDocument('src/content/homepage/home.json')).toBe(false);
+    expect(isPublishedContentDocument('src/content/settings/images.json')).toBe(false);
+    expect(isPublishedContentDocument('src/content/settings/site.json')).toBe(true);
+    expect(isPublishedContentDocument('src/content/blog/download-youtube-videos.md')).toBe(true);
   });
 });
