@@ -31,12 +31,16 @@ export default function LocalVideoTool({ mode, copy }: Props) {
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<{ url: string; name: string } | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const runtime = useRef<BrowserMediaRuntime | null>(null);
 
   useEffect(() => () => runtime.current?.terminate(), []);
   useEffect(() => () => {
     if (result) URL.revokeObjectURL(result.url);
   }, [result]);
+  useEffect(() => () => {
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+  }, [previewUrl]);
 
   function resetResult() {
     if (result) URL.revokeObjectURL(result.url);
@@ -51,6 +55,7 @@ export default function LocalVideoTool({ mode, copy }: Props) {
     const selected = event.target.files?.[0] ?? null;
     if (!selected) {
       setFile(null);
+      setPreviewUrl(null);
       return;
     }
     const validation = validateLocalVideo(selected);
@@ -62,6 +67,7 @@ export default function LocalVideoTool({ mode, copy }: Props) {
       return;
     }
     setFile(selected);
+    setPreviewUrl(URL.createObjectURL(selected));
   }
 
   async function processVideo() {
@@ -100,7 +106,7 @@ export default function LocalVideoTool({ mode, copy }: Props) {
   const productIcon = mode === 'converter' ? '/assets/tools/converter-logo.svg' : '/assets/tools/compressor-logo.svg';
 
   return (
-    <section className="local-media-tool" aria-labelledby={`${mode}-tool-title`}>
+    <section className="local-media-tool" data-workspace={file ? 'true' : 'false'} aria-labelledby={`${mode}-tool-title`}>
       <div className="local-media-heading">
         <span className="local-media-icon" aria-hidden="true"><img className="local-media-product-icon" src={productIcon} alt="" /></span>
         <div>
@@ -109,12 +115,15 @@ export default function LocalVideoTool({ mode, copy }: Props) {
         </div>
       </div>
 
-      <label className="local-file-picker">
-        <FileVideoIcon size={34} aria-hidden="true" />
-        <strong>{file ? file.name : copy.chooseFile}</strong>
-        <span>{file ? formatBytes(file.size) : copy.formatHelp}</span>
-        <input type="file" accept="video/*" disabled={busy} onChange={selectFile} />
-      </label>
+      <div className={file ? 'local-media-workspace' : undefined}>
+        {file && previewUrl ? <video className="local-media-preview" src={previewUrl} controls preload="metadata" /> : null}
+        <div className="local-media-controls">
+          <label className="local-file-picker">
+            <FileVideoIcon size={34} aria-hidden="true" />
+            <strong>{file ? file.name : copy.chooseFile}</strong>
+            <span>{file ? formatBytes(file.size) : copy.formatHelp}</span>
+            <input type="file" accept="video/*" disabled={busy} onChange={selectFile} />
+          </label>
 
       {mode === 'converter' ? (
         <label className="local-media-field">
@@ -156,6 +165,8 @@ export default function LocalVideoTool({ mode, copy }: Props) {
       </div>
 
       <p className="local-media-privacy"><ShieldCheckIcon size={20} aria-hidden="true" />{copy.privacyLabel}</p>
+        </div>
+      </div>
     </section>
   );
 }

@@ -45,6 +45,7 @@ type NavigationItem = {
 const navigation: NavigationItem[] = utilitiesMode ? [
   { label: 'Video Converter', href: '/video-converter' },
   { label: 'Video Compressor', href: '/video-compressor' },
+  { label: 'Background Remover', href: '/background-remover' },
   ...(hasVisibleBlogPosts ? [{ label: 'Guides', href: '/blog' }] : []),
   { label: 'Desktop App', href: '/#desktop-app' },
   { label: 'Privacy', href: '/privacy' },
@@ -52,10 +53,12 @@ const navigation: NavigationItem[] = utilitiesMode ? [
   ...site.header.navigation,
   { label: 'Video Converter', href: '/video-converter' },
   { label: 'Video Compressor', href: '/video-compressor' },
+  { label: 'Background Remover', href: '/background-remover' },
 ];
 const footerLinks = [
   { label: 'Video Converter', href: '/video-converter' },
   { label: 'Video Compressor', href: '/video-compressor' },
+  { label: 'Background Remover', href: '/background-remover' },
   ...(hasVisibleBlogPosts ? [{ label: 'Guides', href: '/blog' }] : []),
   ...site.footer.links,
 ];

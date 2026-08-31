@@ -12,7 +12,7 @@ const { compressor, tool } = entry.data;
 <SiteLayout siteMode={Astro.locals.siteMode} title={compressor.meta.title} description={compressor.meta.description}>
   <div class="utility-page">
     <section class="utility-hero" aria-labelledby="compressor-heading">
-      <div>
+      <div class="utility-hero-copy">
         <span class="eyebrow">{compressor.hero.eyebrow}</span>
         <h1 id="compressor-heading">{compressor.hero.heading}<br /><em>{compressor.hero.accent}</em></h1>
         <p>{compressor.hero.intro}</p>

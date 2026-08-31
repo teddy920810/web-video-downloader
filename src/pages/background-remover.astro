@@ -1,0 +1,27 @@
+---
+import BackgroundRemover from '../components/image/BackgroundRemover';
+import SiteLayout from '../layouts/SiteLayout.astro';
+import { getCollection } from 'astro:content';
+
+export const prerender = false;
+const [entry] = await getCollection('utilitiesSettings');
+if (!entry) throw new Error('Utilities CMS settings are missing.');
+const { backgroundRemover, backgroundTool } = entry.data;
+---
+
+<SiteLayout siteMode={Astro.locals.siteMode} title={backgroundRemover.meta.title} description={backgroundRemover.meta.description}>
+  <div class="utility-page">
+    <section class="utility-hero background-remover-hero" aria-labelledby="background-remover-heading">
+      <div class="utility-hero-copy">
+        <span class="eyebrow">{backgroundRemover.hero.eyebrow}</span>
+        <h1 id="background-remover-heading">{backgroundRemover.hero.heading}<br /><em>{backgroundRemover.hero.accent}</em></h1>
+        <p>{backgroundRemover.hero.intro}</p>
+      </div>
+      <BackgroundRemover client:only="react" copy={backgroundTool} />
+    </section>
+    <section class="utility-notes" aria-labelledby="background-remover-notes-heading">
+      <div><span class="eyebrow">{backgroundRemover.notesEyebrow}</span><h2 id="background-remover-notes-heading">{backgroundRemover.notesHeading}</h2></div>
+      <ul>{backgroundRemover.notes.map((note) => <li>{note}</li>)}</ul>
+    </section>
+  </div>
+</SiteLayout>

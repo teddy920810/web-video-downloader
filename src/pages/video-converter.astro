@@ -12,7 +12,7 @@ const { converter, tool } = entry.data;
 <SiteLayout siteMode={Astro.locals.siteMode} title={converter.meta.title} description={converter.meta.description}>
   <div class="utility-page">
     <section class="utility-hero" aria-labelledby="converter-heading">
-      <div>
+      <div class="utility-hero-copy">
         <span class="eyebrow">{converter.hero.eyebrow}</span>
         <h1 id="converter-heading">{converter.hero.heading}<br /><em>{converter.hero.accent}</em></h1>
         <p>{converter.hero.intro}</p>
