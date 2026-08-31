@@ -56,3 +56,15 @@ test('converts and compresses a tiny generated video entirely in the browser', a
   await expect(compressed).toHaveAttribute('href', /^blob:/);
   expect(apiRequests).toEqual([]);
 });
+
+test('processes an image locally and publishes every low-cost tool route', async ({ page, request }) => {
+  for (const path of ['/video-trimmer', '/video-merger', '/audio-extractor', '/video-to-gif', '/image-converter', '/image-compressor', '/image-resizer']) {
+    expect((await request.get(path)).status(), path).toBe(200);
+  }
+  await page.goto('/image-converter');
+  await page.locator('input[type=file]').setInputFiles('public/assets/blog/download-youtube-videos.webp');
+  await page.getByRole('button', { name: 'Convert locally' }).click();
+  const result = page.getByRole('link', { name: 'Save converted.png' });
+  await expect(result).toBeVisible();
+  await expect(result).toHaveAttribute('href', /^blob:/);
+});

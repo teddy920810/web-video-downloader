@@ -1,0 +1,10 @@
+---
+import { getCollection } from 'astro:content';
+import LocalVideoTool from '../components/media/LocalVideoTool';
+import UtilityToolPage from '../components/products/UtilityToolPage.astro';
+export const prerender = false;
+const [entry] = await getCollection('utilitiesSettings');
+if (!entry) throw new Error('Utilities CMS settings are missing.');
+const page = entry.data.toolPages['video-to-gif'];
+---
+<UtilityToolPage page={page} siteMode={Astro.locals.siteMode} headingId="video-gif-heading"><LocalVideoTool client:only="react" mode="gif" copy={entry.data.tool} heading="Turn a video clip into a GIF" /></UtilityToolPage>

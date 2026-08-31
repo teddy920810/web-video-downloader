@@ -47,7 +47,10 @@ export function collectSiteValidationIssues(input) {
   duplicateBlogSlugs.forEach((slug) => issues.push(`Blog slug ${slug} is duplicated.`));
 
   const allowedRoutes = new Set([
-    '/', '/blog', '/privacy', '/terms', '/video-converter', '/video-compressor',
+    '/', '/blog', '/privacy', '/terms', '/pricing', '/account',
+    '/video-converter', '/video-compressor', '/video-trimmer', '/video-merger',
+    '/audio-extractor', '/video-to-gif', '/image-converter', '/image-compressor',
+    '/image-resizer', '/background-remover',
     ...input.landingSlugs.map((slug) => `/${slug}`),
     ...input.blogSlugs.map((slug) => `/blog/${slug}`),
   ]);

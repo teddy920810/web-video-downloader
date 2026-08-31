@@ -53,7 +53,7 @@ describe('browser-local media tools', () => {
 
   it('uses product icons inside the tools instead of as the shared brand', () => {
     const component = readProjectFile('src/components/media/LocalVideoTool.tsx');
-    expect(component).toContain("mode === 'converter' ? '/assets/tools/converter-logo.svg' : '/assets/tools/compressor-logo.svg'");
+    expect(component).toContain("mode === 'converter' ? '/assets/tools/converter-logo.svg' : mode === 'compressor' ? '/assets/tools/compressor-logo.svg' : null");
     expect(component).toContain('className="local-media-product-icon"');
   });
 

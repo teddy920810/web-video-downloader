@@ -22,6 +22,8 @@
     "test:e2e": "playwright test",
     "test:e2e:utilities": "playwright test --config playwright.utilities.config.ts",
     "auth:import": "node scripts/import-google-credentials.mjs",
+    "db:migrate": "node scripts/migrate-db.mjs",
+    "db:verify": "node scripts/verify-credit-ledger.mjs",
     "site:init": "node scripts/initialize-site.mjs",
     "site:validate": "node scripts/validate-site.mjs",
     "verify:deploy": "npm run site:validate && npm run test:coverage && npm run lint && npm run build",

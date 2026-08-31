@@ -11,9 +11,11 @@ export type LocalVideoMetadata = {
 
 export type MediaPlan = {
   inputName: string;
+  inputNames?: string[];
   outputName: string;
   mimeType: string;
   args: string[];
+  supportFiles?: Array<{ name: string; content: string }>;
 };
 
 export type LocalVideoValidation = { ok: true } | { ok: false; message: string };
@@ -119,5 +121,57 @@ export function buildCompressionPlan(inputFileName: string, preset: CompressionP
       '-movflags', '+faststart',
       outputName,
     ],
+  };
+}
+
+export function buildTrimPlan(inputFileName: string, options: { startSeconds: number; endSeconds: number }): MediaPlan {
+  if (!Number.isFinite(options.startSeconds) || options.startSeconds < 0) throw new Error('Start time must be zero or greater.');
+  if (!Number.isFinite(options.endSeconds) || options.endSeconds <= options.startSeconds) throw new Error('End time must be after the start time.');
+  const duration = options.endSeconds - options.startSeconds;
+  const inputName = safeInputName(inputFileName);
+  return {
+    inputName,
+    outputName: 'trimmed.mp4',
+    mimeType: 'video/mp4',
+    args: ['-ss', String(options.startSeconds), '-i', inputName, '-t', String(duration), '-c:v', 'libx264', '-preset', 'veryfast', '-c:a', 'aac', '-movflags', '+faststart', 'trimmed.mp4'],
+  };
+}
+
+export function buildAudioExtractionPlan(inputFileName: string, target: 'mp3' | 'wav'): MediaPlan {
+  const inputName = safeInputName(inputFileName);
+  if (target === 'wav') {
+    return { inputName, outputName: 'audio.wav', mimeType: 'audio/wav', args: ['-i', inputName, '-vn', '-c:a', 'pcm_s16le', 'audio.wav'] };
+  }
+  return { inputName, outputName: 'audio.mp3', mimeType: 'audio/mpeg', args: ['-i', inputName, '-vn', '-c:a', 'libmp3lame', '-b:a', '192k', 'audio.mp3'] };
+}
+
+export function buildGifPlan(inputFileName: string, options: { startSeconds: number; durationSeconds: number; width: number }): MediaPlan {
+  if (!Number.isFinite(options.startSeconds) || options.startSeconds < 0) throw new Error('Start time must be zero or greater.');
+  if (!Number.isFinite(options.durationSeconds) || options.durationSeconds <= 0 || options.durationSeconds > 30) throw new Error('GIF duration must be between 1 and 30 seconds.');
+  if (!Number.isInteger(options.width) || options.width < 160 || options.width > 1280) throw new Error('GIF width must be between 160 and 1280 pixels.');
+  const inputName = safeInputName(inputFileName);
+  const filter = `fps=12,scale=${options.width}:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse`;
+  return {
+    inputName,
+    outputName: 'clip.gif',
+    mimeType: 'image/gif',
+    args: ['-ss', String(options.startSeconds), '-t', String(options.durationSeconds), '-i', inputName, '-filter_complex', filter, '-loop', '0', 'clip.gif'],
+  };
+}
+
+export function buildMergePlan(inputFileNames: string[]): MediaPlan {
+  if (inputFileNames.length < 2 || inputFileNames.length > 10) throw new Error('Choose between 2 and 10 clips.');
+  const inputNames = inputFileNames.map((name, index) => {
+    const extension = extensionOf(name);
+    return `clip-${index}.${extension || 'mp4'}`;
+  });
+  const manifest = inputNames.map((name) => `file '${name.replaceAll("'", "'\\''")}'`).join('\n');
+  return {
+    inputName: inputNames[0],
+    inputNames,
+    outputName: 'merged.mp4',
+    mimeType: 'video/mp4',
+    supportFiles: [{ name: 'concat.txt', content: manifest }],
+    args: ['-f', 'concat', '-safe', '0', '-i', 'concat.txt', '-c:v', 'libx264', '-preset', 'veryfast', '-c:a', 'aac', '-movflags', '+faststart', 'merged.mp4'],
   };
 }

@@ -1,0 +1,14 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import { PRODUCT_PLANS } from '../lib/product/catalog';
+export const prerender = false;
+---
+<SiteLayout siteMode={Astro.locals.siteMode} title="Streamnest plans and AI credits" description="Use Streamnest browser tools free and learn how Pro AI credits will work when paid plans become available.">
+  <main class="utility-page pricing-page">
+    <section class="account-hero"><span class="eyebrow">Simple plans</span><h1>Local tools stay free.<br /><em>AI work uses credits.</em></h1><p>Paid checkout is coming soon. Nothing on this page starts a subscription or charges a card.</p></section>
+    <section class="pricing-grid" aria-label="Plans">
+      <article><span class="eyebrow">Available now</span><h2>{PRODUCT_PLANS.free.label}</h2><strong>$0</strong><ul><li>Browser-local video and image tools</li><li>Up to 250 MB per local file</li><li>{PRODUCT_PLANS.free.monthlyCredits} welcome AI credit</li></ul><a class="button button-primary" href="/account">View free account</a></article>
+      <article><span class="eyebrow">Coming soon</span><h2>{PRODUCT_PLANS.pro.label}</h2><strong>Not yet for sale</strong><ul><li>Higher local file allowance</li><li>{PRODUCT_PLANS.pro.monthlyCredits} AI credits per plan period</li><li>Credit packs for occasional AI work</li></ul><button class="button button-ghost" type="button" disabled>Checkout coming soon</button></article>
+    </section>
+  </main>
+</SiteLayout>

@@ -1,0 +1,11 @@
+---
+import AccountDashboard from '../components/account/AccountDashboard';
+import SiteLayout from '../layouts/SiteLayout.astro';
+export const prerender = false;
+---
+<SiteLayout siteMode={Astro.locals.siteMode} title="Your Streamnest account" description="View your Streamnest plan, AI credit balance, and recent tool activity." noindex={true}>
+  <main class="utility-page account-page">
+    <section class="account-hero"><span class="eyebrow">Account</span><h1>Your tools, plan, and credits.</h1><p>Local media tools remain free. Cloud AI tools use the credit balance shown here.</p></section>
+    <AccountDashboard client:only="react" />
+  </main>
+</SiteLayout>

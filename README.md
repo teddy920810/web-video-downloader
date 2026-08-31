@@ -1,6 +1,13 @@
-# Web Video Downloader
+# Streamnest Media Tools
 
-An Astro and React web trial for downloading eligible public videos from supported platforms. Users sign in with Google, analyze a single public URL, choose an audio-ready format, and receive a short-lived private download link.
+An Astro and React media-tool product with browser-local video and image utilities, an authenticated AI background remover, and an optional eligible-public-video trial. The product-mode switch can hide all downloader surfaces while preserving the common brand, Google sign-in, accounts, credits, legal pages, and media tools.
+
+## Product surfaces
+
+- Browser-local: video conversion, compression, trimming, merging, audio extraction, video-to-GIF, image conversion, image compression, and image resizing.
+- Cloud AI: background removal through the private Vercel → Cloud Run → Replicate flow. One successful result uses one AI credit; provider failures refund the reservation.
+- Account: Google identity, Free/Pro entitlement model, welcome credit, wallet, immutable credit ledger, and recent usage.
+- Pricing: current Free benefits and truthful Coming Soon paid plans. Checkout is intentionally disabled until the payment phase.
 
 ## Trial policy
 
@@ -13,6 +20,9 @@ An Astro and React web trial for downloading eligible public videos from support
 
 ```text
 Browser -> Astro/Vercel -> Google Auth + Neon
+                         -> browser-local FFmpeg/Canvas tools (no upload)
+                         -> credit reserve/consume/refund ledger
+                         -> private Cloud Run background-removal service
                          -> authenticated Cloud Run yt-dlp service
                          -> private R2 -> 15-minute signed download URL
 ```
@@ -26,6 +36,7 @@ Requires Node.js 22 or later.
 ```sh
 npm ci
 cp .env.example .env.local
+npm run db:migrate
 npm run dev -- --port 4322
 ```
 
@@ -37,6 +48,7 @@ The companion backend is [media-download-service](https://github.com/teddy920810
 
 ```sh
 npm run verify
+npm run db:verify
 ```
 
 Production deployment uses Vercel for the Astro application and Google Cloud Run for the containerized media service.

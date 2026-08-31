@@ -45,7 +45,7 @@ img { display: block; max-width: 100%; }
 .nav-dropdown { position: relative; }
 .nav-dropdown-trigger { padding: 0; display: flex; align-items: center; gap: 7px; border: 0; color: inherit; background: transparent; cursor: default; font-family: inherit; font-size: inherit; line-height: inherit; }
 .nav-dropdown-trigger span { font-size: .8rem; transition: transform .2s ease; }
-.nav-dropdown-panel { min-width: 230px; padding: 10px; position: absolute; z-index: 20; top: calc(100% + 14px); left: 50%; display: grid; gap: 2px; visibility: hidden; opacity: 0; pointer-events: none; border: 1px solid var(--line); border-radius: 14px; background: var(--card); box-shadow: 0 18px 45px rgba(24, 42, 36, .16); transform: translate(-50%, -4px); transition: opacity .16s ease, transform .16s ease, visibility .16s; }
+.nav-dropdown-panel { min-width: 250px; max-height: min(70vh, 560px); padding: 10px; position: absolute; z-index: 20; top: calc(100% + 14px); left: 50%; display: grid; gap: 2px; visibility: hidden; opacity: 0; pointer-events: none; overflow-y: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--card); box-shadow: 0 18px 45px rgba(24, 42, 36, .16); transform: translate(-50%, -4px); transition: opacity .16s ease, transform .16s ease, visibility .16s; }
 .nav-dropdown-panel::before { content: ""; height: 14px; position: absolute; right: 0; bottom: 100%; left: 0; }
 .nav-dropdown-panel a { padding: 10px 12px; border-radius: 9px; white-space: nowrap; }
 .nav-dropdown-panel a:hover, .nav-dropdown-panel a:focus-visible { color: var(--green); background: #eef4ef; }
@@ -62,6 +62,24 @@ img { display: block; max-width: 100%; }
 .header-account span { max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .8rem; font-weight: 750; }
 .header-account small { color: var(--muted); font-size: .65rem; }
 .header-account:disabled { opacity: .6; cursor: wait; }
+.account-page, .pricing-page { padding-block: clamp(54px, 7vw, 100px); }
+.account-hero { max-width: 820px; margin: 0 auto 42px; text-align: center; }
+.account-hero h1 { margin: 12px 0 18px; font-size: clamp(2.4rem, 6vw, 5.4rem); line-height: .98; }
+.account-hero h1 em { color: var(--accent); font-style: normal; }
+.account-hero p { color: var(--muted); font-size: 1.05rem; }
+.account-empty, .account-status { max-width: 760px; margin: 0 auto; padding: 36px; text-align: center; border: 1px solid var(--line); border-radius: 24px; background: var(--card); }
+.account-summary, .pricing-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; max-width: 1040px; margin: 0 auto; }
+.account-summary > div, .pricing-grid article, .account-usage { padding: 30px; border: 1px solid var(--line); border-radius: 24px; background: var(--card); }
+.account-summary strong { display: block; margin: 10px 0; font-size: 2.2rem; }
+.account-summary small { color: var(--muted); }
+.account-usage { max-width: 1040px; margin: 20px auto 0; }
+.account-usage ul { display: grid; gap: 10px; padding: 0; list-style: none; }
+.account-usage li { display: grid; grid-template-columns: 1fr auto auto; gap: 18px; padding: 12px 0; border-bottom: 1px solid var(--line); text-transform: capitalize; }
+.pricing-grid article { display: flex; flex-direction: column; gap: 18px; }
+.pricing-grid article > strong { font-size: 2rem; }
+.pricing-grid ul { flex: 1; display: grid; gap: 12px; padding-left: 20px; color: var(--muted); }
+.pricing-grid button:disabled { opacity: .7; cursor: not-allowed; }
+@media (max-width: 720px) { .account-summary, .pricing-grid { grid-template-columns: 1fr; } }
 
 .hero { max-width: 1240px; margin: 34px auto 0; padding: 58px 60px; border-radius: 30px; display: grid; grid-template-columns: .9fr 1.1fr; align-items: center; gap: 58px; background: radial-gradient(circle at 5% 10%, rgba(255,255,255,.9), transparent 35%), linear-gradient(130deg, #edf3e8, #e1ecdf 55%, #d8e7de); overflow: hidden; position: relative; }
 .hero::after { content: ""; position: absolute; width: 320px; height: 320px; left: -180px; bottom: -220px; border: 48px solid rgba(29,107,86,.08); border-radius: 50%; }
@@ -143,7 +161,16 @@ img { display: block; max-width: 100%; }
 .local-media-tool[data-workspace="true"] .local-file-picker { min-height: 118px; padding: 18px; }
 .local-media-field { margin-top: 16px; display: grid; gap: 7px; }
 .local-media-field > span { color: #cbd5f5; font-size: .78rem; font-weight: 750; }
-.local-media-field select { width: 100%; min-height: 46px; padding: 0 14px; border: 1px solid rgba(255,255,255,.2); border-radius: 12px; color: #fff; background: #111d4e; }
+.local-media-field select, .local-media-field input { width: 100%; min-height: 46px; padding: 0 14px; border: 1px solid rgba(255,255,255,.2); border-radius: 12px; color: #fff; background: #111d4e; }
+.local-media-field input[type="range"] { padding: 0; accent-color: var(--download-magenta); }
+.local-media-field-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+.local-file-list { max-height: 210px; margin: 14px 0 0; padding: 0; display: grid; overflow-y: auto; list-style: none; border: 1px solid rgba(255,255,255,.14); border-radius: 12px; }
+.local-file-list li { padding: 9px 12px; display: flex; justify-content: space-between; gap: 14px; border-bottom: 1px solid rgba(255,255,255,.1); color: #fff; font-size: .76rem; }
+.local-file-list li:last-child { border-bottom: 0; }
+.local-file-list span { color: #aeb9db; }
+.local-image-preview { min-height: 390px; padding: 24px; display: grid; place-items: center; border-radius: 18px; background: repeating-conic-gradient(#1c244b 0 25%, #121a3d 0 50%) 50% / 24px 24px; }
+.local-image-preview img { width: 100%; height: 100%; max-height: 620px; object-fit: contain; }
+.local-image-result-meta { margin: 14px 0 0; color: #cbd5f5; font-size: .78rem; }
 .local-media-actions { margin-top: 18px; display: flex; flex-wrap: wrap; gap: 10px; }
 .local-media-actions .button-primary { background: linear-gradient(135deg, var(--download-violet), var(--download-magenta)); }
 .local-media-actions .button-ghost { border-color: rgba(255,255,255,.25); color: #fff; }

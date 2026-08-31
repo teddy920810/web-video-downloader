@@ -8,6 +8,7 @@ import { authClient } from '../auth/auth-client';
 import { putFileWithRetry } from '../../lib/upload/direct-upload';
 import { validateUploadMetadata } from '../../lib/upload/validation';
 import type { BackgroundRemoverCopy } from '../../lib/content/utilities-settings';
+import { trackToolEvent } from '../../lib/analytics/tool-events';
 
 type Phase = 'idle' | 'selected' | 'uploading' | 'processing' | 'ready' | 'error';
 type ApiError = { error?: string };
@@ -27,11 +28,23 @@ export default function BackgroundRemover({ copy }: { copy: BackgroundRemoverCop
   const [phase, setPhase] = useState<Phase>('idle');
   const [message, setMessage] = useState<string | null>(null);
   const [background, setBackground] = useState('transparent');
+  const [creditBalance, setCreditBalance] = useState<number | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => () => {
     if (previewUrl) URL.revokeObjectURL(previewUrl);
   }, [previewUrl]);
+  useEffect(() => {
+    if (!session?.user) { setCreditBalance(null); return; }
+    const controller = new AbortController();
+    fetch('/api/me', { signal: controller.signal })
+      .then(async (response) => response.ok ? response.json() : null)
+      .then((body) => {
+        if (body?.account) setCreditBalance(Number(body.account.freeCredits) + Number(body.account.paidCredits));
+      })
+      .catch(() => undefined);
+    return () => controller.abort();
+  }, [session?.user]);
 
   function choose(next: File) {
     const validation = validateUploadMetadata({ contentType: next.type, size: next.size });
@@ -75,6 +88,7 @@ export default function BackgroundRemover({ copy }: { copy: BackgroundRemoverCop
       return;
     }
     try {
+      trackToolEvent('background-remover', 'started', 'cloud');
       setMessage(null);
       setPhase('uploading');
       const upload = await readApi<{ jobId: string; inputKey: string; uploadUrl: string }>('/api/background-remover/upload-url', {
@@ -91,10 +105,13 @@ export default function BackgroundRemover({ copy }: { copy: BackgroundRemoverCop
         body: JSON.stringify({ jobId: upload.jobId, inputKey: upload.inputKey }),
       });
       setResultUrl(result.downloadUrl);
+      setCreditBalance((balance) => balance === null ? null : Math.max(0, balance - 1));
       setPhase('ready');
+      trackToolEvent('background-remover', 'succeeded', 'cloud');
     } catch (error) {
       setMessage(error instanceof Error ? error.message : copy.processError);
       setPhase('error');
+      trackToolEvent('background-remover', 'failed', 'cloud');
     }
   }
 
@@ -123,6 +140,7 @@ export default function BackgroundRemover({ copy }: { copy: BackgroundRemoverCop
           <aside className="background-controls">
             <div><p>{copy.privateLabel}</p><h2 id="background-tool-title">{resultUrl ? copy.resultHeading : copy.selectedHeading}</h2></div>
             <div className="background-file-meta"><strong>{file?.name}</strong><span>{file ? `${(file.size / 1024 / 1024).toFixed(1)} MB` : ''}</span></div>
+            <p className="background-credit-note">1 AI credit per successful result{creditBalance === null ? '' : ` · ${creditBalance} available`}</p>
             {resultUrl ? (
               <fieldset className="background-swatches"><legend>{copy.backgroundLabel}</legend>{swatches.map((color) => (
                 <button key={color} type="button" className={background === color ? 'is-selected' : ''} style={{ backgroundColor: color === 'transparent' ? '#d8dbe5' : color }} onClick={() => setBackground(color)} aria-label={color === 'transparent' ? copy.transparentLabel : color} />

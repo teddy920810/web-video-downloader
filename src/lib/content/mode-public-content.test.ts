@@ -31,9 +31,10 @@ describe('mode-specific public content', () => {
 
   it('describes local video and private AI image processing without downloader claims', () => {
     const rendered = Object.values(utilityLegalPages).map((page) => JSON.stringify(page)).join(' ');
-    expect(rendered).toContain('process video in your browser');
+    expect(rendered).toContain('process selected files in your browser');
     expect(rendered).toContain('private object storage');
     expect(rendered).toContain('Google sign-in');
+    expect(rendered).toContain('credit balance');
     expect(rendered).not.toMatch(/YouTube|TikTok|Instagram|Cloud Run|Cloudflare R2|free successful download/i);
   });
 });

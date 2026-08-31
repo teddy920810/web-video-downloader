@@ -1,4 +1,5 @@
 import type { SitemapChangeFrequency, SitemapSettings } from './sitemap-settings';
+import { TOOLS } from '../product/catalog';
 
 interface BlogSitemapSource {
   slug: string;
@@ -50,9 +51,8 @@ export function buildUtilitiesSitemapEntries(settings: SitemapSettings, posts: B
   const visiblePosts = posts.filter((post) => !post.draft && post.productArea !== 'downloader');
   return [
     withRule('/', settings.lastmod, settings.groups.homepage),
-    withRule('/video-converter', settings.lastmod, settings.groups.landingPages),
-    withRule('/video-compressor', settings.lastmod, settings.groups.landingPages),
-    withRule('/background-remover', settings.lastmod, settings.groups.landingPages),
+    ...TOOLS.map((tool) => withRule(tool.route, settings.lastmod, settings.groups.landingPages)),
+    withRule('/pricing', settings.lastmod, settings.groups.landingPages),
     ...(visiblePosts.length > 0 ? [withRule('/blog', settings.lastmod, settings.groups.blogIndex)] : []),
     ...visiblePosts.map((post) => withRule(`/blog/${post.slug}`, post.publishedAt, settings.groups.blogPosts)),
     withRule('/privacy', settings.lastmod, settings.groups.legalPages),

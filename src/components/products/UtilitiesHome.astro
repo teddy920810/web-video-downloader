@@ -16,7 +16,7 @@ const { home } = entry.data;
       : <h2 id="utilities-heading">{home.hero.heading}<br /><em>{home.hero.accent}</em></h2>}
     <p>{home.hero.intro}</p>
   </section>
-  <section class="utility-tool-grid" aria-label="Video tools">
+  <section id="tools" class="utility-tool-grid" aria-label="Media tools">
     {home.tools.map((tool) => <a href={tool.href}><span>{tool.number}</span><h2>{tool.title}</h2><p>{tool.description}</p><strong>{tool.linkLabel}</strong></a>)}
   </section>
   <section class="utility-privacy-strip">
