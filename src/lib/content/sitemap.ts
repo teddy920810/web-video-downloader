@@ -52,6 +52,7 @@ export function buildUtilitiesSitemapEntries(settings: SitemapSettings, posts: B
     withRule('/', settings.lastmod, settings.groups.homepage),
     withRule('/video-converter', settings.lastmod, settings.groups.landingPages),
     withRule('/video-compressor', settings.lastmod, settings.groups.landingPages),
+    withRule('/background-remover', settings.lastmod, settings.groups.landingPages),
     ...(visiblePosts.length > 0 ? [withRule('/blog', settings.lastmod, settings.groups.blogIndex)] : []),
     ...visiblePosts.map((post) => withRule(`/blog/${post.slug}`, post.publishedAt, settings.groups.blogPosts)),
     withRule('/privacy', settings.lastmod, settings.groups.legalPages),

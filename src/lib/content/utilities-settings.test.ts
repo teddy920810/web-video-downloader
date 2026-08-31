@@ -7,9 +7,11 @@ const settings = JSON.parse(readFileSync(new URL('../../content/settings/utiliti
 describe('utilities CMS settings', () => {
   it('validates every utility surface and local form label', () => {
     const parsed = utilitiesSettingsSchema.parse(settings);
-    expect(parsed.home.tools.map((tool) => tool.href)).toEqual(['/video-converter', '/video-compressor']);
+    expect(parsed.home.tools.map((tool) => tool.href)).toEqual(['/video-converter', '/video-compressor', '/background-remover']);
     expect(parsed.converter.notes).toHaveLength(4);
     expect(parsed.compressor.notes).toHaveLength(4);
+    expect(parsed.backgroundRemover.notes).toHaveLength(4);
     expect(parsed.tool.privacyLabel).toContain('not uploaded');
+    expect(parsed.backgroundTool.privacyLabel).toContain('processed only');
   });
 });

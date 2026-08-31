@@ -30,6 +30,20 @@ export function createUploadKey(contentType: string, id: string = crypto.randomU
   return `uploads/${id}.${extension}`;
 }
 
+export function createToolInputKey(
+  tool: 'background-remover',
+  contentType: string,
+  id: string = crypto.randomUUID(),
+): string {
+  const extension = extensions[contentType as AllowedContentType];
+  if (!extension) throw new Error('Unsupported image type');
+  return `tool-inputs/${tool}/${id}.${extension}`;
+}
+
+export function isBackgroundRemovalInput(key: string, jobId: string): boolean {
+  return new RegExp(`^tool-inputs/background-remover/${jobId.replaceAll('-', '\\-')}\\.(?:jpg|png|webp)$`, 'i').test(key);
+}
+
 export function isUploadKey(key: string): boolean {
   return /^uploads\/[0-9a-f-]+\.(?:jpg|png|webp)$/i.test(key);
 }

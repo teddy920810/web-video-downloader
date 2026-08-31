@@ -1,14 +1,15 @@
 {
   "home": {
-    "meta": { "title": "Streamnest Video Tools – Local Converter and Compressor", "description": "Convert and compress local video files directly in your browser without uploading them to a server." },
-    "hero": { "eyebrow": "Private local video tools", "heading": "Work with video", "accent": "on your device.", "intro": "Convert formats or reduce file size directly in your browser. Your selected video stays on this device." },
+    "meta": { "title": "Streamnest Media Tools – Video and Image Utilities", "description": "Convert and compress video locally, or remove image backgrounds with Streamnest media tools." },
+    "hero": { "eyebrow": "Practical media tools", "heading": "Work with media", "accent": "in one place.", "intro": "Convert and compress video on your device, or create a clean transparent image with AI background removal." },
     "tools": [
       { "number": "01", "title": "Video Converter", "description": "Convert a local video to MP4, WebM, or MP3 with a browser-based media engine.", "linkLabel": "Open converter →", "href": "/video-converter" },
-      { "number": "02", "title": "Video Compressor", "description": "Choose a practical 480p, 720p, or 1080p quality preset and reduce a local file.", "linkLabel": "Open compressor →", "href": "/video-compressor" }
+      { "number": "02", "title": "Video Compressor", "description": "Choose a practical 480p, 720p, or 1080p quality preset and reduce a local file.", "linkLabel": "Open compressor →", "href": "/video-compressor" },
+      { "number": "03", "title": "Background Remover", "description": "Upload a JPG, PNG, or WebP image and create a transparent PNG with AI.", "linkLabel": "Remove a background →", "href": "/background-remover" }
     ],
-    "privacyEyebrow": "Local by design",
-    "privacyHeading": "No media upload.",
-    "privacyBody": "The processing engine loads only when you start a task. Closing this tab stops the work and releases the local result."
+    "privacyEyebrow": "Clear processing boundaries",
+    "privacyHeading": "Local video. Private image processing.",
+    "privacyBody": "Video conversion and compression stay in your browser. Background removal securely uploads only the image you choose for temporary processing."
   },
   "converter": {
     "meta": { "title": "Free Local Video Converter – Convert Video in Your Browser", "description": "Convert a local video to MP4, WebM, or MP3 in your browser without uploading the file to a server." },
@@ -22,6 +23,12 @@
     "notesEyebrow": "Three presets", "notesHeading": "Choose the result you need",
     "notes": ["Small: compact 480p output for quick sharing", "Balanced: practical 720p output for everyday use", "Higher quality: preserves up to 1080p", "The result depends on the source codec, motion, duration, and original bitrate"]
   },
+  "backgroundRemover": {
+    "meta": { "title": "AI Background Remover – Create a Transparent PNG", "description": "Remove a JPG, PNG, or WebP image background and download a transparent PNG with Streamnest." },
+    "hero": { "eyebrow": "AI image utility", "heading": "Remove an image", "accent": "background cleanly.", "intro": "Upload one image, create a transparent result, and choose a simple preview background before downloading." },
+    "notesEyebrow": "Before you start", "notesHeading": "Built for quick image cutouts",
+    "notes": ["JPG, PNG, and WebP input", "Files up to 10 MB", "Google sign-in protects the processing endpoint", "Processed files use temporary private storage and result links"]
+  },
   "tool": {
     "privateLabel": "Private browser tool", "converterHeading": "Convert a local video", "compressorHeading": "Compress a local video",
     "chooseFile": "Choose a video file", "formatHelp": "MP4, MOV, WebM, MKV and other browser-readable video files",
@@ -31,5 +38,13 @@
     "loadingLabel": "Loading the local media engine…", "processingLabel": "Processing in this browser…", "cancelLabel": "Cancel",
     "convertLabel": "Convert locally", "compressLabel": "Compress locally", "saveLabel": "Save",
     "privacyLabel": "Your selected video stays on this device and is not uploaded to our servers."
+  },
+  "backgroundTool": {
+    "privateLabel": "Private AI image tool", "dropHeading": "Drag and drop your image here", "dropIntro": "Choose one image to begin", "uploadLabel": "Upload image", "formatHelp": "JPG, PNG, or WebP · up to 10 MB",
+    "selectedHeading": "Ready to remove the background", "resultHeading": "Your transparent image is ready", "previewAlt": "Selected image preview", "resultAlt": "Image with background removed",
+    "removeLabel": "Remove selected image", "backgroundLabel": "Preview background", "transparentLabel": "Transparent preview",
+    "uploadingLabel": "Uploading your image securely…", "processingLabel": "Removing the background…", "workingLabel": "Working…", "removeBackgroundLabel": "Remove background",
+    "downloadLabel": "Download PNG", "chooseAnotherLabel": "Choose another", "privacyLabel": "Your image is uploaded privately and processed only to complete this request.",
+    "uploadError": "The image could not be uploaded. Please try again.", "processError": "The background could not be removed right now."
   }
 }

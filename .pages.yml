@@ -352,6 +352,10 @@ content:
         label: 视频压缩页 / Compressor
         type: object
         fields: *utility_page_fields
+      - name: backgroundRemover
+        label: 背景移除页 / Background remover
+        type: object
+        fields: *utility_page_fields
       - name: tool
         label: 本地处理表单 / Local tool form
         type: object
@@ -376,6 +380,31 @@ content:
           - { name: compressLabel, label: 压缩按钮, type: string, required: true }
           - { name: saveLabel, label: 保存按钮, type: string, required: true }
           - { name: privacyLabel, label: 本地隐私说明, type: text, required: true }
+      - name: backgroundTool
+        label: 背景移除表单 / Background remover form
+        type: object
+        fields:
+          - { name: privateLabel, label: 隐私标签, type: string, required: true }
+          - { name: dropHeading, label: 上传区标题, type: string, required: true }
+          - { name: dropIntro, label: 上传区说明, type: string, required: true }
+          - { name: uploadLabel, label: 上传按钮, type: string, required: true }
+          - { name: formatHelp, label: 格式帮助, type: text, required: true }
+          - { name: selectedHeading, label: 已选图片标题, type: string, required: true }
+          - { name: resultHeading, label: 完成标题, type: string, required: true }
+          - { name: previewAlt, label: 原图替代文字, type: string, required: true }
+          - { name: resultAlt, label: 结果图替代文字, type: string, required: true }
+          - { name: removeLabel, label: 删除图片按钮说明, type: string, required: true }
+          - { name: backgroundLabel, label: 背景预览标签, type: string, required: true }
+          - { name: transparentLabel, label: 透明背景标签, type: string, required: true }
+          - { name: uploadingLabel, label: 上传中提示, type: string, required: true }
+          - { name: processingLabel, label: 处理中提示, type: string, required: true }
+          - { name: workingLabel, label: 工作中按钮, type: string, required: true }
+          - { name: removeBackgroundLabel, label: 移除背景按钮, type: string, required: true }
+          - { name: downloadLabel, label: 下载按钮, type: string, required: true }
+          - { name: chooseAnotherLabel, label: 重选按钮, type: string, required: true }
+          - { name: privacyLabel, label: 隐私说明, type: text, required: true }
+          - { name: uploadError, label: 上传失败提示, type: text, required: true }
+          - { name: processError, label: 处理失败提示, type: text, required: true }
 
   - name: image-metadata
     label: 图片信息 / Image metadata

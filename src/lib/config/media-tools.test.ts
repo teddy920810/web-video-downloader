@@ -27,6 +27,22 @@ describe('browser-local media tools', () => {
     expect(page).toContain('<LocalVideoTool client:only="react" mode="compressor"');
   });
 
+  it('publishes an authenticated background remover with the shared workspace interaction', () => {
+    const page = readProjectFile('src/pages/background-remover.astro');
+    const component = readProjectFile('src/components/image/BackgroundRemover.tsx');
+    expect(page).toContain('<BackgroundRemover client:only="react"');
+    expect(component).toContain('/api/background-remover/upload-url');
+    expect(component).toContain('/api/background-remover');
+    expect(component).toContain('data-workspace');
+  });
+
+  it('expands every selected-file tool into the shared full-width workspace', () => {
+    const component = readProjectFile('src/components/media/LocalVideoTool.tsx');
+    const css = readProjectFile('src/styles/global.css');
+    expect(component).toContain('data-workspace={file ?');
+    expect(css).toContain('.utility-hero:has([data-workspace="true"])');
+  });
+
   it('renders the homepage through separate downloader and utilities products', () => {
     const page = readProjectFile('src/pages/index.astro');
     expect(page).toContain('export const prerender = false');

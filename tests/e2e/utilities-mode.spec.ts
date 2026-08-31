@@ -1,11 +1,12 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
-test('utilities home exposes only local converter and compressor surfaces', async ({ page }) => {
+test('utilities home exposes video and image tools without downloader surfaces', async ({ page }) => {
   await page.goto('/');
-  await expect(page.getByRole('heading', { level: 1 })).toContainText('Work with video');
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('Work with media');
   await expect(page.getByRole('link', { name: 'Video Converter' }).first()).toBeVisible();
   await expect(page.getByRole('link', { name: 'Video Compressor' }).first()).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Background Remover' }).first()).toBeVisible();
   const html = await page.locator('body').innerHTML();
   expect(html).not.toContain('Paste a video link');
   await expect(page.getByRole('button', { name: /Sign in with Google/i })).toBeVisible();
@@ -30,15 +31,28 @@ test('utilities discovery files and legal pages exclude downloader content', asy
   const sitemap = await (await request.get('/sitemap.xml')).text();
   expect(sitemap).toContain('/video-converter');
   expect(sitemap).toContain('/video-compressor');
+  expect(sitemap).toContain('/background-remover');
   expect(sitemap).not.toContain('/blog');
 
   const robots = await (await request.get('/robots.txt')).text();
   expect(robots).not.toContain('Disallow: /blog');
 
   const privacy = await (await request.get('/privacy')).text();
-  expect(privacy).toContain('Your selected video stays on your device');
-  expect(privacy).not.toContain('Cloudflare R2');
+  expect(privacy).toContain('Background removal securely uploads');
+  expect(privacy).toContain('private object storage');
   expect(privacy).toContain('Google sign-in');
+});
+
+test('background remover expands into the shared workspace after image selection', async ({ page }) => {
+  await page.goto('/background-remover');
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('Remove an image');
+  await page.locator('input[type=file]').setInputFiles({
+    name: 'tiny.png',
+    mimeType: 'image/png',
+    buffer: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M/wHwAF/gL+Av7+WQAAAABJRU5ErkJggg==', 'base64'),
+  });
+  await expect(page.locator('[data-workspace="true"]')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Remove background' })).toBeVisible();
 });
 
 test('utilities mode remains usable on a mobile viewport', async ({ page }) => {

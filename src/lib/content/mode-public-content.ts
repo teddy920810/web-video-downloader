@@ -23,10 +23,10 @@ export interface UtilityLegalPage {
 export const utilityLegalPages: Record<'privacy' | 'terms', UtilityLegalPage> = {
   privacy: {
     title: 'Privacy Policy | Streamnest Video Tools',
-    description: 'How Streamnest Video Tools protects files processed locally in your browser.',
+    description: 'How Streamnest protects local video processing and private AI image processing.',
     eyebrow: 'Privacy',
-    heading: 'Your selected video stays on your device',
-    introduction: 'The converter and compressor process the file you choose inside your browser. The media file is not sent to our application servers.',
+    heading: 'Clear boundaries for every media tool',
+    introduction: 'The converter and compressor process video in your browser. Background removal securely uploads only the image you choose for temporary processing.',
     sections: [
       {
         heading: 'Local processing',
@@ -34,7 +34,7 @@ export const utilityLegalPages: Record<'privacy' | 'terms', UtilityLegalPage> = 
       },
       {
         heading: 'Technical data',
-        body: 'Our hosting provider may process standard request logs for security and reliability. Those requests deliver the website code and media engine, not the local media file you select.',
+        body: 'Background-removal inputs and results use private object storage and temporary signed links. The processing provider receives the selected image only to complete the requested task. Standard request logs may be processed for security and reliability.',
       },
       {
         heading: 'Account information',
@@ -48,14 +48,14 @@ export const utilityLegalPages: Record<'privacy' | 'terms', UtilityLegalPage> = 
   },
   terms: {
     title: 'Terms of Use | Streamnest Video Tools',
-    description: 'Terms for using the local Streamnest video converter and compressor.',
+    description: 'Terms for using Streamnest video and image tools.',
     eyebrow: 'Terms',
-    heading: 'Use local video tools responsibly',
+    heading: 'Use media tools responsibly',
     introduction: 'By using these tools, you confirm that you own the selected media or have permission to process it.',
     sections: [
       {
         heading: 'Browser processing',
-        body: 'Conversion and compression run in your current browser session. Performance and supported formats depend on your device, browser, and available memory.',
+        body: 'Conversion and compression run in your browser. Background removal uses a private online processing service. Performance and supported formats depend on the selected tool, file, browser, and available service capacity.',
       },
       {
         heading: 'Acceptable use',
