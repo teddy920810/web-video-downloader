@@ -2,6 +2,10 @@ import { describe, expect, it } from 'vitest';
 import {
   buildCompressionPlan,
   buildConversionPlan,
+  buildAudioExtractionPlan,
+  buildGifPlan,
+  buildMergePlan,
+  buildTrimPlan,
   describeBrowserMediaError,
   validateLocalVideo,
   type LocalVideoMetadata,
@@ -71,5 +75,29 @@ describe('browser-local media compression', () => {
     expect(plan.args).toContain(crf);
     expect(plan.args).toContain(`scale=min(${maxWidth}\\,iw):-2`);
     expect(plan.args.at(-1)).toBe(plan.outputName);
+  });
+});
+
+describe('additional browser-local media tools', () => {
+  it('builds a bounded trim plan', () => {
+    const plan = buildTrimPlan(validVideo.name, { startSeconds: 2, endSeconds: 8 });
+    expect(plan.args).toContain('2');
+    expect(plan.args).toContain('6');
+    expect(plan.outputName).toBe('trimmed.mp4');
+  });
+
+  it('builds audio and GIF plans', () => {
+    expect(buildAudioExtractionPlan(validVideo.name, 'mp3')).toMatchObject({ outputName: 'audio.mp3', mimeType: 'audio/mpeg' });
+    expect(buildAudioExtractionPlan(validVideo.name, 'wav')).toMatchObject({ outputName: 'audio.wav', mimeType: 'audio/wav' });
+    const gif = buildGifPlan(validVideo.name, { startSeconds: 0, durationSeconds: 5, width: 640 });
+    expect(gif.outputName).toBe('clip.gif');
+    expect(gif.args.join(' ')).toContain('fps=12');
+  });
+
+  it('builds a local merge plan for bounded compatible clips', () => {
+    const plan = buildMergePlan(['one.mp4', 'two.mp4']);
+    expect(plan.inputNames).toHaveLength(2);
+    expect(plan.supportFiles?.[0]?.name).toBe('concat.txt');
+    expect(plan.outputName).toBe('merged.mp4');
   });
 });

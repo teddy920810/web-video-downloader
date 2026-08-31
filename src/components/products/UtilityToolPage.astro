@@ -1,0 +1,31 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import type { SiteMode } from '../../lib/config/site-mode';
+
+interface PageCopy {
+  meta: { title: string; description: string };
+  hero: { eyebrow: string; heading: string; accent: string; intro: string };
+  notesEyebrow: string;
+  notesHeading: string;
+  notes: string[];
+}
+
+interface Props { page: PageCopy; siteMode: SiteMode; headingId: string }
+const { page, siteMode, headingId } = Astro.props;
+---
+<SiteLayout siteMode={siteMode} title={page.meta.title} description={page.meta.description}>
+  <div class="utility-page">
+    <section class="utility-hero" aria-labelledby={headingId}>
+      <div class="utility-hero-copy">
+        <span class="eyebrow">{page.hero.eyebrow}</span>
+        <h1 id={headingId}>{page.hero.heading}<br /><em>{page.hero.accent}</em></h1>
+        <p>{page.hero.intro}</p>
+      </div>
+      <slot />
+    </section>
+    <section class="utility-notes" aria-labelledby={`${headingId}-notes`}>
+      <div><span class="eyebrow">{page.notesEyebrow}</span><h2 id={`${headingId}-notes`}>{page.notesHeading}</h2></div>
+      <ul>{page.notes.map((note) => <li>{note}</li>)}</ul>
+    </section>
+  </div>
+</SiteLayout>

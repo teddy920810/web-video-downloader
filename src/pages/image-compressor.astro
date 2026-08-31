@@ -1,0 +1,10 @@
+---
+import { getCollection } from 'astro:content';
+import LocalImageTool from '../components/image/LocalImageTool';
+import UtilityToolPage from '../components/products/UtilityToolPage.astro';
+export const prerender = false;
+const [entry] = await getCollection('utilitiesSettings');
+if (!entry) throw new Error('Utilities CMS settings are missing.');
+const page = entry.data.toolPages['image-compressor'];
+---
+<UtilityToolPage page={page} siteMode={Astro.locals.siteMode} headingId="image-compressor-heading"><LocalImageTool client:only="react" mode="compressor" heading="Compress a local image" /></UtilityToolPage>

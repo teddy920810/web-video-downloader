@@ -356,6 +356,17 @@ content:
         label: 背景移除页 / Background remover
         type: object
         fields: *utility_page_fields
+      - name: toolPages
+        label: 其他在线工具页 / Additional online tools
+        type: object
+        fields:
+          - { name: video-trimmer, label: 视频裁剪 / Video trimmer, type: object, fields: *utility_page_fields }
+          - { name: video-merger, label: 视频合并 / Video merger, type: object, fields: *utility_page_fields }
+          - { name: audio-extractor, label: 音频提取 / Audio extractor, type: object, fields: *utility_page_fields }
+          - { name: video-to-gif, label: 视频转 GIF / Video to GIF, type: object, fields: *utility_page_fields }
+          - { name: image-converter, label: 图片转换 / Image converter, type: object, fields: *utility_page_fields }
+          - { name: image-compressor, label: 图片压缩 / Image compressor, type: object, fields: *utility_page_fields }
+          - { name: image-resizer, label: 图片改尺寸 / Image resizer, type: object, fields: *utility_page_fields }
       - name: tool
         label: 本地处理表单 / Local tool form
         type: object

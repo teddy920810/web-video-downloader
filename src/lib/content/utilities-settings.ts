@@ -40,6 +40,7 @@ export const utilitiesSettingsSchema = z.object({
   converter: pageSchema,
   compressor: pageSchema,
   backgroundRemover: pageSchema,
+  toolPages: z.record(z.string(), pageSchema),
   tool: localMediaToolCopySchema,
   backgroundTool: backgroundRemoverCopySchema,
 });

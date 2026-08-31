@@ -7,6 +7,9 @@ import { StopCircleIcon } from '@phosphor-icons/react/StopCircle';
 import {
   buildCompressionPlan,
   buildConversionPlan,
+  buildAudioExtractionPlan,
+  buildGifPlan,
+  buildTrimPlan,
   describeBrowserMediaError,
   validateLocalVideo,
   type CompressionPreset,
@@ -15,18 +18,33 @@ import {
 } from '../../lib/media/browser-media';
 import type { BrowserMediaRuntime } from '../../lib/media/ffmpeg-runtime';
 import type { LocalMediaToolCopy } from '../../lib/content/utilities-settings';
+import { trackToolEvent } from '../../lib/analytics/tool-events';
 
-type Props = { mode: 'converter' | 'compressor'; copy: LocalMediaToolCopy };
+type Mode = 'converter' | 'compressor' | 'trimmer' | 'audio' | 'gif';
+type Props = { mode: Mode; copy: LocalMediaToolCopy; heading?: string };
 type Phase = 'idle' | 'loading' | 'processing' | 'ready' | 'failed';
 
 function formatBytes(bytes: number) {
   return `${(bytes / 1024 / 1024).toFixed(bytes >= 10 * 1024 * 1024 ? 0 : 1)} MB`;
 }
 
-export default function LocalVideoTool({ mode, copy }: Props) {
+const ACTION_LABELS: Record<Mode, string> = {
+  converter: 'Convert locally',
+  compressor: 'Compress locally',
+  trimmer: 'Trim locally',
+  audio: 'Extract audio locally',
+  gif: 'Create GIF locally',
+};
+
+export default function LocalVideoTool({ mode, copy, heading }: Props) {
   const [file, setFile] = useState<File | null>(null);
   const [target, setTarget] = useState<ConversionTarget>('mp4');
   const [compressionPreset, setCompressionPreset] = useState<CompressionPreset>('balanced');
+  const [audioTarget, setAudioTarget] = useState<'mp3' | 'wav'>('mp3');
+  const [startSeconds, setStartSeconds] = useState(0);
+  const [endSeconds, setEndSeconds] = useState(10);
+  const [gifDuration, setGifDuration] = useState(5);
+  const [gifWidth, setGifWidth] = useState(640);
   const [phase, setPhase] = useState<Phase>('idle');
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
@@ -74,21 +92,28 @@ export default function LocalVideoTool({ mode, copy }: Props) {
     if (!file) return;
     resetResult();
     setPhase('loading');
+    const toolId = mode === 'audio' ? 'audio-extractor' : mode === 'gif' ? 'video-to-gif' : `video-${mode}`;
+    trackToolEvent(toolId, 'started', 'local');
     try {
       const { createBrowserMediaRuntime } = await import('../../lib/media/ffmpeg-runtime');
       const engine = await createBrowserMediaRuntime();
       runtime.current = engine;
-      const plan: MediaPlan = mode === 'converter'
-        ? buildConversionPlan(file.name, target)
-        : buildCompressionPlan(file.name, compressionPreset);
+      let plan: MediaPlan;
+      if (mode === 'converter') plan = buildConversionPlan(file.name, target);
+      else if (mode === 'compressor') plan = buildCompressionPlan(file.name, compressionPreset);
+      else if (mode === 'trimmer') plan = buildTrimPlan(file.name, { startSeconds, endSeconds });
+      else if (mode === 'audio') plan = buildAudioExtractionPlan(file.name, audioTarget);
+      else plan = buildGifPlan(file.name, { startSeconds, durationSeconds: gifDuration, width: gifWidth });
       setPhase('processing');
       const blob = await engine.run(file, plan, setProgress);
       setResult({ url: URL.createObjectURL(blob), name: plan.outputName });
       setProgress(1);
       setPhase('ready');
+      trackToolEvent(toolId, 'succeeded', 'local');
     } catch (cause) {
       setError(describeBrowserMediaError(cause));
       setPhase('failed');
+      trackToolEvent(toolId, 'failed', 'local');
     } finally {
       runtime.current?.terminate();
       runtime.current = null;
@@ -100,18 +125,21 @@ export default function LocalVideoTool({ mode, copy }: Props) {
     runtime.current = null;
     setError('Processing was cancelled.');
     setPhase('failed');
+    const toolId = mode === 'audio' ? 'audio-extractor' : mode === 'gif' ? 'video-to-gif' : `video-${mode}`;
+    trackToolEvent(toolId, 'cancelled', 'local');
   }
 
   const busy = phase === 'loading' || phase === 'processing';
-  const productIcon = mode === 'converter' ? '/assets/tools/converter-logo.svg' : '/assets/tools/compressor-logo.svg';
+  const productIcon = mode === 'converter' ? '/assets/tools/converter-logo.svg' : mode === 'compressor' ? '/assets/tools/compressor-logo.svg' : null;
+  const toolHeading = heading ?? (mode === 'converter' ? copy.converterHeading : copy.compressorHeading);
 
   return (
     <section className="local-media-tool" data-workspace={file ? 'true' : 'false'} aria-labelledby={`${mode}-tool-title`}>
       <div className="local-media-heading">
-        <span className="local-media-icon" aria-hidden="true"><img className="local-media-product-icon" src={productIcon} alt="" /></span>
+        <span className="local-media-icon" aria-hidden="true">{productIcon ? <img className="local-media-product-icon" src={productIcon} alt="" /> : <FileVideoIcon size={28} />}</span>
         <div>
           <p>{copy.privateLabel}</p>
-          <h2 id={`${mode}-tool-title`}>{mode === 'converter' ? copy.converterHeading : copy.compressorHeading}</h2>
+          <h2 id={`${mode}-tool-title`}>{toolHeading}</h2>
         </div>
       </div>
 
@@ -134,7 +162,7 @@ export default function LocalVideoTool({ mode, copy }: Props) {
             <option value="mp3">{copy.mp3Label}</option>
           </select>
         </label>
-      ) : (
+      ) : mode === 'compressor' ? (
         <label className="local-media-field">
           <span>{copy.compressionLevelLabel}</span>
           <select value={compressionPreset} disabled={busy} onChange={(event) => setCompressionPreset(event.target.value as CompressionPreset)}>
@@ -143,6 +171,12 @@ export default function LocalVideoTool({ mode, copy }: Props) {
             <option value="quality">{copy.qualityLabel}</option>
           </select>
         </label>
+      ) : mode === 'audio' ? (
+        <label className="local-media-field"><span>Audio format</span><select value={audioTarget} disabled={busy} onChange={(event) => setAudioTarget(event.target.value as 'mp3' | 'wav')}><option value="mp3">MP3 · 192 kbps</option><option value="wav">WAV · lossless PCM</option></select></label>
+      ) : mode === 'trimmer' ? (
+        <div className="local-media-field-row"><label className="local-media-field"><span>Start time · seconds</span><input type="number" min="0" step="0.1" value={startSeconds} disabled={busy} onChange={(event) => setStartSeconds(Number(event.target.value))} /></label><label className="local-media-field"><span>End time · seconds</span><input type="number" min="0.1" step="0.1" value={endSeconds} disabled={busy} onChange={(event) => setEndSeconds(Number(event.target.value))} /></label></div>
+      ) : (
+        <div className="local-media-field-row"><label className="local-media-field"><span>Start · seconds</span><input type="number" min="0" step="0.1" value={startSeconds} disabled={busy} onChange={(event) => setStartSeconds(Number(event.target.value))} /></label><label className="local-media-field"><span>Duration · up to 30 seconds</span><input type="number" min="1" max="30" value={gifDuration} disabled={busy} onChange={(event) => setGifDuration(Number(event.target.value))} /></label><label className="local-media-field"><span>GIF width</span><select value={gifWidth} disabled={busy} onChange={(event) => setGifWidth(Number(event.target.value))}><option value="480">480 px</option><option value="640">640 px</option><option value="960">960 px</option></select></label></div>
       )}
 
       {busy ? (
@@ -158,7 +192,7 @@ export default function LocalVideoTool({ mode, copy }: Props) {
           <button className="button button-ghost" type="button" onClick={cancel}><StopCircleIcon size={18} />{copy.cancelLabel}</button>
         ) : (
           <button className="button button-primary" type="button" disabled={!file} onClick={processVideo}>
-            <ArrowCounterClockwiseIcon size={18} />{mode === 'converter' ? copy.convertLabel : copy.compressLabel}
+            <ArrowCounterClockwiseIcon size={18} />{mode === 'converter' ? copy.convertLabel : mode === 'compressor' ? copy.compressLabel : ACTION_LABELS[mode]}
           </button>
         )}
         {result ? <a className="button button-primary" href={result.url} download={result.name}><DownloadSimpleIcon size={18} />{copy.saveLabel} {result.name}</a> : null}

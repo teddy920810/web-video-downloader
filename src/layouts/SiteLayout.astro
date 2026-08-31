@@ -4,6 +4,7 @@ import AuthControls from '../components/auth/AuthControls';
 import { getCollection } from 'astro:content';
 import type { SiteMode } from '../lib/config/site-mode';
 import { filterPostsForMode } from '../lib/content/mode-public-content';
+import { TOOLS } from '../lib/product/catalog';
 
 interface Props {
   title?: string;
@@ -42,23 +43,24 @@ type NavigationItem = {
   href: string;
   children?: Array<{ label: string; href: string }>;
 };
+const toolsMenu: NavigationItem = { label: 'Tools', href: '/#tools', children: TOOLS.map((tool) => ({ label: tool.label, href: tool.route })) };
 const navigation: NavigationItem[] = utilitiesMode ? [
-  { label: 'Video Converter', href: '/video-converter' },
-  { label: 'Video Compressor', href: '/video-compressor' },
-  { label: 'Background Remover', href: '/background-remover' },
+  toolsMenu,
+  { label: 'Pricing', href: '/pricing' },
+  { label: 'Account', href: '/account' },
   ...(hasVisibleBlogPosts ? [{ label: 'Guides', href: '/blog' }] : []),
   { label: 'Desktop App', href: '/#desktop-app' },
   { label: 'Privacy', href: '/privacy' },
 ] : [
   ...site.header.navigation,
-  { label: 'Video Converter', href: '/video-converter' },
-  { label: 'Video Compressor', href: '/video-compressor' },
-  { label: 'Background Remover', href: '/background-remover' },
+  toolsMenu,
+  { label: 'Pricing', href: '/pricing' },
+  { label: 'Account', href: '/account' },
 ];
 const footerLinks = [
-  { label: 'Video Converter', href: '/video-converter' },
-  { label: 'Video Compressor', href: '/video-compressor' },
-  { label: 'Background Remover', href: '/background-remover' },
+  ...TOOLS.map((tool) => ({ label: tool.label, href: tool.route })),
+  { label: 'Pricing', href: '/pricing' },
+  { label: 'Account', href: '/account' },
   ...(hasVisibleBlogPosts ? [{ label: 'Guides', href: '/blog' }] : []),
   ...site.footer.links,
 ];

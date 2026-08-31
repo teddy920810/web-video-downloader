@@ -5,7 +5,14 @@
     "tools": [
       { "number": "01", "title": "Video Converter", "description": "Convert a local video to MP4, WebM, or MP3 with a browser-based media engine.", "linkLabel": "Open converter →", "href": "/video-converter" },
       { "number": "02", "title": "Video Compressor", "description": "Choose a practical 480p, 720p, or 1080p quality preset and reduce a local file.", "linkLabel": "Open compressor →", "href": "/video-compressor" },
-      { "number": "03", "title": "Background Remover", "description": "Upload a JPG, PNG, or WebP image and create a transparent PNG with AI.", "linkLabel": "Remove a background →", "href": "/background-remover" }
+      { "number": "03", "title": "Video Trimmer", "description": "Choose a start and end time, then create a shorter MP4 locally.", "linkLabel": "Open trimmer →", "href": "/video-trimmer" },
+      { "number": "04", "title": "Video Merger", "description": "Join compatible clips from the same camera or device without uploading them.", "linkLabel": "Open merger →", "href": "/video-merger" },
+      { "number": "05", "title": "Audio Extractor", "description": "Extract MP3 or WAV audio from a local video in your browser.", "linkLabel": "Extract audio →", "href": "/audio-extractor" },
+      { "number": "06", "title": "Video to GIF", "description": "Turn a short section of a video into a shareable animated GIF.", "linkLabel": "Create a GIF →", "href": "/video-to-gif" },
+      { "number": "07", "title": "Image Converter", "description": "Convert JPG, PNG, and WebP images locally with no upload.", "linkLabel": "Convert an image →", "href": "/image-converter" },
+      { "number": "08", "title": "Image Compressor", "description": "Create a smaller WebP image and choose the output quality.", "linkLabel": "Compress an image →", "href": "/image-compressor" },
+      { "number": "09", "title": "Image Resizer", "description": "Resize a local image to a practical maximum width while keeping its proportions.", "linkLabel": "Resize an image →", "href": "/image-resizer" },
+      { "number": "10", "title": "Background Remover", "description": "Use one AI credit to create a transparent PNG from a JPG, PNG, or WebP image.", "linkLabel": "Remove a background →", "href": "/background-remover" }
     ],
     "privacyEyebrow": "Clear processing boundaries",
     "privacyHeading": "Local video. Private image processing.",
@@ -28,6 +35,43 @@
     "hero": { "eyebrow": "AI image utility", "heading": "Remove an image", "accent": "background cleanly.", "intro": "Upload one image, create a transparent result, and choose a simple preview background before downloading." },
     "notesEyebrow": "Before you start", "notesHeading": "Built for quick image cutouts",
     "notes": ["JPG, PNG, and WebP input", "Files up to 10 MB", "Google sign-in protects the processing endpoint", "Processed files use temporary private storage and result links"]
+  },
+  "toolPages": {
+    "video-trimmer": {
+      "meta": { "title": "Free Local Video Trimmer – Trim Video in Your Browser", "description": "Trim a local video to a selected time range in your browser without uploading it." },
+      "hero": { "eyebrow": "Local video utility", "heading": "Trim a video", "accent": "to the moment you need.", "intro": "Choose the start and end time, then create a shorter MP4 directly on this device." },
+      "notesEyebrow": "Precise and private", "notesHeading": "Shorten practical clips locally", "notes": ["Choose start and end times in seconds", "MP4 output", "Files up to 250 MB", "The selected video is never uploaded"]
+    },
+    "video-merger": {
+      "meta": { "title": "Free Local Video Merger – Join Compatible Clips", "description": "Merge compatible local video clips in your browser without uploading them to a server." },
+      "hero": { "eyebrow": "Local video utility", "heading": "Merge compatible clips", "accent": "on your device.", "intro": "Select clips captured with compatible settings and join them into one MP4 in this browser." },
+      "notesEyebrow": "Best results", "notesHeading": "Use clips with matching media settings", "notes": ["Choose 2 to 10 clips", "250 MB total browser limit", "Use clips from the same camera or device", "The selected clips are never uploaded"]
+    },
+    "audio-extractor": {
+      "meta": { "title": "Free Audio Extractor – Extract MP3 or WAV Locally", "description": "Extract MP3 or WAV audio from a local video in your browser without uploading it." },
+      "hero": { "eyebrow": "Local audio utility", "heading": "Extract audio", "accent": "from a local video.", "intro": "Create an MP3 for everyday listening or a WAV file for editing, entirely on this device." },
+      "notesEyebrow": "Two formats", "notesHeading": "Choose a practical audio result", "notes": ["MP3 at 192 kbps", "Lossless PCM WAV", "Files up to 250 MB", "No media upload"]
+    },
+    "video-to-gif": {
+      "meta": { "title": "Free Video to GIF Converter – Create GIFs Locally", "description": "Turn a short video section into an animated GIF in your browser without uploading the source." },
+      "hero": { "eyebrow": "Local animation utility", "heading": "Turn a video clip", "accent": "into a GIF.", "intro": "Choose a short section and practical output width, then create an animated GIF on this device." },
+      "notesEyebrow": "Keep it short", "notesHeading": "GIFs work best for small moments", "notes": ["Up to 30 seconds", "480, 640, or 960 pixel width", "12 frames per second", "No video upload"]
+    },
+    "image-converter": {
+      "meta": { "title": "Free Local Image Converter – JPG, PNG and WebP", "description": "Convert JPG, PNG, and WebP images locally in your browser without uploading them." },
+      "hero": { "eyebrow": "Local image utility", "heading": "Convert image formats", "accent": "without an upload.", "intro": "Choose an image and create a PNG, JPG, or WebP result directly in this browser." },
+      "notesEyebrow": "Browser-native", "notesHeading": "Practical image conversion", "notes": ["JPG, PNG, and WebP input", "PNG, JPG, and WebP output", "Files up to 50 MB", "The image stays on this device"]
+    },
+    "image-compressor": {
+      "meta": { "title": "Free Local Image Compressor – Make Images Smaller", "description": "Compress a JPG, PNG, or WebP image into a smaller WebP result locally in your browser." },
+      "hero": { "eyebrow": "Local image utility", "heading": "Make image files", "accent": "smaller and easier to share.", "intro": "Choose the output quality and create a compact WebP without sending the image to a server." },
+      "notesEyebrow": "Adjustable quality", "notesHeading": "Balance size and appearance", "notes": ["35% to 90% quality range", "Efficient WebP output", "Files up to 50 MB", "No image upload"]
+    },
+    "image-resizer": {
+      "meta": { "title": "Free Local Image Resizer – Resize Images in Your Browser", "description": "Resize a JPG, PNG, or WebP image to a practical width locally without uploading it." },
+      "hero": { "eyebrow": "Local image utility", "heading": "Resize an image", "accent": "while keeping its proportions.", "intro": "Choose a maximum width and create a resized WebP directly on this device." },
+      "notesEyebrow": "Proportional resize", "notesHeading": "Keep the original aspect ratio", "notes": ["Widths up to 8192 pixels", "The tool never enlarges the source", "Efficient WebP output", "No image upload"]
+    }
   },
   "tool": {
     "privateLabel": "Private browser tool", "converterHeading": "Convert a local video", "compressorHeading": "Compress a local video",

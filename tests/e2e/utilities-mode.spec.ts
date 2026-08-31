@@ -7,6 +7,7 @@ test('utilities home exposes video and image tools without downloader surfaces',
   await expect(page.getByRole('link', { name: 'Video Converter' }).first()).toBeVisible();
   await expect(page.getByRole('link', { name: 'Video Compressor' }).first()).toBeVisible();
   await expect(page.getByRole('link', { name: 'Background Remover' }).first()).toBeVisible();
+  await expect(page.locator('#tools > a')).toHaveCount(10);
   const html = await page.locator('body').innerHTML();
   expect(html).not.toContain('Paste a video link');
   await expect(page.getByRole('button', { name: /Sign in with Google/i })).toBeVisible();
@@ -32,6 +33,10 @@ test('utilities discovery files and legal pages exclude downloader content', asy
   expect(sitemap).toContain('/video-converter');
   expect(sitemap).toContain('/video-compressor');
   expect(sitemap).toContain('/background-remover');
+  expect(sitemap).toContain('/video-trimmer');
+  expect(sitemap).toContain('/image-resizer');
+  expect(sitemap).toContain('/pricing');
+  expect(sitemap).not.toContain('/account');
   expect(sitemap).not.toContain('/blog');
 
   const robots = await (await request.get('/robots.txt')).text();
@@ -41,6 +46,16 @@ test('utilities discovery files and legal pages exclude downloader content', asy
   expect(privacy).toContain('Background removal securely uploads');
   expect(privacy).toContain('private object storage');
   expect(privacy).toContain('Google sign-in');
+});
+
+test('pricing and account surfaces describe current entitlements without enabling checkout', async ({ page }) => {
+  await page.goto('/pricing');
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('Local tools stay free');
+  await expect(page.getByRole('button', { name: 'Checkout coming soon' })).toBeDisabled();
+  await page.goto('/account');
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('tools, plan, and credits');
+  await expect(page.getByRole('button', { name: 'Sign in with Google' }).first()).toBeVisible();
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex, follow');
 });
 
 test('background remover expands into the shared workspace after image selection', async ({ page }) => {

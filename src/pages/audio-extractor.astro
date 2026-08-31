@@ -1,0 +1,10 @@
+---
+import { getCollection } from 'astro:content';
+import LocalVideoTool from '../components/media/LocalVideoTool';
+import UtilityToolPage from '../components/products/UtilityToolPage.astro';
+export const prerender = false;
+const [entry] = await getCollection('utilitiesSettings');
+if (!entry) throw new Error('Utilities CMS settings are missing.');
+const page = entry.data.toolPages['audio-extractor'];
+---
+<UtilityToolPage page={page} siteMode={Astro.locals.siteMode} headingId="audio-extractor-heading"><LocalVideoTool client:only="react" mode="audio" copy={entry.data.tool} heading="Extract audio from a video" /></UtilityToolPage>

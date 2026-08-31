@@ -26,7 +26,7 @@ export const utilityLegalPages: Record<'privacy' | 'terms', UtilityLegalPage> = 
     description: 'How Streamnest protects local video processing and private AI image processing.',
     eyebrow: 'Privacy',
     heading: 'Clear boundaries for every media tool',
-    introduction: 'The converter and compressor process video in your browser. Background removal securely uploads only the image you choose for temporary processing.',
+    introduction: 'Local video and image tools process selected files in your browser. Background removal securely uploads only the image you choose for temporary AI processing.',
     sections: [
       {
         heading: 'Local processing',
@@ -38,7 +38,7 @@ export const utilityLegalPages: Record<'privacy' | 'terms', UtilityLegalPage> = 
       },
       {
         heading: 'Account information',
-        body: 'If you use Google sign-in, we store the account identifier and email address needed to provide and protect your Streamnest account.',
+        body: 'If you use Google sign-in, we store the account identifier, email address, basic profile fields, plan status, credit balance, and tool-usage outcome needed to provide and protect your Streamnest account. We do not store Google access or refresh tokens.',
       },
       {
         heading: 'Your choices',
@@ -55,7 +55,7 @@ export const utilityLegalPages: Record<'privacy' | 'terms', UtilityLegalPage> = 
     sections: [
       {
         heading: 'Browser processing',
-        body: 'Conversion and compression run in your browser. Background removal uses a private online processing service. Performance and supported formats depend on the selected tool, file, browser, and available service capacity.',
+        body: 'Local video and image utilities run in your browser. Background removal uses a private online processing service and one AI credit per successful result. Failed provider requests are eligible for an automatic credit refund. Performance and supported formats depend on the selected tool, file, browser, and available service capacity.',
       },
       {
         heading: 'Acceptable use',
@@ -64,6 +64,10 @@ export const utilityLegalPages: Record<'privacy' | 'terms', UtilityLegalPage> = 
       {
         heading: 'Availability',
         body: 'The tools are provided as available. A task may fail when a browser cannot decode the selected format or the device does not have enough memory.',
+      },
+      {
+        heading: 'Paid plans',
+        body: 'Paid checkout is not currently available. Coming Soon labels do not create a subscription, purchase, renewal, or paid entitlement.',
       },
     ],
   },

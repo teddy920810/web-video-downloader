@@ -1,14 +1,17 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { getSecret, getSession } = vi.hoisted(() => ({
+const { getSecret, getSession, getCreditService } = vi.hoisted(() => ({
   getSecret: vi.fn(),
   getSession: vi.fn(),
+  getCreditService: vi.fn(),
 }));
 
 vi.mock('astro:env/server', () => ({ getSecret }));
 vi.mock('../../../lib/auth', () => ({ getSession }));
+vi.mock('../../../lib/credits/services', () => ({ getCreditService }));
 
 import { POST } from './index';
+import { InsufficientCreditsError } from '../../../lib/credits/credit-service';
 
 const jobId = 'eb8fa168-c11c-4e54-8c63-137d649ed1db';
 const requestBody = {
@@ -28,6 +31,12 @@ describe('POST /api/background-remover', () => {
     getSecret.mockImplementation((name: string) => name === 'DOWNLOAD_SERVICE_URL'
       ? 'http://media-service.test'
       : 'private-token');
+    getCreditService.mockReturnValue({
+      getOrCreateAccount: vi.fn().mockResolvedValue({ userId: 'google-user-1' }),
+      reserve: vi.fn().mockResolvedValue({ id: 'reservation-1', userId: 'google-user-1', toolId: 'background-remover', amount: 1, freeCredits: 1, paidCredits: 0 }),
+      complete: vi.fn().mockResolvedValue(undefined),
+      fail: vi.fn().mockResolvedValue(undefined),
+    });
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify({
       jobId,
       status: 'ready',
@@ -58,6 +67,7 @@ describe('POST /api/background-remover', () => {
     expect(fetch).toHaveBeenCalledOnce();
     expect(String(vi.mocked(fetch).mock.calls[0]?.[0])).toBe('http://media-service.test/v1/background-removals');
     expect(JSON.parse(String(vi.mocked(fetch).mock.calls[0]?.[1]?.body))).toEqual(requestBody);
+    expect(getCreditService().complete).toHaveBeenCalledOnce();
   });
 
   it('returns a safe error without exposing provider details', async () => {
@@ -65,5 +75,13 @@ describe('POST /api/background-remover', () => {
     const response = await POST(context(requestBody));
     expect(response.status).toBe(502);
     await expect(response.json()).resolves.toEqual({ error: 'Unable to remove the image background right now.' });
+    expect(getCreditService().fail).toHaveBeenCalledOnce();
+  });
+
+  it('does not call the provider when the account has no AI credits', async () => {
+    getCreditService().reserve.mockRejectedValue(new InsufficientCreditsError());
+    const response = await POST(context(requestBody));
+    expect(response.status).toBe(402);
+    expect(fetch).not.toHaveBeenCalled();
   });
 });
