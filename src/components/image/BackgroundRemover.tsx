@@ -149,7 +149,7 @@ export default function BackgroundRemover({ copy }: { copy: BackgroundRemoverCop
       ) : (
         <div className="background-workspace">
           <div className="background-canvas" style={{ backgroundColor: background === 'transparent' ? '#d8dbe5' : background }}>
-            {displayUrl ? <img src={displayUrl} alt={resultUrl ? copy.resultAlt : copy.previewAlt} /> : null}
+            {displayUrl ? <img src={displayUrl} crossOrigin={resultUrl ? 'anonymous' : undefined} alt={resultUrl ? copy.resultAlt : copy.previewAlt} /> : null}
             {busy ? <ProcessingOverlay label={phase === 'uploading' ? copy.uploadingLabel : copy.processingLabel} /> : null}
             <button type="button" className="background-reset" disabled={busy} onClick={reset} aria-label={copy.removeLabel}><TrashIcon size={18} /></button>
           </div>

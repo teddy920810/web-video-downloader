@@ -35,6 +35,7 @@ describe('browser-local media tools', () => {
     expect(component).toContain('/api/background-remover');
     expect(component).toContain('data-workspace');
     expect(component).toContain('downloadBackgroundResult');
+    expect(component).toContain("crossOrigin={resultUrl ? 'anonymous' : undefined}");
   });
 
   it('shows a self-service test credit grant only through the administrator account API', () => {

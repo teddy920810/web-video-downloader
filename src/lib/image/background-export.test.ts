@@ -58,6 +58,7 @@ describe('background result export', () => {
 
     await downloadBackgroundResult('https://result.example.test/output.png', '#3b82f6');
 
+    expect(fetch).toHaveBeenCalledWith('https://result.example.test/output.png', { cache: 'no-store' });
     expect(context.fillStyle).toBe('#3b82f6');
     expect(anchor).toMatchObject({ href: 'blob:result', download: 'streamnest-background-removed.png' });
     expect(click).toHaveBeenCalledOnce();

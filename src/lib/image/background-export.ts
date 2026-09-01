@@ -33,7 +33,7 @@ export async function composeBackground(source: Blob, color: string, dependencie
 }
 
 export async function downloadBackgroundResult(resultUrl: string, color: string): Promise<void> {
-  const response = await fetch(resultUrl);
+  const response = await fetch(resultUrl, { cache: 'no-store' });
   if (!response.ok) throw new Error('Unable to prepare the image download.');
   const output = await composeBackground(await response.blob(), color);
   const objectUrl = URL.createObjectURL(output);
