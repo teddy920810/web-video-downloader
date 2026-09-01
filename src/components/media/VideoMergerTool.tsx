@@ -5,6 +5,7 @@ import { ShieldCheckIcon } from '@phosphor-icons/react/ShieldCheck';
 import { StopCircleIcon } from '@phosphor-icons/react/StopCircle';
 import { buildMergePlan, describeBrowserMediaError, validateLocalVideo } from '../../lib/media/browser-media';
 import type { BrowserMediaRuntime } from '../../lib/media/ffmpeg-runtime';
+import ProcessingOverlay from '../shared/ProcessingOverlay';
 
 const MAX_TOTAL_BYTES = 250 * 1024 * 1024;
 
@@ -60,7 +61,7 @@ export default function VideoMergerTool() {
     <div className="local-media-controls">
       <label className="local-file-picker"><FileVideoIcon size={34} /><strong>{files.length ? `${files.length} clips selected` : 'Choose 2–10 video clips'}</strong><span>For best results, use clips from the same camera or device · 250 MB total</span><input type="file" accept="video/*" multiple disabled={busy} onChange={selectFiles} /></label>
       {files.length ? <ol className="local-file-list">{files.map((file) => <li key={`${file.name}-${file.lastModified}`}>{file.name}<span>{(file.size / 1024 / 1024).toFixed(1)} MB</span></li>)}</ol> : null}
-      {busy ? <div className="local-media-progress" aria-live="polite"><div><span>{phase === 'loading' ? 'Loading the local media engine…' : 'Merging in this browser…'}</span><strong>{Math.round(progress * 100)}%</strong></div><progress max="1" value={progress} /></div> : null}
+      {busy ? <ProcessingOverlay inline label={phase === 'loading' ? 'Loading the local media engine…' : 'Merging in this browser…'} progress={progress} /> : null}
       {error ? <p className="error-message" role="alert">{error}</p> : null}
       <div className="local-media-actions">{busy ? <button className="button button-ghost" type="button" onClick={() => runtime.current?.terminate()}><StopCircleIcon size={18} />Cancel</button> : <button className="button button-primary" type="button" disabled={files.length < 2} onClick={merge}>Merge locally</button>}{result ? <a className="button button-primary" href={result} download="merged.mp4"><DownloadSimpleIcon size={18} />Save merged.mp4</a> : null}</div>
       <p className="local-media-privacy"><ShieldCheckIcon size={20} />Your selected clips stay on this device and are not uploaded.</p>

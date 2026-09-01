@@ -68,15 +68,34 @@ describe('browser-local media tools', () => {
 
   it('exposes progress, cancellation, errors, and same-origin FFmpeg assets', () => {
     const component = readProjectFile('src/components/media/LocalVideoTool.tsx');
+    const overlay = readProjectFile('src/components/shared/ProcessingOverlay.tsx');
     const runtime = readProjectFile('src/lib/media/ffmpeg-runtime.ts');
     const prepareScript = readProjectFile('scripts/prepare-ffmpeg-assets.mjs');
-    expect(component).toContain('aria-live="polite"');
+    expect(component).toContain('<ProcessingOverlay');
+    expect(overlay).toContain('aria-live="polite"');
+    expect(overlay).toContain('aria-busy="true"');
     expect(component).toContain('role="alert"');
     expect(component).toContain('runtime.current?.terminate()');
     expect(runtime).toContain("const CORE_BASE_URL = '/vendor/ffmpeg'");
     expect(runtime).not.toContain('unpkg.com');
     expect(runtime).not.toContain('jsdelivr.net');
     expect(prepareScript).toContain("node_modules', '@ffmpeg', 'core'");
+  });
+
+  it('reuses one accessible loading treatment across every processing workspace', () => {
+    const background = readProjectFile('src/components/image/BackgroundRemover.tsx');
+    const image = readProjectFile('src/components/image/LocalImageTool.tsx');
+    const video = readProjectFile('src/components/media/LocalVideoTool.tsx');
+    const merger = readProjectFile('src/components/media/VideoMergerTool.tsx');
+    const css = readProjectFile('src/styles/global.css');
+
+    for (const component of [background, image, video, merger]) {
+      expect(component).toContain('<ProcessingOverlay');
+    }
+    expect(background).toContain('background-canvas');
+    expect(css).toContain('.tool-processing-overlay');
+    expect(css).toContain('@keyframes tool-processing-spin');
+    expect(css).toContain('@media (prefers-reduced-motion: reduce)');
   });
 
   it('isolates downloader and utilities browser suites on separate owned ports', () => {

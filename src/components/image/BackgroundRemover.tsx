@@ -9,6 +9,7 @@ import { putFileWithRetry } from '../../lib/upload/direct-upload';
 import { validateUploadMetadata } from '../../lib/upload/validation';
 import type { BackgroundRemoverCopy } from '../../lib/content/utilities-settings';
 import { trackToolEvent } from '../../lib/analytics/tool-events';
+import ProcessingOverlay from '../shared/ProcessingOverlay';
 
 type Phase = 'idle' | 'selected' | 'uploading' | 'processing' | 'ready' | 'error';
 type ApiError = { error?: string };
@@ -135,7 +136,8 @@ export default function BackgroundRemover({ copy }: { copy: BackgroundRemoverCop
         <div className="background-workspace">
           <div className="background-canvas" style={{ backgroundColor: background === 'transparent' ? '#d8dbe5' : background }}>
             {displayUrl ? <img src={displayUrl} alt={resultUrl ? copy.resultAlt : copy.previewAlt} /> : null}
-            <button type="button" className="background-reset" onClick={reset} aria-label={copy.removeLabel}><TrashIcon size={18} /></button>
+            {busy ? <ProcessingOverlay label={phase === 'uploading' ? copy.uploadingLabel : copy.processingLabel} /> : null}
+            <button type="button" className="background-reset" disabled={busy} onClick={reset} aria-label={copy.removeLabel}><TrashIcon size={18} /></button>
           </div>
           <aside className="background-controls">
             <div><p>{copy.privateLabel}</p><h2 id="background-tool-title">{resultUrl ? copy.resultHeading : copy.selectedHeading}</h2></div>
@@ -147,7 +149,6 @@ export default function BackgroundRemover({ copy }: { copy: BackgroundRemoverCop
               ))}</fieldset>
             ) : null}
             {message ? <p className="error-message" role="alert">{message}</p> : null}
-            {busy ? <p className="background-status" aria-live="polite">{phase === 'uploading' ? copy.uploadingLabel : copy.processingLabel}</p> : null}
             <div className="local-media-actions">
               {!resultUrl ? <button className="button button-primary" type="button" disabled={busy} onClick={processImage}>{busy ? copy.workingLabel : copy.removeBackgroundLabel}</button> : null}
               {resultUrl ? <a className="button button-primary" href={resultUrl} download="streamnest-background-removed.png"><DownloadSimpleIcon size={18} />{copy.downloadLabel}</a> : null}

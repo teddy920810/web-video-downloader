@@ -68,3 +68,23 @@ test('processes an image locally and publishes every low-cost tool route', async
   await expect(result).toBeVisible();
   await expect(result).toHaveAttribute('href', /^blob:/);
 });
+
+test('shows the shared loading treatment while a local image is processing', async ({ page }) => {
+  await page.addInitScript(() => {
+    const originalCreateImageBitmap = window.createImageBitmap.bind(window);
+    Object.defineProperty(window, 'createImageBitmap', {
+      configurable: true,
+      value: async (image: ImageBitmapSource, options?: ImageBitmapOptions) => {
+        await new Promise((resolve) => window.setTimeout(resolve, 350));
+        return originalCreateImageBitmap(image, options);
+      },
+    });
+  });
+  await page.goto('/image-converter');
+  await page.locator('input[type=file]').setInputFiles('public/assets/blog/download-youtube-videos.webp');
+  await page.getByRole('button', { name: 'Convert locally' }).click();
+
+  await expect(page.getByRole('status')).toContainText('Processing locally…');
+  await expect(page.getByRole('link', { name: 'Save converted.png' })).toBeVisible();
+  await expect(page.getByRole('status')).toHaveCount(0);
+});

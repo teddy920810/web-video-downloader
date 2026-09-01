@@ -19,6 +19,7 @@ import {
 import type { BrowserMediaRuntime } from '../../lib/media/ffmpeg-runtime';
 import type { LocalMediaToolCopy } from '../../lib/content/utilities-settings';
 import { trackToolEvent } from '../../lib/analytics/tool-events';
+import ProcessingOverlay from '../shared/ProcessingOverlay';
 
 type Mode = 'converter' | 'compressor' | 'trimmer' | 'audio' | 'gif';
 type Props = { mode: Mode; copy: LocalMediaToolCopy; heading?: string };
@@ -144,7 +145,7 @@ export default function LocalVideoTool({ mode, copy, heading }: Props) {
       </div>
 
       <div className={file ? 'local-media-workspace' : undefined}>
-        {file && previewUrl ? <video className="local-media-preview" src={previewUrl} controls preload="metadata" /> : null}
+        {file && previewUrl ? <div className="local-media-preview-shell"><video className="local-media-preview" src={previewUrl} controls={!busy} preload="metadata" />{busy ? <ProcessingOverlay label={phase === 'loading' ? copy.loadingLabel : copy.processingLabel} progress={progress} /> : null}</div> : null}
         <div className="local-media-controls">
           <label className="local-file-picker">
             <FileVideoIcon size={34} aria-hidden="true" />
@@ -179,12 +180,6 @@ export default function LocalVideoTool({ mode, copy, heading }: Props) {
         <div className="local-media-field-row"><label className="local-media-field"><span>Start · seconds</span><input type="number" min="0" step="0.1" value={startSeconds} disabled={busy} onChange={(event) => setStartSeconds(Number(event.target.value))} /></label><label className="local-media-field"><span>Duration · up to 30 seconds</span><input type="number" min="1" max="30" value={gifDuration} disabled={busy} onChange={(event) => setGifDuration(Number(event.target.value))} /></label><label className="local-media-field"><span>GIF width</span><select value={gifWidth} disabled={busy} onChange={(event) => setGifWidth(Number(event.target.value))}><option value="480">480 px</option><option value="640">640 px</option><option value="960">960 px</option></select></label></div>
       )}
 
-      {busy ? (
-        <div className="local-media-progress" aria-live="polite">
-          <div><span>{phase === 'loading' ? copy.loadingLabel : copy.processingLabel}</span><strong>{Math.round(progress * 100)}%</strong></div>
-          <progress max="1" value={progress} />
-        </div>
-      ) : null}
       {error ? <p className="error-message" role="alert">{error}</p> : null}
 
       <div className="local-media-actions">
