@@ -4,6 +4,7 @@ import { ImageIcon } from '@phosphor-icons/react/Image';
 import { ShieldCheckIcon } from '@phosphor-icons/react/ShieldCheck';
 import { buildImagePlan, validateLocalImage, type ImageFormat, type ImageToolMode } from '../../lib/image/browser-image';
 import { trackToolEvent } from '../../lib/analytics/tool-events';
+import ProcessingOverlay from '../shared/ProcessingOverlay';
 
 function canvasBlob(canvas: HTMLCanvasElement, type: string, quality: number) {
   return new Promise<Blob>((resolve, reject) => canvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error('The browser could not create this image.')), type, quality));
@@ -64,7 +65,7 @@ export default function LocalImageTool({ mode, heading }: { mode: ImageToolMode;
   return <section className="local-media-tool local-image-tool" data-workspace={file ? 'true' : 'false'} aria-labelledby={`${mode}-image-tool-title`}>
     <div className="local-media-heading"><span className="local-media-icon"><ImageIcon size={28} /></span><div><p>Private browser tool</p><h2 id={`${mode}-image-tool-title`}>{heading}</h2></div></div>
     <div className={file ? 'local-media-workspace' : undefined}>
-      {preview ? <div className="local-image-preview"><img src={result?.url ?? preview} alt={result ? 'Processed image preview' : 'Selected image preview'} /></div> : null}
+      {preview ? <div className="local-image-preview"><img src={result?.url ?? preview} alt={result ? 'Processed image preview' : 'Selected image preview'} />{busy ? <ProcessingOverlay label="Processing locally…" /> : null}</div> : null}
       <div className="local-media-controls">
         <label className="local-file-picker"><ImageIcon size={34} /><strong>{file?.name ?? 'Choose an image file'}</strong><span>{file ? `${(file.size / 1024 / 1024).toFixed(1)} MB` : 'JPG, PNG, or WebP · up to 50 MB'}</span><input type="file" accept="image/jpeg,image/png,image/webp" disabled={busy} onChange={select} /></label>
         {mode === 'converter' ? <label className="local-media-field"><span>Output format</span><select value={format} onChange={(event) => setFormat(event.target.value as ImageFormat)}><option value="png">PNG</option><option value="jpeg">JPG</option><option value="webp">WebP</option></select></label> : null}
