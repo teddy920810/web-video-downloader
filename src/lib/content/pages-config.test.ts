@@ -122,6 +122,14 @@ describe('Pages CMS maintenance safeguards', () => {
     expect(navigation?.fields).toEqual(expect.arrayContaining([
       expect.objectContaining({ name: 'children', type: 'object' }),
     ]));
+    const footer = siteSettings?.fields.find((field) => field.name === 'footer');
+    const socialLinks = footer?.fields?.find((field) => field.name === 'socialLinks');
+    expect(socialLinks).toMatchObject({ type: 'object' });
+    expect(socialLinks?.fields).toEqual(expect.arrayContaining([
+      expect.objectContaining({ name: 'platform', type: 'select' }),
+      expect.objectContaining({ name: 'label', type: 'string' }),
+      expect.objectContaining({ name: 'href', type: 'string' }),
+    ]));
   });
 
   it('connects the blog rich-text editor to the static image library', () => {

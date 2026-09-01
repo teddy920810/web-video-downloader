@@ -10,6 +10,13 @@ const navigationLinkSchema = z.object({
   href: z.string().min(1),
 });
 
+const socialPlatformSchema = z.enum(['x', 'youtube', 'instagram', 'tiktok', 'facebook', 'linkedin', 'github', 'discord']);
+const socialLinkSchema = z.object({
+  platform: socialPlatformSchema,
+  label: z.string().min(1),
+  href: z.url().refine((value) => new URL(value).protocol === 'https:', 'Social links must use HTTPS.'),
+});
+
 const headerNavigationItemSchema = z.object({
   label: z.string().min(1),
   href: z.string().default(''),
@@ -78,6 +85,7 @@ export const siteSettingsSchema = z.object({
   footer: z.object({
     tagline: z.string().min(1),
     links: z.array(navigationLinkSchema).min(1),
+    socialLinks: z.array(socialLinkSchema).default([]),
   }),
 });
 

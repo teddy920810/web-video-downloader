@@ -1,10 +1,11 @@
 ---
 import '../styles/global.css';
 import AuthControls from '../components/auth/AuthControls';
+import SocialIcon from '../components/icons/SocialIcon';
 import { getCollection } from 'astro:content';
 import type { SiteMode } from '../lib/config/site-mode';
 import { filterPostsForMode } from '../lib/content/mode-public-content';
-import { TOOLS } from '../lib/product/catalog';
+import { TOOL_GROUPS, TOOLS } from '../lib/product/catalog';
 
 interface Props {
   title?: string;
@@ -42,8 +43,9 @@ type NavigationItem = {
   label: string;
   href: string;
   children?: Array<{ label: string; href: string }>;
+  groups?: typeof TOOL_GROUPS;
 };
-const toolsMenu: NavigationItem = { label: 'Tools', href: '/#tools', children: TOOLS.map((tool) => ({ label: tool.label, href: tool.route })) };
+const toolsMenu: NavigationItem = { label: 'Tools', href: '/#tools', groups: TOOL_GROUPS };
 const navigation: NavigationItem[] = utilitiesMode ? [
   toolsMenu,
   { label: 'Pricing', href: '/pricing' },
@@ -57,12 +59,16 @@ const navigation: NavigationItem[] = utilitiesMode ? [
   { label: 'Pricing', href: '/pricing' },
   { label: 'Account', href: '/account' },
 ];
-const footerLinks = [
-  ...TOOLS.map((tool) => ({ label: tool.label, href: tool.route })),
-  { label: 'Pricing', href: '/pricing' },
-  { label: 'Account', href: '/account' },
-  ...(hasVisibleBlogPosts ? [{ label: 'Guides', href: '/blog' }] : []),
+const footerResources = [
   ...site.footer.links,
+  ...(hasVisibleBlogPosts ? [{ label: 'Guides', href: '/blog' }] : []),
+];
+const footerVideoAudioTools = TOOLS.filter((tool) => tool.category === 'video' || tool.category === 'audio');
+const footerImageTools = TOOLS.filter((tool) => tool.category === 'image');
+const legalLinks = [
+  { label: 'Refund Policy', href: '/refund-policy' },
+  { label: 'Privacy Policy', href: '/privacy' },
+  { label: 'Terms of Use', href: '/terms' },
 ];
 const footerTagline = site.footer.tagline;
 const canonical = new URL(Astro.url.pathname, Astro.site);
@@ -132,11 +138,16 @@ const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultS
         <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
       </button>
       <nav id="site-navigation" aria-label="Main navigation">
-        {navigation.map((item, index) => (item.children?.length ?? 0) > 0 ? (
+        {navigation.map((item, index) => ((item.groups?.length ?? 0) > 0 || (item.children?.length ?? 0) > 0) ? (
           <div class="nav-dropdown">
             <button class="nav-dropdown-trigger" type="button" aria-haspopup="true" aria-expanded="false" aria-controls={`nav-dropdown-${index}`} data-nav-dropdown-trigger>{item.label}<span aria-hidden="true">⌄</span></button>
-            <div class="nav-dropdown-panel" id={`nav-dropdown-${index}`}>
-              {(item.children ?? []).map((child) => <a href={child.href}>{child.label}</a>)}
+            <div class:list={['nav-dropdown-panel', { 'nav-dropdown-mega': item.groups }]} id={`nav-dropdown-${index}`}>
+              {item.groups ? TOOL_GROUPS.map((group) => (
+                <section class="nav-dropdown-group" aria-labelledby={`tool-group-${group.id}`}>
+                  <span class="nav-dropdown-group-title" id={`tool-group-${group.id}`}>{group.label}</span>
+                  {group.tools.map((tool) => <a href={tool.route}>{tool.label}</a>)}
+                </section>
+              )) : (item.children ?? []).map((child) => <a href={child.href}>{child.label}</a>)}
             </div>
           </div>
         ) : <a href={item.href}>{item.label}{item.href.endsWith('#desktop-app') && <span class="nav-coming-soon">Coming soon</span>}</a>)}
@@ -145,9 +156,18 @@ const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultS
     </header>
     <main><slot /></main>
     <footer class="site-footer">
-      <div><a class="brand" href="/"><img class="brand-logo" src={site.logo} alt="" /><span>{displayName}</span></a><p>{footerTagline}</p></div>
-      <div class="footer-links">{footerLinks.map((item) => <a href={item.href}>{item.label}</a>)}</div>
-      <p>© {new Date().getFullYear()} {displayName}</p>
+      <div class="footer-brand"><a class="brand" href="/"><img class="brand-logo" src={site.logo} alt="" /><span>{displayName}</span></a><p>{footerTagline}</p>
+        {site.footer.socialLinks.length > 0 && <div class="footer-social-links" aria-label="Social media">
+          {site.footer.socialLinks.map((social) => <a href={social.href} aria-label={social.label} title={social.label} target="_blank" rel="noreferrer"><SocialIcon platform={social.platform} /></a>)}
+        </div>}
+      </div>
+      <div class="footer-tool-groups">
+        <section class="footer-link-group"><h2>Video & audio tools</h2>{footerVideoAudioTools.map((tool) => <a href={tool.route}>{tool.label}</a>)}</section>
+        <section class="footer-link-group"><h2>Image tools</h2>{footerImageTools.map((tool) => <a href={tool.route}>{tool.label}</a>)}</section>
+        <section class="footer-link-group"><h2>Resources</h2>{footerResources.map((item) => <a href={item.href}>{item.label}</a>)}</section>
+        <section class="footer-link-group"><h2>Legal</h2>{legalLinks.map((item) => <a href={item.href}>{item.label}</a>)}</section>
+      </div>
+      <p class="footer-copyright">© {new Date().getFullYear()} {displayName}. All rights reserved.</p>
     </footer>
     <script>
       const header = document.querySelector<HTMLElement>('.site-header');
@@ -173,7 +193,8 @@ const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultS
         if (!open) closeDropdowns();
       });
 
-      dropdownTriggers.forEach((trigger) => trigger.addEventListener('click', () => {
+      dropdownTriggers.forEach((trigger) => trigger.addEventListener('click', (event) => {
+        event.stopPropagation();
         const dropdown = trigger.closest('.nav-dropdown');
         const open = trigger.getAttribute('aria-expanded') !== 'true';
         closeDropdowns();
@@ -198,9 +219,8 @@ const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultS
           menuToggle?.focus();
         }
       });
-      document.addEventListener('click', (event) => {
-        if (header && event.target instanceof Node && !header.contains(event.target)) closeMenu();
-      });
+      header?.addEventListener('click', (event) => event.stopPropagation());
+      document.addEventListener('click', closeMenu);
     </script>
   </body>
 </html>

@@ -27,8 +27,19 @@ describe('site settings CMS content', () => {
     expect(parsed.defaultShareImage).toMatch(/\S/);
     expect(parsed.header.navigation.length).toBeGreaterThan(0);
     expect(parsed.footer.links.length).toBeGreaterThan(0);
+    expect(parsed.footer.socialLinks).toEqual([]);
     expect(parsed.uploader.hero.heading).toBeTruthy();
     expect(parsed.uploader.dropzone.fileInputLabel).toBeTruthy();
+  });
+
+  it('allows optional HTTPS social links and rejects unsafe social destinations', () => {
+    const withSocial = structuredClone(settings);
+    withSocial.footer.socialLinks = [{ platform: 'youtube', label: 'YouTube', href: 'https://youtube.com/@streamnest' }];
+    expect(siteSettingsSchema.parse(withSocial).footer.socialLinks).toHaveLength(1);
+
+    const unsafe = structuredClone(withSocial);
+    unsafe.footer.socialLinks[0].href = 'javascript:alert(1)';
+    expect(siteSettingsSchema.safeParse(unsafe).success).toBe(false);
   });
 
   it('keeps the shared brand neutral across every product mode', () => {

@@ -39,7 +39,7 @@ export const notFoundSettingsSchema = z.object({
 });
 
 export const legalPageSchema = z.object({
-  slug: z.enum(['privacy', 'terms']),
+  slug: z.enum(['privacy', 'terms', 'refund-policy']),
   title: z.string().min(1),
   description: z.string().min(1).max(180),
   eyebrow: z.string().min(1),

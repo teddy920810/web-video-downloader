@@ -2,7 +2,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
 test('critical public routes and SEO files are available', async ({ page, request }) => {
-  for (const path of ['/', '/privacy', '/terms', '/robots.txt', '/sitemap.xml']) {
+  for (const path of ['/', '/privacy', '/terms', '/refund-policy', '/robots.txt', '/sitemap.xml']) {
     const response = await request.get(path);
     expect(response.ok(), `${path} should be available`).toBeTruthy();
   }
@@ -18,6 +18,7 @@ test('critical public routes and SEO files are available', async ({ page, reques
   const sitemap = await sitemapResponse.text();
   expect(sitemap).toContain('<urlset');
   expect(sitemap).toContain(`<loc>${new URL('/privacy', canonical).toString()}</loc>`);
+  expect(sitemap).toContain(`<loc>${new URL('/refund-policy', canonical).toString()}</loc>`);
   expect(sitemap).toMatch(/<lastmod>\d{4}-\d{2}-\d{2}<\/lastmod>/);
   expect(sitemap).toMatch(/<changefreq>[a-z]+<\/changefreq>/);
   expect(sitemap).toMatch(/<priority>\d\.\d<\/priority>/);

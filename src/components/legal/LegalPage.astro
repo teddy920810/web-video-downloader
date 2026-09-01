@@ -1,0 +1,22 @@
+---
+import { getCollection, render } from 'astro:content';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { buildWebPageSchema } from '../../lib/content/seo-schema';
+
+interface Props {
+  slug: 'privacy' | 'terms' | 'refund-policy';
+  path: '/privacy' | '/terms' | '/refund-policy';
+}
+
+const { slug, path } = Astro.props;
+const page = (await getCollection('legalPages')).find((entry) => entry.data.slug === slug);
+if (!page) throw new Error(`${slug} CMS content is missing.`);
+const { Content } = await render(page);
+const [siteEntry] = await getCollection('siteSettings');
+if (!siteEntry) throw new Error('Site settings CMS content is missing.');
+const schema = buildWebPageSchema({ canonicalOrigin: siteEntry.data.canonicalOrigin, path, name: page.data.heading, description: page.data.description });
+---
+<SiteLayout siteMode={Astro.locals.siteMode} title={page.data.title} description={page.data.description} schema={schema}>
+  <header class="legal-page"><span class="eyebrow">{page.data.eyebrow}</span><h1>{page.data.heading}</h1></header>
+  <article class="legal-body"><Content /></article>
+</SiteLayout>

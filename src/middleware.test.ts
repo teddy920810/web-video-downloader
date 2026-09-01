@@ -30,11 +30,11 @@ describe('site mode middleware', () => {
   it('keeps local utility and legal routes available', async () => {
     const next = vi.fn().mockResolvedValue(new Response('ok'));
     const middleware = createModeMiddleware(async () => 'utilities');
-    for (const path of ['/video-converter', '/video-compressor', '/privacy', '/terms']) {
+    for (const path of ['/video-converter', '/video-compressor', '/privacy', '/terms', '/refund-policy']) {
       const response = asResponse(await middleware(context(path) as never, next));
       expect(response.status).toBe(200);
     }
-    expect(next).toHaveBeenCalledTimes(4);
+    expect(next).toHaveBeenCalledTimes(5);
   });
 
   it('keeps existing download routes available in downloader mode', async () => {
