@@ -1,4 +1,6 @@
 import type { APIRoute } from 'astro';
+import { getSecret } from 'astro:env/server';
+import { isAdminEmail } from '../../../lib/admin';
 import { json } from '../../../lib/api/response';
 import { getSession } from '../../../lib/auth';
 import { getCreditService } from '../../../lib/credits/services';
@@ -16,5 +18,5 @@ export const GET: APIRoute = async ({ request }) => {
     image: session.user.image,
   });
   const usage = await credits.listUsage(session.user.id, 20);
-  return json({ account, usage });
+  return json({ account, usage, canGrantTestCredits: isAdminEmail(session.user.email, getSecret('ADMIN_EMAILS')) });
 };

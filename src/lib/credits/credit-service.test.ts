@@ -23,6 +23,7 @@ describe('credit service', () => {
       reserve: vi.fn().mockResolvedValue({ id: 'reservation-1', status: 'reserved', amount: 1, freeCredits: 1, paidCredits: 0 }),
       consume: vi.fn().mockResolvedValue(undefined),
       refund: vi.fn().mockResolvedValue(undefined),
+      grantTestCredits: vi.fn().mockResolvedValue(account),
       recordUsage: vi.fn().mockResolvedValue(undefined),
       listUsage: vi.fn().mockResolvedValue([]),
     };
@@ -53,5 +54,10 @@ describe('credit service', () => {
   it('maps an exhausted wallet to a stable product error', async () => {
     store.reserve = vi.fn().mockResolvedValue(null);
     await expect(service.reserve(account.userId, 'background-remover', 'job-3')).rejects.toBeInstanceOf(InsufficientCreditsError);
+  });
+
+  it('delegates an idempotent administrator test-credit grant to the store', async () => {
+    await expect(service.grantTestCredits(account.userId, 1, 'grant-key')).resolves.toMatchObject({ freeCredits: 1 });
+    expect(store.grantTestCredits).toHaveBeenCalledWith(account.userId, 1, 'grant-key');
   });
 });

@@ -10,8 +10,9 @@ import { validateUploadMetadata } from '../../lib/upload/validation';
 import type { BackgroundRemoverCopy } from '../../lib/content/utilities-settings';
 import { trackToolEvent } from '../../lib/analytics/tool-events';
 import ProcessingOverlay from '../shared/ProcessingOverlay';
+import { downloadBackgroundResult } from '../../lib/image/background-export';
 
-type Phase = 'idle' | 'selected' | 'uploading' | 'processing' | 'ready' | 'error';
+type Phase = 'idle' | 'selected' | 'uploading' | 'processing' | 'exporting' | 'ready' | 'error';
 type ApiError = { error?: string };
 
 async function readApi<T>(url: string, init: RequestInit): Promise<T> {
@@ -116,8 +117,21 @@ export default function BackgroundRemover({ copy }: { copy: BackgroundRemoverCop
     }
   }
 
+  async function downloadResult() {
+    if (!resultUrl) return;
+    try {
+      setMessage(null);
+      setPhase('exporting');
+      await downloadBackgroundResult(resultUrl, background);
+      setPhase('ready');
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : copy.processError);
+      setPhase('ready');
+    }
+  }
+
   const selected = Boolean(file && previewUrl);
-  const busy = phase === 'uploading' || phase === 'processing';
+  const busy = phase === 'uploading' || phase === 'processing' || phase === 'exporting';
   const displayUrl = resultUrl ?? previewUrl;
   const swatches = ['transparent', '#ffffff', '#111827', '#f3f4f6', '#ef4444', '#f59e0b', '#22c55e', '#3b82f6', '#8b5cf6'];
 
@@ -145,13 +159,13 @@ export default function BackgroundRemover({ copy }: { copy: BackgroundRemoverCop
             <p className="background-credit-note">1 AI credit per successful result{creditBalance === null ? '' : ` · ${creditBalance} available`}</p>
             {resultUrl ? (
               <fieldset className="background-swatches"><legend>{copy.backgroundLabel}</legend>{swatches.map((color) => (
-                <button key={color} type="button" className={background === color ? 'is-selected' : ''} style={{ backgroundColor: color === 'transparent' ? '#d8dbe5' : color }} onClick={() => setBackground(color)} aria-label={color === 'transparent' ? copy.transparentLabel : color} />
+                <button key={color} type="button" disabled={busy} className={background === color ? 'is-selected' : ''} style={{ backgroundColor: color === 'transparent' ? '#d8dbe5' : color }} onClick={() => setBackground(color)} aria-label={color === 'transparent' ? copy.transparentLabel : color} />
               ))}</fieldset>
             ) : null}
             {message ? <p className="error-message" role="alert">{message}</p> : null}
             <div className="local-media-actions">
               {!resultUrl ? <button className="button button-primary" type="button" disabled={busy} onClick={processImage}>{busy ? copy.workingLabel : copy.removeBackgroundLabel}</button> : null}
-              {resultUrl ? <a className="button button-primary" href={resultUrl} download="streamnest-background-removed.png"><DownloadSimpleIcon size={18} />{copy.downloadLabel}</a> : null}
+              {resultUrl ? <button className="button button-primary" type="button" disabled={busy} onClick={downloadResult}><DownloadSimpleIcon size={18} />{copy.downloadLabel}</button> : null}
               <button className="button button-ghost" type="button" disabled={busy} onClick={() => inputRef.current?.click()}>{copy.chooseAnotherLabel}</button>
             </div>
             <input ref={inputRef} className="sr-only" type="file" accept="image/jpeg,image/png,image/webp" onChange={onInput} />

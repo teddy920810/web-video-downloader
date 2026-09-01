@@ -1,4 +1,4 @@
-import { readFile } from 'node:fs/promises';
+import { readFile, readdir } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import process from 'node:process';
 import { neon } from '@neondatabase/serverless';
@@ -21,6 +21,11 @@ async function loadLocalEnvironment() {
 await loadLocalEnvironment();
 if (!process.env.DATABASE_URL) throw new Error('DATABASE_URL is required.');
 const sql = neon(process.env.DATABASE_URL);
-const migration = await readFile(resolve('db/migrations/001_product_accounts.sql'), 'utf8');
-for (const statement of splitSqlStatements(migration)) await sql.query(statement);
-process.stdout.write('Product account migration applied.\n');
+const migrationNames = (await readdir(resolve('db/migrations')))
+  .filter((name) => /^\d+_.+\.sql$/.test(name))
+  .sort();
+for (const name of migrationNames) {
+  const migration = await readFile(resolve('db/migrations', name), 'utf8');
+  for (const statement of splitSqlStatements(migration)) await sql.query(statement);
+}
+process.stdout.write(`${migrationNames.length} product account migrations applied.\n`);

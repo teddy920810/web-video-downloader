@@ -65,6 +65,13 @@ export class PostgresCreditStore implements CreditStore {
     await database()`SELECT refund_tool_credits(${reservationId}::uuid)`;
   }
 
+  async grantTestCredits(userId: string, amount: number, idempotencyKey: string): Promise<ToolAccount> {
+    await database()`SELECT * FROM grant_test_credits(${userId}, ${amount}, ${idempotencyKey}::uuid)`;
+    const account = await this.getAccount(userId);
+    if (!account) throw new Error('Unable to load the credited account.');
+    return account;
+  }
+
   async recordUsage(record: UsageRecord): Promise<void> {
     await database()`INSERT INTO tool_usage(user_id, tool_id, reservation_id, status, credits, size_bytes, duration_ms, error_code)
       VALUES (${record.userId}, ${record.toolId}, ${record.reservationId}::uuid, ${record.status}, ${record.credits},
