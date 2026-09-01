@@ -45,6 +45,8 @@ describe('SiteLayout Google Analytics integration', () => {
     expect(globalCss).toContain('pointer-events: none');
     expect(globalCss).toContain('.site-header nav > a, .nav-dropdown-trigger { font-weight: 750; }');
     expect(globalCss).not.toMatch(/\.nav-dropdown-trigger\s*\{[^}]*font:\s*inherit/);
+    expect(globalCss).toMatch(/\.utility-site \.nav-dropdown-panel\s*\{[^}]*color:\s*var\(--ink\)/);
+    expect(layoutSource).toContain("dropdown.addEventListener('pointerleave'");
   });
 
   it('renders every brand mark as the CMS-managed logo image', () => {
@@ -62,6 +64,11 @@ describe('SiteLayout Google Analytics integration', () => {
     expect(layoutSource).not.toContain('showAuth && !utilitiesMode');
     expect(globalCss).toMatch(/\.utility-site \.site-header\s*\{[^}]*max-width:\s*none/);
     expect(globalCss).toMatch(/\.utility-site \.site-footer\s*\{[^}]*max-width:\s*none/);
+    expect(globalCss).toContain('body.utility-site { background: var(--download-night); }');
+  });
+
+  it('keeps light pricing and account cards readable on the dark utility shell', () => {
+    expect(globalCss).toMatch(/\.pricing-grid article, \.account-summary > div, \.account-empty, \.account-status, \.account-admin, \.account-usage\s*\{[^}]*color:\s*var\(--ink\)/);
   });
 
   it('provides an accessible mobile navigation toggle and dropdown state', () => {

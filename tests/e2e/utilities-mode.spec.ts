@@ -7,7 +7,7 @@ test('utilities home exposes video and image tools without downloader surfaces',
   await expect(page.getByRole('link', { name: 'Video Converter' }).first()).toBeVisible();
   await expect(page.getByRole('link', { name: 'Video Compressor' }).first()).toBeVisible();
   await expect(page.getByRole('link', { name: 'Background Remover' }).first()).toBeVisible();
-  await expect(page.locator('#tools > a')).toHaveCount(10);
+  await expect(page.locator('#tools > a')).toHaveCount(11);
   const html = await page.locator('body').innerHTML();
   expect(html).not.toContain('Paste a video link');
   await expect(page.getByRole('button', { name: /Sign in with Google/i })).toBeVisible();
@@ -51,10 +51,14 @@ test('utilities discovery files and legal pages exclude downloader content', asy
 test('pricing and account surfaces describe current entitlements without enabling checkout', async ({ page }) => {
   await page.goto('/pricing');
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Local tools stay free');
+  await expect(page.locator('.account-hero p')).toHaveCSS('color', 'rgb(203, 213, 245)');
+  await expect(page.getByRole('heading', { level: 2, name: 'Free' })).toHaveCSS('color', 'rgb(23, 35, 33)');
   await expect(page.getByRole('button', { name: 'Checkout coming soon' })).toBeDisabled();
   await page.goto('/account');
   await expect(page.getByRole('heading', { level: 1 })).toContainText('tools, plan, and credits');
+  await expect(page.locator('.account-hero p')).toHaveCSS('color', 'rgb(203, 213, 245)');
   await expect(page.getByRole('button', { name: 'Sign in with Google' }).first()).toBeVisible();
+  await expect(page.locator('.account-empty')).toHaveCSS('color', 'rgb(23, 35, 33)');
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex, follow');
 });
 
@@ -77,4 +81,19 @@ test('utilities mode remains usable on a mobile viewport', async ({ page }) => {
   await page.locator('[data-mobile-menu-toggle]').click();
   await expect(page.locator('#site-navigation')).toBeVisible();
   await expect(page.locator('input[type=file]')).toBeVisible();
+});
+
+test('desktop Tools menu stays readable and closes when the mouse leaves', async ({ page }) => {
+  await page.goto('/');
+  const trigger = page.getByRole('button', { name: 'Tools' });
+  await trigger.hover();
+  const panel = page.locator('.nav-dropdown-panel');
+  const converter = panel.getByRole('link', { name: 'Video Converter' });
+  await expect(converter).toBeVisible();
+  await expect(converter).toHaveCSS('color', 'rgb(23, 35, 33)');
+  await trigger.click();
+  await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+  await page.locator('main').hover({ position: { x: 5, y: 5 } });
+  await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+  await expect(panel).toBeHidden();
 });

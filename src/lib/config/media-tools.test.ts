@@ -38,6 +38,20 @@ describe('browser-local media tools', () => {
     expect(component).toContain("crossOrigin={resultUrl ? 'anonymous' : undefined}");
   });
 
+  it('publishes a browser-local SVG rasterizer for code and URL input', () => {
+    const page = readProjectFile('src/pages/svg-to-image.astro');
+    const component = readProjectFile('src/components/image/SvgToImageTool.tsx');
+    const runtime = readProjectFile('src/lib/image/svg-raster.ts');
+    expect(page).toContain('<SvgToImageTool client:only="react"');
+    expect(component).toContain('SVG code');
+    expect(component).toContain('SVG URL');
+    expect(component).toContain('Save PNG');
+    expect(component).toContain('<ProcessingOverlay');
+    expect(runtime).toContain('image/svg+xml');
+    expect(runtime).toContain('DOMParser');
+    expect(component).not.toContain('/api/');
+  });
+
   it('shows a self-service test credit grant only through the administrator account API', () => {
     const account = readProjectFile('src/components/account/AccountDashboard.tsx');
     const me = readProjectFile('src/pages/api/me/index.ts');

@@ -1,0 +1,10 @@
+---
+import { getCollection } from 'astro:content';
+import SvgToImageTool from '../components/image/SvgToImageTool';
+import UtilityToolPage from '../components/products/UtilityToolPage.astro';
+export const prerender = false;
+const [entry] = await getCollection('utilitiesSettings');
+if (!entry) throw new Error('Utilities CMS settings are missing.');
+const page = entry.data.toolPages['svg-to-image'];
+---
+<UtilityToolPage page={page} siteMode={Astro.locals.siteMode} headingId="svg-to-image-heading"><SvgToImageTool client:only="react" /></UtilityToolPage>

@@ -12,7 +12,8 @@
       { "number": "07", "title": "Image Converter", "description": "Convert JPG, PNG, and WebP images locally with no upload.", "linkLabel": "Convert an image →", "href": "/image-converter" },
       { "number": "08", "title": "Image Compressor", "description": "Create a smaller WebP image and choose the output quality.", "linkLabel": "Compress an image →", "href": "/image-compressor" },
       { "number": "09", "title": "Image Resizer", "description": "Resize a local image to a practical maximum width while keeping its proportions.", "linkLabel": "Resize an image →", "href": "/image-resizer" },
-      { "number": "10", "title": "Background Remover", "description": "Use one AI credit to create a transparent PNG from a JPG, PNG, or WebP image.", "linkLabel": "Remove a background →", "href": "/background-remover" }
+      { "number": "10", "title": "SVG to Image", "description": "Paste SVG code or enter an SVG URL, then save a PNG, JPG, or WebP locally.", "linkLabel": "Convert an SVG →", "href": "/svg-to-image" },
+      { "number": "11", "title": "Background Remover", "description": "Use one AI credit to create a transparent PNG from a JPG, PNG, or WebP image.", "linkLabel": "Remove a background →", "href": "/background-remover" }
     ],
     "privacyEyebrow": "Clear processing boundaries",
     "privacyHeading": "Local video. Private image processing.",
@@ -71,6 +72,11 @@
       "meta": { "title": "Free Local Image Resizer – Resize Images in Your Browser", "description": "Resize a JPG, PNG, or WebP image to a practical width locally without uploading it." },
       "hero": { "eyebrow": "Local image utility", "heading": "Resize an image", "accent": "while keeping its proportions.", "intro": "Choose a maximum width and create a resized WebP directly on this device." },
       "notesEyebrow": "Proportional resize", "notesHeading": "Keep the original aspect ratio", "notes": ["Widths up to 8192 pixels", "The tool never enlarges the source", "Efficient WebP output", "No image upload"]
+    },
+    "svg-to-image": {
+      "meta": { "title": "Free SVG to PNG, JPG or WebP Converter", "description": "Convert SVG code or an SVG URL to PNG, JPG, or WebP locally in your browser." },
+      "hero": { "eyebrow": "Local vector utility", "heading": "Convert SVG", "accent": "into a practical image.", "intro": "Paste SVG code or enter a public SVG URL, choose an output format, and save the result directly from this browser." },
+      "notesEyebrow": "Browser-native", "notesHeading": "Rasterize SVG without an upload", "notes": ["SVG code or public URL input", "PNG, JPG, and WebP output", "Up to 8192 pixels per dimension", "SVG code and conversion stay in this browser"]
     }
   },
   "tool": {

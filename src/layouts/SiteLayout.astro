@@ -181,6 +181,17 @@ const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultS
         dropdown?.classList.toggle('is-open', open);
       }));
 
+      dropdownTriggers.forEach((trigger) => {
+        const dropdown = trigger.closest('.nav-dropdown');
+        if (!(dropdown instanceof HTMLElement)) return;
+        dropdown.addEventListener('pointerleave', (event) => {
+          if (event.pointerType !== 'mouse') return;
+          trigger.setAttribute('aria-expanded', 'false');
+          dropdown.classList.remove('is-open');
+          trigger.blur();
+        });
+      });
+
       document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape') {
           closeMenu();

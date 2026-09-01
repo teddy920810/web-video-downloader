@@ -10,6 +10,7 @@ export type ToolId =
   | 'image-converter'
   | 'image-compressor'
   | 'image-resizer'
+  | 'svg-to-image'
   | 'background-remover';
 
 export type ToolDefinition = {
@@ -31,6 +32,7 @@ export const TOOLS: readonly ToolDefinition[] = [
   { id: 'image-converter', label: 'Image Converter', route: '/image-converter', category: 'image', processing: 'local', credits: 0 },
   { id: 'image-compressor', label: 'Image Compressor', route: '/image-compressor', category: 'image', processing: 'local', credits: 0 },
   { id: 'image-resizer', label: 'Image Resizer', route: '/image-resizer', category: 'image', processing: 'local', credits: 0 },
+  { id: 'svg-to-image', label: 'SVG to Image', route: '/svg-to-image', category: 'image', processing: 'local', credits: 0 },
   { id: 'background-remover', label: 'Background Remover', route: '/background-remover', category: 'image', processing: 'cloud', credits: 1 },
 ] as const;
 
