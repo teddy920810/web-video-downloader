@@ -34,6 +34,15 @@ describe('browser-local media tools', () => {
     expect(component).toContain('/api/background-remover/upload-url');
     expect(component).toContain('/api/background-remover');
     expect(component).toContain('data-workspace');
+    expect(component).toContain('downloadBackgroundResult');
+  });
+
+  it('shows a self-service test credit grant only through the administrator account API', () => {
+    const account = readProjectFile('src/components/account/AccountDashboard.tsx');
+    const me = readProjectFile('src/pages/api/me/index.ts');
+    expect(account).toContain('/api/admin/test-credits');
+    expect(account).toContain('canGrantTestCredits');
+    expect(me).toContain('canGrantTestCredits');
   });
 
   it('expands every selected-file tool into the shared full-width workspace', () => {

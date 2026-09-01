@@ -39,6 +39,7 @@ export interface CreditStore {
   reserve(userId: string, toolId: ToolId, amount: number, idempotencyKey: string): Promise<CreditReservation | null>;
   consume(reservationId: string): Promise<void>;
   refund(reservationId: string): Promise<void>;
+  grantTestCredits(userId: string, amount: number, idempotencyKey: string): Promise<ToolAccount>;
   recordUsage(record: UsageRecord): Promise<void>;
   listUsage(userId: string, limit: number): Promise<UsageRecord[]>;
 }
@@ -62,6 +63,10 @@ export class CreditService {
 
   listUsage(userId: string, limit = 20) {
     return this.store.listUsage(userId, Math.min(Math.max(limit, 1), 50));
+  }
+
+  grantTestCredits(userId: string, amount: number, idempotencyKey: string) {
+    return this.store.grantTestCredits(userId, amount, idempotencyKey);
   }
 
   async reserve(userId: string, toolId: ToolId, idempotencyKey: string) {

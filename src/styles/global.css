@@ -73,13 +73,15 @@ img { display: block; max-width: 100%; }
 .account-summary strong { display: block; margin: 10px 0; font-size: 2.2rem; }
 .account-summary small { color: var(--muted); }
 .account-usage { max-width: 1040px; margin: 20px auto 0; }
+.account-admin { max-width: 1040px; margin: 20px auto 0; padding: 24px 30px; display: flex; align-items: center; justify-content: space-between; gap: 24px; border: 1px solid var(--line); border-radius: 24px; background: var(--card); }
+.account-admin h2, .account-admin p { margin: 4px 0 0; }
 .account-usage ul { display: grid; gap: 10px; padding: 0; list-style: none; }
 .account-usage li { display: grid; grid-template-columns: 1fr auto auto; gap: 18px; padding: 12px 0; border-bottom: 1px solid var(--line); text-transform: capitalize; }
 .pricing-grid article { display: flex; flex-direction: column; gap: 18px; }
 .pricing-grid article > strong { font-size: 2rem; }
 .pricing-grid ul { flex: 1; display: grid; gap: 12px; padding-left: 20px; color: var(--muted); }
 .pricing-grid button:disabled { opacity: .7; cursor: not-allowed; }
-@media (max-width: 720px) { .account-summary, .pricing-grid { grid-template-columns: 1fr; } }
+@media (max-width: 720px) { .account-summary, .pricing-grid { grid-template-columns: 1fr; } .account-admin { align-items: stretch; flex-direction: column; } }
 
 .hero { max-width: 1240px; margin: 34px auto 0; padding: 58px 60px; border-radius: 30px; display: grid; grid-template-columns: .9fr 1.1fr; align-items: center; gap: 58px; background: radial-gradient(circle at 5% 10%, rgba(255,255,255,.9), transparent 35%), linear-gradient(130deg, #edf3e8, #e1ecdf 55%, #d8e7de); overflow: hidden; position: relative; }
 .hero::after { content: ""; position: absolute; width: 320px; height: 320px; left: -180px; bottom: -220px; border: 48px solid rgba(29,107,86,.08); border-radius: 50%; }

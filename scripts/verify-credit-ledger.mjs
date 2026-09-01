@@ -33,7 +33,15 @@ try {
   await sql`SELECT consume_tool_credits(${second[0].id}::uuid)`;
   const consumed = await sql`SELECT free_credits AS "freeCredits" FROM credit_wallets WHERE user_id = ${userId}`;
   if (Number(consumed[0]?.freeCredits) !== 0) throw new Error('Idempotent consumption verification failed.');
-  process.stdout.write('Credit reservation, refund, and consumption verification passed.\n');
+  const grantKey = randomUUID();
+  await sql`SELECT * FROM grant_test_credits(${userId}, 1, ${grantKey}::uuid)`;
+  await sql`SELECT * FROM grant_test_credits(${userId}, 1, ${grantKey}::uuid)`;
+  const granted = await sql`SELECT free_credits AS "freeCredits" FROM credit_wallets WHERE user_id = ${userId}`;
+  const grantEvents = await sql`SELECT COUNT(*)::int AS count FROM credit_ledger WHERE user_id = ${userId} AND event_type = 'grant'`;
+  if (Number(granted[0]?.freeCredits) !== 1 || Number(grantEvents[0]?.count) !== 1) {
+    throw new Error('Idempotent test-credit grant verification failed.');
+  }
+  process.stdout.write('Credit reservation, refund, consumption, and grant verification passed.\n');
 } finally {
   await sql`DELETE FROM tool_accounts WHERE user_id = ${userId}`;
 }
