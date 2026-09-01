@@ -4,7 +4,7 @@ An Astro and React media-tool product with browser-local video and image utiliti
 
 ## Product surfaces
 
-- Browser-local: video conversion, compression, trimming, merging, audio extraction, video-to-GIF, image conversion, image compression, and image resizing.
+- Browser-local: video conversion, compression, trimming, merging, audio extraction, video-to-GIF, image conversion, image compression, image resizing, and SVG-to-image conversion from code or a public URL.
 - Cloud AI: background removal through the private Vercel → Cloud Run → Replicate flow. One successful result uses one AI credit; provider failures refund the reservation.
 - Account: Google identity, Free/Pro entitlement model, welcome credit, wallet, immutable credit ledger, and recent usage.
 - Pricing: current Free benefits and truthful Coming Soon paid plans. Checkout is intentionally disabled until the payment phase.

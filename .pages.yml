@@ -367,6 +367,7 @@ content:
           - { name: image-converter, label: 图片转换 / Image converter, type: object, fields: *utility_page_fields }
           - { name: image-compressor, label: 图片压缩 / Image compressor, type: object, fields: *utility_page_fields }
           - { name: image-resizer, label: 图片改尺寸 / Image resizer, type: object, fields: *utility_page_fields }
+          - { name: svg-to-image, label: SVG 转图片 / SVG to image, type: object, fields: *utility_page_fields }
       - name: tool
         label: 本地处理表单 / Local tool form
         type: object

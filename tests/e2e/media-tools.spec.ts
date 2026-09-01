@@ -58,7 +58,7 @@ test('converts and compresses a tiny generated video entirely in the browser', a
 });
 
 test('processes an image locally and publishes every low-cost tool route', async ({ page, request }) => {
-  for (const path of ['/video-trimmer', '/video-merger', '/audio-extractor', '/video-to-gif', '/image-converter', '/image-compressor', '/image-resizer']) {
+  for (const path of ['/video-trimmer', '/video-merger', '/audio-extractor', '/video-to-gif', '/image-converter', '/image-compressor', '/image-resizer', '/svg-to-image']) {
     expect((await request.get(path)).status(), path).toBe(200);
   }
   await page.goto('/image-converter');
@@ -67,6 +67,44 @@ test('processes an image locally and publishes every low-cost tool route', async
   const result = page.getByRole('link', { name: 'Save converted.png' });
   await expect(result).toBeVisible();
   await expect(result).toHaveAttribute('href', /^blob:/);
+});
+
+test('converts SVG code and a fetched SVG URL into selected local image formats', async ({ page }) => {
+  const apiRequests = trackProcessingApiRequests(page);
+  await page.route('https://assets.example.test/icon.svg', (route) => route.fulfill({
+    status: 200,
+    contentType: 'image/svg+xml',
+    body: '<svg xmlns="http://www.w3.org/2000/svg" width="3" height="2"><rect width="3" height="2" fill="#2563eb"/></svg>',
+  }));
+  await page.goto('/svg-to-image');
+  await page.getByLabel('SVG code').fill('<svg xmlns="http://www.w3.org/2000/svg" width="2" height="2"><rect width="2" height="2" fill="#2563eb"/></svg>');
+  let downloadPromise = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Save PNG' }).click();
+  let download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe('streamnest-svg.png');
+  let stream = await download.createReadStream();
+  let chunks: Buffer[] = [];
+  for await (const chunk of stream) chunks.push(Buffer.from(chunk));
+  expect(Buffer.concat(chunks).subarray(0, 8).toString('hex')).toBe('89504e470d0a1a0a');
+
+  await page.getByRole('button', { name: 'Use URL' }).click();
+  await page.getByLabel('SVG URL').fill('https://assets.example.test/icon.svg');
+  downloadPromise = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Save PNG' }).click();
+  download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe('streamnest-svg.png');
+  await expect(page.getByRole('img', { name: 'Converted SVG preview' })).toBeVisible();
+
+  await page.getByLabel('Output format').selectOption('jpeg');
+  downloadPromise = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Save JPG' }).click();
+  download = await downloadPromise;
+  expect(download.suggestedFilename()).toBe('streamnest-svg.jpg');
+  stream = await download.createReadStream();
+  chunks = [];
+  for await (const chunk of stream) chunks.push(Buffer.from(chunk));
+  expect(Buffer.concat(chunks).subarray(0, 3).toString('hex')).toBe('ffd8ff');
+  expect(apiRequests).toEqual([]);
 });
 
 test('shows the shared loading treatment while a local image is processing', async ({ page }) => {

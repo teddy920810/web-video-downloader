@@ -13,6 +13,7 @@ describe('product catalog', () => {
       'image-converter',
       'image-compressor',
       'image-resizer',
+      'svg-to-image',
       'background-remover',
     ]);
     expect(toolsForMode('utilities')).toHaveLength(TOOLS.length);

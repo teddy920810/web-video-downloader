@@ -17,6 +17,7 @@ describe('utilities CMS settings', () => {
       'image-converter',
       'image-compressor',
       'image-resizer',
+      'svg-to-image',
     ]);
     expect(parsed.converter.notes).toHaveLength(4);
     expect(parsed.compressor.notes).toHaveLength(4);
