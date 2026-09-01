@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildRobotsText, filterPostsForMode, isPostVisibleInMode, utilityLegalPages } from './mode-public-content';
+import { buildRobotsText, filterPostsForMode, isPostVisibleInMode } from './mode-public-content';
 
 describe('mode-specific public content', () => {
   const site = new URL('https://www.streamnest.io');
@@ -29,12 +29,4 @@ describe('mode-specific public content', () => {
     expect(isPostVisibleInMode({ productArea: 'downloader' }, 'utilities')).toBe(false);
   });
 
-  it('describes local video and private AI image processing without downloader claims', () => {
-    const rendered = Object.values(utilityLegalPages).map((page) => JSON.stringify(page)).join(' ');
-    expect(rendered).toContain('process selected files in your browser');
-    expect(rendered).toContain('private object storage');
-    expect(rendered).toContain('Google sign-in');
-    expect(rendered).toContain('credit balance');
-    expect(rendered).not.toMatch(/YouTube|TikTok|Instagram|Cloud Run|Cloudflare R2|free successful download/i);
-  });
 });

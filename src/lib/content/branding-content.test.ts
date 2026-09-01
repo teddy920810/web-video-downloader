@@ -5,6 +5,7 @@ const contentFiles = [
   '../../content/settings/site.json',
   '../../content/legal/privacy.md',
   '../../content/legal/terms.md',
+  '../../content/legal/refund-policy.md',
 ];
 
 describe('public brand content', () => {

@@ -36,6 +36,12 @@ export const TOOLS: readonly ToolDefinition[] = [
   { id: 'background-remover', label: 'Background Remover', route: '/background-remover', category: 'image', processing: 'cloud', credits: 1 },
 ] as const;
 
+export const TOOL_GROUPS = [
+  { id: 'video', label: 'Video tools', tools: TOOLS.filter((tool) => tool.category === 'video') },
+  { id: 'audio', label: 'Audio tools', tools: TOOLS.filter((tool) => tool.category === 'audio') },
+  { id: 'image', label: 'Image tools', tools: TOOLS.filter((tool) => tool.category === 'image') },
+] as const;
+
 export const PRODUCT_PLANS = {
   free: {
     id: 'free',

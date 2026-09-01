@@ -24,6 +24,10 @@ export default function AuthControls() {
     }
   }
 
+  if (isPending) {
+    return <span className="header-auth-loading" role="status"><span className="sr-only">Loading account</span></span>;
+  }
+
   if (session?.user) {
     return (
       <button className="header-account" type="button" onClick={signOut} disabled={actionPending} title="Sign out">
@@ -35,7 +39,7 @@ export default function AuthControls() {
   }
 
   return (
-    <button className="header-cta" type="button" onClick={signIn} disabled={isPending || actionPending}>
+    <button className="header-cta" type="button" onClick={signIn} disabled={actionPending}>
       {actionPending ? 'Connecting…' : 'Sign in with Google'}
     </button>
   );

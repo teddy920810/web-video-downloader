@@ -46,7 +46,28 @@ describe('SiteLayout Google Analytics integration', () => {
     expect(globalCss).toContain('.site-header nav > a, .nav-dropdown-trigger { font-weight: 750; }');
     expect(globalCss).not.toMatch(/\.nav-dropdown-trigger\s*\{[^}]*font:\s*inherit/);
     expect(globalCss).toMatch(/\.utility-site \.nav-dropdown-panel\s*\{[^}]*color:\s*var\(--ink\)/);
+    expect(globalCss).toMatch(/\.download-site \.nav-dropdown-panel\s*\{[^}]*color:\s*var\(--ink\)/);
     expect(layoutSource).toContain("dropdown.addEventListener('pointerleave'");
+  });
+
+  it('groups the tools menu and keeps the brand, navigation, and auth columns stable', () => {
+    expect(layoutSource).toContain('TOOL_GROUPS.map');
+    expect(layoutSource).toContain('class="nav-dropdown-group"');
+    expect(layoutSource).toContain('class="nav-dropdown-group-title"');
+    expect(globalCss).toMatch(/\.site-header\s*\{[^}]*grid-template-columns:\s*minmax\(170px, 1fr\) auto minmax\(170px, 1fr\)/);
+    expect(globalCss).toMatch(/\.header-auth\s*\{[^}]*inline-size:\s*190px/);
+    expect(globalCss).toContain('.header-auth-loading');
+  });
+
+  it('renders grouped footer columns and hides unconfigured social links', () => {
+    expect(layoutSource).toContain('class="footer-tool-groups"');
+    expect(layoutSource).toContain('class="footer-link-group"');
+    expect(layoutSource).toContain('site.footer.socialLinks.length > 0');
+    expect(layoutSource).toContain('class="footer-social-links"');
+    expect(layoutSource).toContain('Refund Policy');
+    expect(layoutSource).toContain('Privacy Policy');
+    expect(layoutSource).toContain('Terms of Use');
+    expect(globalCss).toMatch(/\.site-footer\s*\{[^}]*grid-template-columns:\s*minmax\(220px, 1\.15fr\) minmax\(0, 3fr\)/);
   });
 
   it('renders every brand mark as the CMS-managed logo image', () => {
@@ -77,8 +98,14 @@ describe('SiteLayout Google Analytics integration', () => {
     expect(layoutSource).toContain('aria-expanded="false"');
     expect(layoutSource).toContain('data-nav-dropdown-trigger');
     expect(layoutSource).toContain("event.key === 'Escape'");
+    expect(layoutSource).toContain("header?.addEventListener('click', (event) => event.stopPropagation())");
+    expect(layoutSource).toContain("trigger.addEventListener('click', (event) => {");
+    expect(layoutSource).toContain('event.stopPropagation();');
     expect(globalCss).toContain('.site-header.is-menu-open nav');
     expect(globalCss).toContain('.nav-dropdown.is-open .nav-dropdown-panel');
+    expect(globalCss).toMatch(/@media \(max-width: 900px\)[\s\S]*?\.header-auth\s*\{[^}]*grid-row:\s*1/);
+    expect(globalCss).toMatch(/@media \(max-width: 900px\)[\s\S]*?\.mobile-menu-toggle\s*\{[^}]*grid-row:\s*1/);
+    expect(globalCss).toMatch(/@media \(max-width: 900px\)[\s\S]*?\.download-site \.site-header\s*\{[^}]*height:\s*auto/);
   });
 
   it('lets the browser infer the CMS favicon media type', () => {

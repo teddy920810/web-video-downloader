@@ -287,6 +287,39 @@ content:
                 type: string
                 required: true
                 description: 链接目标；站内链接使用以 / 开头的路径。
+          - name: socialLinks
+            label: 社交媒体链接（不配置则不展示）
+            type: object
+            description: 只填写已经启用并由团队维护的官方 HTTPS 社媒地址；列表为空时 Footer 不渲染社媒区域。
+            list:
+              collapsible:
+                collapsed: true
+                summary: "{label}"
+            fields:
+              - name: platform
+                label: 平台
+                type: select
+                required: true
+                options:
+                  values:
+                    - { name: x, label: X }
+                    - { name: youtube, label: YouTube }
+                    - { name: instagram, label: Instagram }
+                    - { name: tiktok, label: TikTok }
+                    - { name: facebook, label: Facebook }
+                    - { name: linkedin, label: LinkedIn }
+                    - { name: github, label: GitHub }
+                    - { name: discord, label: Discord }
+              - name: label
+                label: 无障碍名称｜ARIA
+                type: string
+                required: true
+                description: 例如 Streamnest on YouTube。
+              - name: href
+                label: 官方 HTTPS 地址｜HREF
+                type: string
+                required: true
+                description: 必须使用 https:// 开头；未启用的社媒不要添加。
 
   - name: utilities-settings
     label: 视频工具 / Video tools

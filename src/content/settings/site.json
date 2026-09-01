@@ -97,14 +97,19 @@
     "tagline": "Private video tools for practical browser and desktop workflows.",
     "links": [
       {
-        "label": "Privacy",
-        "href": "/privacy"
+        "label": "Pricing",
+        "href": "/pricing"
       },
       {
-        "label": "Terms",
-        "href": "/terms"
+        "label": "Account",
+        "href": "/account"
+      },
+      {
+        "label": "Desktop App",
+        "href": "/#desktop-app"
       }
-    ]
+    ],
+    "socialLinks": []
   },
   "themeColorFallback": "#6610f2"
 }

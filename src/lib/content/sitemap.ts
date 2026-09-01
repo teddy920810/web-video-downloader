@@ -37,6 +37,7 @@ export function buildSitemapEntries({
     withRule('/blog', settings.lastmod, settings.groups.blogIndex),
     withRule('/privacy', settings.lastmod, settings.groups.legalPages),
     withRule('/terms', settings.lastmod, settings.groups.legalPages),
+    withRule('/refund-policy', settings.lastmod, settings.groups.legalPages),
     ...posts
       .filter((post) => !post.draft)
       .map((post) => withRule(`/blog/${post.slug}`, post.publishedAt, settings.groups.blogPosts)),
@@ -57,6 +58,7 @@ export function buildUtilitiesSitemapEntries(settings: SitemapSettings, posts: B
     ...visiblePosts.map((post) => withRule(`/blog/${post.slug}`, post.publishedAt, settings.groups.blogPosts)),
     withRule('/privacy', settings.lastmod, settings.groups.legalPages),
     withRule('/terms', settings.lastmod, settings.groups.legalPages),
+    withRule('/refund-policy', settings.lastmod, settings.groups.legalPages),
   ];
 }
 
