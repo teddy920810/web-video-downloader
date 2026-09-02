@@ -9,6 +9,18 @@ export type LocalVideoMetadata = {
   type: string;
 };
 
+export type BrowserVideoMetadata = {
+  size: number;
+  durationSeconds?: number;
+  width?: number;
+  height?: number;
+};
+
+export type BrowserMediaRisk = {
+  level: 'standard' | 'elevated' | 'high';
+  reasons: readonly string[];
+};
+
 export type MediaPlan = {
   inputName: string;
   inputNames?: string[];
@@ -56,6 +68,41 @@ function safeInputName(name: string) {
   return extension ? `input.${extension}` : 'input.video';
 }
 
+export function assessBrowserMediaRisk(metadata: BrowserVideoMetadata): BrowserMediaRisk {
+  const duration = Number.isFinite(metadata.durationSeconds) ? Math.max(0, metadata.durationSeconds ?? 0) : 0;
+  const width = Number.isFinite(metadata.width) ? Math.max(0, metadata.width ?? 0) : 0;
+  const height = Number.isFinite(metadata.height) ? Math.max(0, metadata.height ?? 0) : 0;
+  const pixels = width * height;
+  const pixelSeconds = pixels * duration;
+  const highReasons = [
+    metadata.size > 150 * 1024 * 1024 ? 'large file' : null,
+    duration > 30 * 60 ? 'long duration' : null,
+    pixels > 2560 * 1440 ? 'very high resolution' : null,
+    pixelSeconds > 4_000_000_000 ? 'high decoded-frame workload' : null,
+  ].filter((reason): reason is string => Boolean(reason));
+  if (highReasons.length) return { level: 'high', reasons: highReasons };
+
+  const elevatedReasons = [
+    metadata.size > 80 * 1024 * 1024 ? 'medium-large file' : null,
+    duration > 15 * 60 ? 'extended duration' : null,
+    pixels > 1920 * 1080 ? 'high resolution' : null,
+    pixelSeconds > 1_000_000_000 ? 'elevated decoded-frame workload' : null,
+  ].filter((reason): reason is string => Boolean(reason));
+  return elevatedReasons.length
+    ? { level: 'elevated', reasons: elevatedReasons }
+    : { level: 'standard', reasons: [] };
+}
+
+function safeRetryWidth(risk: BrowserMediaRisk) {
+  return risk.level === 'high' ? '854' : '1280';
+}
+
+function compatibleCopyTarget(inputFileName: string, target: ConversionTarget) {
+  const extension = extensionOf(inputFileName);
+  return (target === 'mp4' && ['m4v', 'mov', 'mp4'].includes(extension))
+    || (target === 'webm' && extension === 'webm');
+}
+
 export function buildConversionPlan(inputFileName: string, target: ConversionTarget): MediaPlan {
   const inputName = safeInputName(inputFileName);
   if (target === 'mp3') {
@@ -98,6 +145,61 @@ export function buildConversionPlan(inputFileName: string, target: ConversionTar
   };
 }
 
+export function buildConversionPlanAttempts(
+  inputFileName: string,
+  target: ConversionTarget,
+  risk: BrowserMediaRisk,
+): MediaPlan[] {
+  const inputName = safeInputName(inputFileName);
+  const outputName = `converted.${target}`;
+  const mimeType = target === 'mp3' ? 'audio/mpeg' : `video/${target}`;
+  const primary = compatibleCopyTarget(inputFileName, target)
+    ? {
+        inputName,
+        outputName,
+        mimeType,
+        args: ['-i', inputName, '-map', '0:v:0', '-map', '0:a?', '-c', 'copy', ...(target === 'mp4' ? ['-movflags', '+faststart'] : []), outputName],
+      }
+    : buildConversionPlan(inputFileName, target);
+  if (target === 'mp3') {
+    return [primary, {
+      inputName,
+      outputName,
+      mimeType,
+      args: ['-i', inputName, '-vn', '-c:a', 'libmp3lame', '-b:a', '128k', outputName],
+    }];
+  }
+  const maxWidth = safeRetryWidth(risk);
+  if (target === 'webm') {
+    return [primary, {
+      inputName,
+      outputName,
+      mimeType,
+      args: [
+        '-i', inputName,
+        '-map', '0:v:0', '-map', '0:a?',
+        '-vf', `scale=min(${maxWidth}\\,iw):-2`,
+        '-c:v', 'libvpx', '-deadline', 'realtime', '-cpu-used', '8', '-threads', '1',
+        '-c:a', 'libopus', '-b:a', '96k',
+        outputName,
+      ],
+    }];
+  }
+  return [primary, {
+    inputName,
+    outputName,
+    mimeType,
+    args: [
+      '-i', inputName,
+      '-map', '0:v:0', '-map', '0:a?',
+      '-vf', `scale=min(${maxWidth}\\,iw):-2`,
+      '-c:v', 'libx264', '-preset', 'ultrafast', '-threads', '1',
+      '-c:a', 'aac', '-b:a', '96k', '-movflags', '+faststart',
+      outputName,
+    ],
+  }];
+}
+
 const COMPRESSION_PRESETS: Record<CompressionPreset, { crf: string; maxWidth: string; audioBitrate: string }> = {
   small: { crf: '32', maxWidth: '854', audioBitrate: '96k' },
   balanced: { crf: '28', maxWidth: '1280', audioBitrate: '128k' },
@@ -124,6 +226,28 @@ export function buildCompressionPlan(inputFileName: string, preset: CompressionP
   };
 }
 
+export function buildCompressionPlanAttempts(
+  inputFileName: string,
+  preset: CompressionPreset,
+  risk: BrowserMediaRisk,
+): MediaPlan[] {
+  const primary = buildCompressionPlan(inputFileName, preset);
+  const maxWidth = safeRetryWidth(risk);
+  return [primary, {
+    inputName: primary.inputName,
+    outputName: primary.outputName,
+    mimeType: primary.mimeType,
+    args: [
+      '-i', primary.inputName,
+      '-map', '0:v:0', '-map', '0:a?',
+      '-vf', `scale=min(${maxWidth}\\,iw):-2`,
+      '-c:v', 'libx264', '-preset', 'ultrafast', '-threads', '1', '-crf', '30',
+      '-c:a', 'aac', '-b:a', '96k', '-movflags', '+faststart',
+      primary.outputName,
+    ],
+  }];
+}
+
 export function buildTrimPlan(inputFileName: string, options: { startSeconds: number; endSeconds: number }): MediaPlan {
   if (!Number.isFinite(options.startSeconds) || options.startSeconds < 0) throw new Error('Start time must be zero or greater.');
   if (!Number.isFinite(options.endSeconds) || options.endSeconds <= options.startSeconds) throw new Error('End time must be after the start time.');
@@ -137,12 +261,47 @@ export function buildTrimPlan(inputFileName: string, options: { startSeconds: nu
   };
 }
 
+export function buildTrimPlanAttempts(
+  inputFileName: string,
+  options: { startSeconds: number; endSeconds: number },
+  risk: BrowserMediaRisk,
+): MediaPlan[] {
+  const fallback = buildTrimPlan(inputFileName, options);
+  const duration = options.endSeconds - options.startSeconds;
+  const maxWidth = safeRetryWidth(risk);
+  return [{
+    inputName: fallback.inputName,
+    outputName: fallback.outputName,
+    mimeType: fallback.mimeType,
+    args: ['-ss', String(options.startSeconds), '-i', fallback.inputName, '-t', String(duration), '-map', '0:v:0', '-map', '0:a?', '-c', 'copy', '-avoid_negative_ts', 'make_zero', fallback.outputName],
+  }, {
+    ...fallback,
+    args: [
+      '-ss', String(options.startSeconds), '-i', fallback.inputName, '-t', String(duration),
+      '-map', '0:v:0', '-map', '0:a?', '-vf', `scale=min(${maxWidth}\\,iw):-2`,
+      '-c:v', 'libx264', '-preset', 'ultrafast', '-threads', '1',
+      '-c:a', 'aac', '-b:a', '96k', '-movflags', '+faststart', fallback.outputName,
+    ],
+  }];
+}
+
 export function buildAudioExtractionPlan(inputFileName: string, target: 'mp3' | 'wav'): MediaPlan {
   const inputName = safeInputName(inputFileName);
   if (target === 'wav') {
     return { inputName, outputName: 'audio.wav', mimeType: 'audio/wav', args: ['-i', inputName, '-vn', '-c:a', 'pcm_s16le', 'audio.wav'] };
   }
   return { inputName, outputName: 'audio.mp3', mimeType: 'audio/mpeg', args: ['-i', inputName, '-vn', '-c:a', 'libmp3lame', '-b:a', '192k', 'audio.mp3'] };
+}
+
+export function buildAudioExtractionPlanAttempts(inputFileName: string, target: 'mp3' | 'wav'): MediaPlan[] {
+  const primary = buildAudioExtractionPlan(inputFileName, target);
+  return [primary, target === 'wav' ? {
+    ...primary,
+    args: ['-i', primary.inputName, '-vn', '-c:a', 'pcm_s16le', '-ar', '44100', '-ac', '2', primary.outputName],
+  } : {
+    ...primary,
+    args: ['-i', primary.inputName, '-vn', '-c:a', 'libmp3lame', '-b:a', '128k', primary.outputName],
+  }];
 }
 
 export function buildGifPlan(inputFileName: string, options: { startSeconds: number; durationSeconds: number; width: number }): MediaPlan {
@@ -157,6 +316,20 @@ export function buildGifPlan(inputFileName: string, options: { startSeconds: num
     mimeType: 'image/gif',
     args: ['-ss', String(options.startSeconds), '-t', String(options.durationSeconds), '-i', inputName, '-filter_complex', filter, '-loop', '0', 'clip.gif'],
   };
+}
+
+export function buildGifPlanAttempts(
+  inputFileName: string,
+  options: { startSeconds: number; durationSeconds: number; width: number },
+  risk: BrowserMediaRisk,
+): MediaPlan[] {
+  const primary = buildGifPlan(inputFileName, options);
+  const safeWidth = Math.min(options.width, risk.level === 'high' ? 480 : 640);
+  const filter = `fps=8,scale=${safeWidth}:-1:flags=bilinear,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse`;
+  return [primary, {
+    ...primary,
+    args: ['-ss', String(options.startSeconds), '-t', String(options.durationSeconds), '-i', primary.inputName, '-filter_complex', filter, '-loop', '0', primary.outputName],
+  }];
 }
 
 export function buildMergePlan(inputFileNames: string[]): MediaPlan {
@@ -174,4 +347,21 @@ export function buildMergePlan(inputFileNames: string[]): MediaPlan {
     supportFiles: [{ name: 'concat.txt', content: manifest }],
     args: ['-f', 'concat', '-safe', '0', '-i', 'concat.txt', '-c:v', 'libx264', '-preset', 'veryfast', '-c:a', 'aac', '-movflags', '+faststart', 'merged.mp4'],
   };
+}
+
+export function buildMergePlanAttempts(inputFileNames: string[], risk: BrowserMediaRisk): MediaPlan[] {
+  const fallback = buildMergePlan(inputFileNames);
+  const maxWidth = safeRetryWidth(risk);
+  return [{
+    ...fallback,
+    args: ['-f', 'concat', '-safe', '0', '-i', 'concat.txt', '-c', 'copy', fallback.outputName],
+  }, {
+    ...fallback,
+    args: [
+      '-f', 'concat', '-safe', '0', '-i', 'concat.txt',
+      '-vf', `scale=min(${maxWidth}\\,iw):-2`,
+      '-c:v', 'libx264', '-preset', 'ultrafast', '-threads', '1',
+      '-c:a', 'aac', '-b:a', '96k', '-movflags', '+faststart', fallback.outputName,
+    ],
+  }];
 }

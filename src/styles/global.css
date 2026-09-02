@@ -207,6 +207,7 @@ img { display: block; max-width: 100%; }
 @keyframes tool-processing-spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .tool-processing-spinner { animation-duration: 1.8s; } }
 .local-media-privacy { margin: 18px 0 0; display: flex; align-items: center; gap: 8px; color: #aeb9db; font-size: .74rem; }
+.local-media-compatibility { margin: 14px 0 0; padding: 10px 12px; border: 1px solid rgba(214,108,255,.24); border-radius: 10px; color: #d9def4; background: rgba(120,74,183,.14); font-size: .78rem; line-height: 1.5; }
 .background-remover-tool { min-width: 0; }
 .background-dropzone { min-height: 430px; padding: 34px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; color: #fff; border: 1px dashed rgba(255,255,255,.38); border-radius: 24px; background: rgba(7,15,55,.78); box-shadow: 0 28px 80px rgba(0,0,0,.3); cursor: pointer; text-align: center; }
 .background-dropzone:hover { border-color: var(--download-magenta); background: rgba(21,31,83,.92); }

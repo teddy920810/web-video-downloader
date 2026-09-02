@@ -5,17 +5,18 @@ import { FileVideoIcon } from '@phosphor-icons/react/FileVideo';
 import { ShieldCheckIcon } from '@phosphor-icons/react/ShieldCheck';
 import { StopCircleIcon } from '@phosphor-icons/react/StopCircle';
 import {
-  buildCompressionPlan,
-  buildConversionPlan,
-  buildAudioExtractionPlan,
-  buildGifPlan,
-  buildTrimPlan,
+  assessBrowserMediaRisk,
+  buildCompressionPlanAttempts,
+  buildConversionPlanAttempts,
+  buildAudioExtractionPlanAttempts,
+  buildGifPlanAttempts,
+  buildTrimPlanAttempts,
   describeBrowserMediaError,
   validateLocalVideo,
   type CompressionPreset,
   type ConversionTarget,
-  type MediaPlan,
 } from '../../lib/media/browser-media';
+import { BrowserMediaJobCancelledError, runBrowserMediaPlans } from '../../lib/media/browser-job';
 import type { BrowserMediaRuntime } from '../../lib/media/ffmpeg-runtime';
 import type { LocalMediaToolCopy } from '../../lib/content/utilities-settings';
 import { trackToolEvent } from '../../lib/analytics/tool-events';
@@ -51,7 +52,10 @@ export default function LocalVideoTool({ mode, copy, heading }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<{ url: string; name: string } | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [videoMetadata, setVideoMetadata] = useState<{ durationSeconds?: number; width?: number; height?: number }>({});
+  const [retrying, setRetrying] = useState(false);
   const runtime = useRef<BrowserMediaRuntime | null>(null);
+  const cancelRequested = useRef(false);
 
   useEffect(() => () => runtime.current?.terminate(), []);
   useEffect(() => () => {
@@ -67,6 +71,7 @@ export default function LocalVideoTool({ mode, copy, heading }: Props) {
     setProgress(0);
     setError(null);
     setPhase('idle');
+    setRetrying(false);
   }
 
   function selectFile(event: ChangeEvent<HTMLInputElement>) {
@@ -75,6 +80,7 @@ export default function LocalVideoTool({ mode, copy, heading }: Props) {
     if (!selected) {
       setFile(null);
       setPreviewUrl(null);
+      setVideoMetadata({});
       return;
     }
     const validation = validateLocalVideo(selected);
@@ -86,42 +92,59 @@ export default function LocalVideoTool({ mode, copy, heading }: Props) {
       return;
     }
     setFile(selected);
+    setVideoMetadata({});
     setPreviewUrl(URL.createObjectURL(selected));
   }
 
   async function processVideo() {
     if (!file) return;
     resetResult();
+    cancelRequested.current = false;
     setPhase('loading');
     const toolId = mode === 'audio' ? 'audio-extractor' : mode === 'gif' ? 'video-to-gif' : `video-${mode}`;
     trackToolEvent(toolId, 'started', 'local');
     try {
-      const { createBrowserMediaRuntime } = await import('../../lib/media/ffmpeg-runtime');
-      const engine = await createBrowserMediaRuntime();
-      runtime.current = engine;
-      let plan: MediaPlan;
-      if (mode === 'converter') plan = buildConversionPlan(file.name, target);
-      else if (mode === 'compressor') plan = buildCompressionPlan(file.name, compressionPreset);
-      else if (mode === 'trimmer') plan = buildTrimPlan(file.name, { startSeconds, endSeconds });
-      else if (mode === 'audio') plan = buildAudioExtractionPlan(file.name, audioTarget);
-      else plan = buildGifPlan(file.name, { startSeconds, durationSeconds: gifDuration, width: gifWidth });
+      const risk = assessBrowserMediaRisk({ size: file.size, ...videoMetadata });
+      const plans = mode === 'converter'
+        ? buildConversionPlanAttempts(file.name, target, risk)
+        : mode === 'compressor'
+          ? buildCompressionPlanAttempts(file.name, compressionPreset, risk)
+          : mode === 'trimmer'
+            ? buildTrimPlanAttempts(file.name, { startSeconds, endSeconds }, risk)
+            : mode === 'audio'
+              ? buildAudioExtractionPlanAttempts(file.name, audioTarget)
+              : buildGifPlanAttempts(file.name, { startSeconds, durationSeconds: gifDuration, width: gifWidth }, risk);
       setPhase('processing');
-      const blob = await engine.run(file, plan, setProgress);
-      setResult({ url: URL.createObjectURL(blob), name: plan.outputName });
+      const blob = await runBrowserMediaPlans({
+        files: [file],
+        plans,
+        createRuntime: async () => {
+          const { createBrowserMediaRuntime } = await import('../../lib/media/ffmpeg-runtime');
+          return createBrowserMediaRuntime();
+        },
+        onProgress: setProgress,
+        onRuntime: (current) => { runtime.current = current; },
+        onRetry: () => {
+          setRetrying(true);
+          setProgress(0);
+          trackToolEvent(toolId, 'retried', 'local');
+        },
+        isCancelled: () => cancelRequested.current,
+      });
+      setResult({ url: URL.createObjectURL(blob), name: plans[0].outputName });
       setProgress(1);
       setPhase('ready');
       trackToolEvent(toolId, 'succeeded', 'local');
     } catch (cause) {
-      setError(describeBrowserMediaError(cause));
+      const cancelled = cause instanceof BrowserMediaJobCancelledError || cancelRequested.current;
+      setError(cancelled ? 'Processing was cancelled.' : describeBrowserMediaError(cause));
       setPhase('failed');
-      trackToolEvent(toolId, 'failed', 'local');
-    } finally {
-      runtime.current?.terminate();
-      runtime.current = null;
+      if (!cancelled) trackToolEvent(toolId, 'failed', 'local');
     }
   }
 
   function cancel() {
+    cancelRequested.current = true;
     runtime.current?.terminate();
     runtime.current = null;
     setError('Processing was cancelled.');
@@ -131,6 +154,7 @@ export default function LocalVideoTool({ mode, copy, heading }: Props) {
   }
 
   const busy = phase === 'loading' || phase === 'processing';
+  const risk = file ? assessBrowserMediaRisk({ size: file.size, ...videoMetadata }) : null;
   const productIcon = mode === 'converter' ? '/assets/tools/converter-logo.svg' : mode === 'compressor' ? '/assets/tools/compressor-logo.svg' : null;
   const toolHeading = heading ?? (mode === 'converter' ? copy.converterHeading : copy.compressorHeading);
 
@@ -145,7 +169,7 @@ export default function LocalVideoTool({ mode, copy, heading }: Props) {
       </div>
 
       <div className={file ? 'local-media-workspace' : undefined}>
-        {file && previewUrl ? <div className="local-media-preview-shell"><video className="local-media-preview" src={previewUrl} controls={!busy} preload="metadata" />{busy ? <ProcessingOverlay label={phase === 'loading' ? copy.loadingLabel : copy.processingLabel} progress={progress} /> : null}</div> : null}
+        {file && previewUrl ? <div className="local-media-preview-shell"><video className="local-media-preview" src={previewUrl} controls={!busy} preload="metadata" onLoadedMetadata={(event) => setVideoMetadata({ durationSeconds: event.currentTarget.duration, width: event.currentTarget.videoWidth, height: event.currentTarget.videoHeight })} />{busy ? <ProcessingOverlay label={retrying ? 'Retrying with a browser-safe profile…' : phase === 'loading' ? copy.loadingLabel : copy.processingLabel} progress={progress} /> : null}</div> : null}
         <div className="local-media-controls">
           <label className="local-file-picker">
             <FileVideoIcon size={34} aria-hidden="true" />
@@ -179,6 +203,8 @@ export default function LocalVideoTool({ mode, copy, heading }: Props) {
       ) : (
         <div className="local-media-field-row"><label className="local-media-field"><span>Start · seconds</span><input type="number" min="0" step="0.1" value={startSeconds} disabled={busy} onChange={(event) => setStartSeconds(Number(event.target.value))} /></label><label className="local-media-field"><span>Duration · up to 30 seconds</span><input type="number" min="1" max="30" value={gifDuration} disabled={busy} onChange={(event) => setGifDuration(Number(event.target.value))} /></label><label className="local-media-field"><span>GIF width</span><select value={gifWidth} disabled={busy} onChange={(event) => setGifWidth(Number(event.target.value))}><option value="480">480 px</option><option value="640">640 px</option><option value="960">960 px</option></select></label></div>
       )}
+
+      {risk && risk.level !== 'standard' ? <p className="local-media-compatibility" role="status">This video may need compatibility mode. If the first attempt fails, Streamnest will retry once with a lower-memory profile.</p> : null}
 
       {error ? <p className="error-message" role="alert">{error}</p> : null}
 

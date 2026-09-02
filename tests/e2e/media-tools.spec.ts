@@ -57,6 +57,33 @@ test('converts and compresses a tiny generated video entirely in the browser', a
   expect(apiRequests).toEqual([]);
 });
 
+test('processes an optional real video through fast conversion and adaptive compression', async ({ page }) => {
+  const mediaSmokeFile = process.env.MEDIA_SMOKE_FILE;
+  test.skip(!mediaSmokeFile, 'Set MEDIA_SMOKE_FILE to a local video path for a non-fixture product smoke test.');
+  test.setTimeout(10 * 60_000);
+  const apiRequests = trackProcessingApiRequests(page);
+
+  for (const tool of [
+    { path: '/video-converter', action: 'Convert locally', result: 'Save converted.mp4' },
+    { path: '/video-compressor', action: 'Compress locally', result: 'Save compressed-balanced.mp4' },
+  ]) {
+    await page.goto(tool.path);
+    await page.locator('input[type=file]').setInputFiles(mediaSmokeFile!);
+    await page.getByRole('button', { name: tool.action }).click();
+    const result = page.getByRole('link', { name: tool.result });
+    await expect(result).toBeVisible({ timeout: 8 * 60_000 });
+    const downloadPromise = page.waitForEvent('download');
+    await result.click();
+    const download = await downloadPromise;
+    const stream = await download.createReadStream();
+    let bytes = 0;
+    for await (const chunk of stream) bytes += Buffer.byteLength(chunk);
+    expect(bytes).toBeGreaterThan(1024);
+  }
+
+  expect(apiRequests).toEqual([]);
+});
+
 test('processes an image locally and publishes every low-cost tool route', async ({ page, request }) => {
   for (const path of ['/video-trimmer', '/video-merger', '/audio-extractor', '/video-to-gif', '/image-converter', '/image-compressor', '/image-resizer', '/svg-to-image']) {
     expect((await request.get(path)).status(), path).toBe(200);
