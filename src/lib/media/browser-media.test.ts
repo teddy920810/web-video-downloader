@@ -6,6 +6,11 @@ import {
   buildGifPlan,
   buildMergePlan,
   buildTrimPlan,
+  assessBrowserMediaRisk,
+  buildCompressionPlanAttempts,
+  buildConversionPlanAttempts,
+  buildMergePlanAttempts,
+  buildTrimPlanAttempts,
   describeBrowserMediaError,
   validateLocalVideo,
   type LocalVideoMetadata,
@@ -59,6 +64,35 @@ describe('browser-local media conversion', () => {
     expect(describeBrowserMediaError(new Event('error')))
       .toBe('The local media engine could not start in this browser.');
   });
+
+  it('classifies browser workload risk from size, duration, and decoded frame dimensions', () => {
+    expect(assessBrowserMediaRisk({ size: 20 * 1024 * 1024, durationSeconds: 60, width: 1280, height: 720 }).level)
+      .toBe('standard');
+    expect(assessBrowserMediaRisk({ size: 90 * 1024 * 1024, durationSeconds: 16 * 60, width: 1920, height: 1080 }).level)
+      .toBe('elevated');
+    expect(assessBrowserMediaRisk({ size: 170 * 1024 * 1024, durationSeconds: 35 * 60, width: 3840, height: 2160 }).level)
+      .toBe('high');
+  });
+
+  it('uses a stream-copy fast path for compatible containers and one conservative retry plan', () => {
+    const attempts = buildConversionPlanAttempts('holiday.mov', 'mp4', { level: 'elevated', reasons: [] });
+
+    expect(attempts).toHaveLength(2);
+    expect(attempts[0].args).toContain('copy');
+    expect(attempts[0].args).not.toContain('libx264');
+    expect(attempts[1].args).toContain('libx264');
+    expect(attempts[1].args).toContain('ultrafast');
+    expect(attempts[1].args).toContain('scale=min(1280\\,iw):-2');
+    expect(attempts[1].args).toContain('1');
+  });
+
+  it('keeps an encode-first conversion bounded and provides a lower-memory retry', () => {
+    const attempts = buildConversionPlanAttempts('camera.mkv', 'webm', { level: 'high', reasons: [] });
+
+    expect(attempts[0].args).toContain('libvpx');
+    expect(attempts[1].args).toContain('scale=min(854\\,iw):-2');
+    expect(attempts[1].args).toContain('96k');
+  });
 });
 
 describe('browser-local media compression', () => {
@@ -76,6 +110,14 @@ describe('browser-local media compression', () => {
     expect(plan.args).toContain(`scale=min(${maxWidth}\\,iw):-2`);
     expect(plan.args.at(-1)).toBe(plan.outputName);
   });
+
+  it('provides a single high-risk compatibility retry for compression', () => {
+    const attempts = buildCompressionPlanAttempts(validVideo.name, 'quality', { level: 'high', reasons: [] });
+    expect(attempts).toHaveLength(2);
+    expect(attempts[0].args).toContain('scale=min(1920\\,iw):-2');
+    expect(attempts[1].args).toContain('scale=min(854\\,iw):-2');
+    expect(attempts[1].args).toContain('ultrafast');
+  });
 });
 
 describe('additional browser-local media tools', () => {
@@ -84,6 +126,17 @@ describe('additional browser-local media tools', () => {
     expect(plan.args).toContain('2');
     expect(plan.args).toContain('6');
     expect(plan.outputName).toBe('trimmed.mp4');
+  });
+
+  it('tries copy-first trim and merge before their safe transcode fallback', () => {
+    const risk = { level: 'standard', reasons: [] } as const;
+    const trim = buildTrimPlanAttempts(validVideo.name, { startSeconds: 2, endSeconds: 8 }, risk);
+    const merge = buildMergePlanAttempts(['one.mp4', 'two.mp4'], risk);
+
+    expect(trim[0].args).toContain('copy');
+    expect(trim[1].args).toContain('libx264');
+    expect(merge[0].args).toContain('copy');
+    expect(merge[1].args).toContain('libx264');
   });
 
   it('builds audio and GIF plans', () => {

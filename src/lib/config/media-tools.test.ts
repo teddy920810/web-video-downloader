@@ -106,6 +106,19 @@ describe('browser-local media tools', () => {
     expect(prepareScript).toContain("node_modules', '@ffmpeg', 'core'");
   });
 
+  it('connects adaptive preflight and one fresh-worker retry to every FFmpeg workspace', () => {
+    const video = readProjectFile('src/components/media/LocalVideoTool.tsx');
+    const merger = readProjectFile('src/components/media/VideoMergerTool.tsx');
+
+    expect(video).toContain('assessBrowserMediaRisk');
+    expect(video).toContain('runBrowserMediaPlans');
+    expect(video).toContain('onLoadedMetadata');
+    expect(video).toContain('onRetry');
+    expect(merger).toContain('buildMergePlanAttempts');
+    expect(merger).toContain('runBrowserMediaPlans');
+    expect(merger).toContain('onRetry');
+  });
+
   it('reuses one accessible loading treatment across every processing workspace', () => {
     const background = readProjectFile('src/components/image/BackgroundRemover.tsx');
     const image = readProjectFile('src/components/image/LocalImageTool.tsx');
