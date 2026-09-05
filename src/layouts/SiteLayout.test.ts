@@ -6,6 +6,9 @@ const globalCss = readFileSync(new URL('../styles/global.css', import.meta.url),
 const uploaderSource = readFileSync(new URL('../components/uploader/ImageUploader.tsx', import.meta.url), 'utf8');
 const popupSource = readFileSync(new URL('../pages/auth/popup.astro', import.meta.url), 'utf8');
 const notFoundSource = readFileSync(new URL('../pages/404.astro', import.meta.url), 'utf8');
+const siteSettings = JSON.parse(
+  readFileSync(new URL('../content/settings/site.json', import.meta.url), 'utf8'),
+) as { analytics: { googleMeasurementId: string } };
 
 describe('SiteLayout Google Analytics integration', () => {
   it('loads GA4 from site settings and supports disabling it', () => {
@@ -14,6 +17,10 @@ describe('SiteLayout Google Analytics integration', () => {
     expect(layoutSource).toContain('googletagmanager.com/gtag/js?id=${analyticsId}');
     expect(layoutSource).toContain("gtag('config', analyticsId)");
     expect(layoutSource).not.toContain('G-52ZWCGEZ7R');
+  });
+
+  it('routes production analytics to the Streamnest GA4 web stream', () => {
+    expect(siteSettings.analytics.googleMeasurementId).toBe('G-KSW5SSGK0H');
   });
 
   it('uses CMS-managed locale, theme color, and structured-data defaults', () => {
