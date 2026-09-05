@@ -54,6 +54,17 @@ describe('SiteLayout Google Analytics integration', () => {
     expect(layoutSource).toContain("'wait_for_update': 500");
   });
 
+  it('does not contact Google Analytics until analytics consent is granted', () => {
+    expect(layoutSource).not.toContain('<script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${analyticsId}`}>');
+    expect(layoutSource).toContain("document.createElement('script')");
+    expect(layoutSource).toContain("script.src = `https://www.googletagmanager.com/gtag/js?id=${analyticsId}`");
+    expect(layoutSource).toContain("storedConsent === 'analytics'");
+    const consentUpdate = layoutSource.indexOf("gtag('consent', 'update'");
+    const appendGoogleTag = layoutSource.indexOf('document.head.append(script)');
+    expect(consentUpdate).toBeGreaterThan(-1);
+    expect(consentUpdate).toBeLessThan(appendGoogleTag);
+  });
+
   it('offers persistent analytics consent choices and a footer settings control', () => {
     expect(layoutSource).toContain('data-cookie-consent');
     expect(layoutSource).toContain('data-consent-accept');

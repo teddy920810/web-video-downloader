@@ -102,8 +102,7 @@ const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultS
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
-    {analyticsId && <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${analyticsId}`}></script>}
-     {analyticsId && <script is:inline define:vars={{ analyticsId }}>
+    {analyticsId && <script is:inline define:vars={{ analyticsId }}>
        window.dataLayer = window.dataLayer || [];
        // Keep Google's official command-queue shape; gtag.js expects the arguments object.
        // eslint-disable-next-line prefer-rest-params
@@ -119,16 +118,36 @@ const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultS
          'analytics_storage': 'denied',
          'wait_for_update': 500,
        });
-       if (storedConsent === 'analytics') {
+       const updateAnalyticsConsent = (analyticsStorage) => {
          gtag('consent', 'update', {
            'ad_storage': 'denied',
            'ad_user_data': 'denied',
            'ad_personalization': 'denied',
-           'analytics_storage': 'granted',
+           'analytics_storage': analyticsStorage,
          });
+       };
+       const loadGoogleAnalytics = () => {
+         if (document.querySelector('[data-streamnest-google-tag]')) return;
+         const script = document.createElement('script');
+         script.async = true;
+         script.src = `https://www.googletagmanager.com/gtag/js?id=${analyticsId}`;
+         script.dataset.streamnestGoogleTag = 'true';
+         document.head.append(script);
+         gtag('js', new Date());
+         gtag('config', analyticsId);
+       };
+       window.streamnestAnalyticsConsent = {
+         grantAnalytics() {
+           updateAnalyticsConsent('granted');
+           loadGoogleAnalytics();
+         },
+         denyAnalytics() {
+           updateAnalyticsConsent('denied');
+         },
+       };
+       if (storedConsent === 'analytics') {
+         window.streamnestAnalyticsConsent.grantAnalytics();
        }
-       gtag('js', new Date());
-       gtag('config', analyticsId);
     </script>}
     <title>{title}</title>
     <meta name="description" content={description} />
@@ -275,13 +294,13 @@ const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultS
          try { localStorage.setItem(consentStorageKey, choice); } catch {
            // Apply the in-page choice even when persistent storage is unavailable.
          }
-         const analyticsWindow = window as Window & { gtag?: (...args: unknown[]) => void };
-         analyticsWindow.gtag?.('consent', 'update', {
-           'ad_storage': 'denied',
-           'ad_user_data': 'denied',
-           'ad_personalization': 'denied',
-           'analytics_storage': choice === 'analytics' ? 'granted' : 'denied',
-         });
+         type AnalyticsConsentBridge = {
+           grantAnalytics: () => void;
+           denyAnalytics: () => void;
+         };
+         const analyticsWindow = window as Window & { streamnestAnalyticsConsent?: AnalyticsConsentBridge };
+         if (choice === 'analytics') analyticsWindow.streamnestAnalyticsConsent?.grantAnalytics();
+         else analyticsWindow.streamnestAnalyticsConsent?.denyAnalytics();
          if (consentBanner) consentBanner.hidden = true;
        };
        if (consentBanner && !readConsentChoice()) consentBanner.hidden = false;
