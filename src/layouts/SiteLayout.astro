@@ -73,7 +73,11 @@ const legalLinks = [
 const footerTagline = site.footer.tagline;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const socialImage = new URL(image, Astro.site);
-const analyticsId = site.analytics.googleMeasurementId;
+const configuredAnalyticsId = site.analytics.googleMeasurementId;
+const analyticsId = Astro.url.origin === new URL(site.canonicalOrigin).origin
+  ? configuredAnalyticsId
+  : '';
+const showConsentControls = Boolean(configuredAnalyticsId);
 const isDownloaderHome = Astro.url.pathname === '/';
 const isDownloaderTheme = !utilitiesMode && (isDownloaderHome || Astro.url.pathname.startsWith('/blog'));
 const defaultSchema = {
@@ -99,13 +103,32 @@ const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultS
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
     {analyticsId && <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${analyticsId}`}></script>}
-    {analyticsId && <script is:inline define:vars={{ analyticsId }}>
-      window.dataLayer = window.dataLayer || [];
-      // Keep Google's official command-queue shape; gtag.js expects the arguments object.
-      // eslint-disable-next-line prefer-rest-params
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', analyticsId);
+     {analyticsId && <script is:inline define:vars={{ analyticsId }}>
+       window.dataLayer = window.dataLayer || [];
+       // Keep Google's official command-queue shape; gtag.js expects the arguments object.
+       // eslint-disable-next-line prefer-rest-params
+       function gtag(){dataLayer.push(arguments);}
+       let storedConsent = null;
+       try { storedConsent = localStorage.getItem('streamnest-consent-v1'); } catch {
+         // Storage can be unavailable in privacy-restricted browser contexts.
+       }
+       gtag('consent', 'default', {
+         'ad_storage': 'denied',
+         'ad_user_data': 'denied',
+         'ad_personalization': 'denied',
+         'analytics_storage': 'denied',
+         'wait_for_update': 500,
+       });
+       if (storedConsent === 'analytics') {
+         gtag('consent', 'update', {
+           'ad_storage': 'denied',
+           'ad_user_data': 'denied',
+           'ad_personalization': 'denied',
+           'analytics_storage': 'granted',
+         });
+       }
+       gtag('js', new Date());
+       gtag('config', analyticsId);
     </script>}
     <title>{title}</title>
     <meta name="description" content={description} />
@@ -165,11 +188,23 @@ const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultS
         <section class="footer-link-group"><h2>Video & audio tools</h2>{footerVideoAudioTools.map((tool) => <a href={tool.route}>{tool.label}</a>)}</section>
         <section class="footer-link-group"><h2>Image tools</h2>{footerImageTools.map((tool) => <a href={tool.route}>{tool.label}</a>)}</section>
         <section class="footer-link-group"><h2>Resources</h2>{footerResources.map((item) => <a href={item.href}>{item.label}</a>)}</section>
-        <section class="footer-link-group"><h2>Legal</h2>{legalLinks.map((item) => <a href={item.href}>{item.label}</a>)}</section>
-      </div>
-      <p class="footer-copyright">© {new Date().getFullYear()} {displayName}. All rights reserved.</p>
-    </footer>
-    <script>
+         <section class="footer-link-group"><h2>Legal</h2>{legalLinks.map((item) => <a href={item.href}>{item.label}</a>)}{showConsentControls && <button class="footer-cookie-settings" type="button" data-cookie-settings>Cookie settings</button>}</section>
+       </div>
+       <p class="footer-copyright">© {new Date().getFullYear()} {displayName}. All rights reserved.</p>
+     </footer>
+     {showConsentControls && (
+       <aside class="cookie-consent" role="dialog" aria-labelledby="cookie-consent-title" aria-describedby="cookie-consent-description" data-cookie-consent hidden>
+         <div>
+           <h2 id="cookie-consent-title">Your privacy choices</h2>
+           <p id="cookie-consent-description">We use optional Google Analytics to understand how Streamnest is used. Necessary storage keeps sign-in and core features working.</p>
+         </div>
+         <div class="cookie-consent-actions">
+           <button class="button-secondary" type="button" data-consent-necessary>Necessary only</button>
+           <button class="button-primary" type="button" data-consent-accept>Accept analytics</button>
+         </div>
+       </aside>
+     )}
+     <script>
       const header = document.querySelector<HTMLElement>('.site-header');
       const menuToggle = document.querySelector<HTMLButtonElement>('[data-mobile-menu-toggle]');
       const dropdownTriggers = document.querySelectorAll<HTMLButtonElement>('[data-nav-dropdown-trigger]');
@@ -220,8 +255,45 @@ const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultS
         }
       });
       header?.addEventListener('click', (event) => event.stopPropagation());
-      document.addEventListener('click', closeMenu);
-    </script>
+       document.addEventListener('click', closeMenu);
+
+       const consentBanner = document.querySelector<HTMLElement>('[data-cookie-consent]');
+       const consentSettings = document.querySelector<HTMLButtonElement>('[data-cookie-settings]');
+       const acceptAnalytics = document.querySelector<HTMLButtonElement>('[data-consent-accept]');
+       const necessaryOnly = document.querySelector<HTMLButtonElement>('[data-consent-necessary]');
+       const consentStorageKey = 'streamnest-consent-v1';
+       type ConsentChoice = 'analytics' | 'necessary';
+       const readConsentChoice = (): ConsentChoice | null => {
+         try {
+           const choice = localStorage.getItem(consentStorageKey);
+           return choice === 'analytics' || choice === 'necessary' ? choice : null;
+         } catch {
+           return null;
+         }
+       };
+       const updateConsent = (choice: ConsentChoice) => {
+         try { localStorage.setItem(consentStorageKey, choice); } catch {
+           // Apply the in-page choice even when persistent storage is unavailable.
+         }
+         const analyticsWindow = window as Window & { gtag?: (...args: unknown[]) => void };
+         analyticsWindow.gtag?.('consent', 'update', {
+           'ad_storage': 'denied',
+           'ad_user_data': 'denied',
+           'ad_personalization': 'denied',
+           'analytics_storage': choice === 'analytics' ? 'granted' : 'denied',
+         });
+         if (consentBanner) consentBanner.hidden = true;
+       };
+       if (consentBanner && !readConsentChoice()) consentBanner.hidden = false;
+       consentSettings?.addEventListener('click', () => {
+         if (consentBanner) {
+           consentBanner.hidden = false;
+           (readConsentChoice() === 'analytics' ? acceptAnalytics : necessaryOnly)?.focus();
+         }
+       });
+       acceptAnalytics?.addEventListener('click', () => updateConsent('analytics'));
+       necessaryOnly?.addEventListener('click', () => updateConsent('necessary'));
+     </script>
   </body>
 </html>
 

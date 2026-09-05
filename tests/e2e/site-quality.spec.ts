@@ -35,6 +35,36 @@ test('mobile visitors can open navigation', async ({ page }) => {
   await expect(page.locator('#site-navigation')).toBeVisible();
 });
 
+test('visitors can persist and revisit analytics consent without loading GA on localhost', async ({ page }) => {
+  const googleTagRequests: string[] = [];
+  page.on('request', (request) => {
+    if (request.url().includes('googletagmanager.com')) googleTagRequests.push(request.url());
+  });
+  await page.addInitScript(() => {
+    if (!sessionStorage.getItem('streamnest-consent-test-ready')) {
+      localStorage.removeItem('streamnest-consent-v1');
+      sessionStorage.setItem('streamnest-consent-test-ready', 'true');
+    }
+  });
+  await page.goto('/');
+
+  const banner = page.locator('[data-cookie-consent]');
+  await expect(banner).toBeVisible();
+  expect(googleTagRequests).toEqual([]);
+  await page.getByRole('button', { name: 'Necessary only' }).click();
+  await expect(banner).toBeHidden();
+  expect(await page.evaluate(() => localStorage.getItem('streamnest-consent-v1'))).toBe('necessary');
+
+  await page.reload();
+  await expect(banner).toBeHidden();
+  await page.getByRole('button', { name: 'Cookie settings' }).click();
+  await expect(banner).toBeVisible();
+  await page.getByRole('button', { name: 'Accept analytics' }).click();
+  await expect(banner).toBeHidden();
+  expect(await page.evaluate(() => localStorage.getItem('streamnest-consent-v1'))).toBe('analytics');
+  expect(googleTagRequests).toEqual([]);
+});
+
 test('blog visitors can filter guides by category and preserve the selection in the URL', async ({ page }) => {
   await page.goto('/blog');
 

@@ -26,6 +26,9 @@ describe('Streamnest legal content', () => {
     expect(privacy).toContain('Google');
     expect(privacy).toContain('Replicate');
     expect(privacy).toContain('Cloudflare R2');
+    expect(privacy).toContain('Google Consent Mode');
+    expect(privacy).toMatch(/accept or reject analytics/i);
+    expect(privacy).toMatch(/Cookie settings/i);
     expect(privacy).toMatch(/access|delete|correct/i);
     expect(terms).toContain('AI credits');
     expect(terms).toContain('Acceptable use');
