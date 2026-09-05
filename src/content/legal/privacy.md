@@ -6,7 +6,7 @@ eyebrow: Privacy policy
 heading: Clear data boundaries for every Streamnest tool
 ---
 
-**Last updated: September 2, 2026**
+**Last updated: September 5, 2026**
 
 This Privacy Policy explains what Streamnest collects, why it is used, how media tools process files, and the choices available to you. It applies to the Streamnest website, account, browser-local tools, and cloud AI features.
 
@@ -37,7 +37,9 @@ Google sign-in is used to authenticate your Streamnest account. We use account d
 
 ## Cookies and similar storage
 
-Streamnest uses cookies or comparable browser storage that are necessary for authentication, security, feature state, and service operation. Analytics is enabled only when a valid analytics identifier is configured. You can clear browser storage or restrict cookies, but authentication and some saved preferences may stop working.
+Streamnest uses cookies or comparable browser storage that are necessary for authentication, security, feature state, and service operation. These necessary functions remain available whether you accept or reject analytics.
+
+When Google Analytics is configured, Streamnest uses Google Consent Mode with analytics storage denied by default. You can accept or reject analytics in the privacy-choice banner. Advertising storage, advertising user data, and advertising personalization remain denied because Streamnest does not currently use these advertising features. Your choice is stored in your browser and can be reviewed at any time through **Cookie settings** in the footer. Clearing browser storage also clears this preference and may sign you out or reset other saved feature state.
 
 ## Service providers and international processing
 

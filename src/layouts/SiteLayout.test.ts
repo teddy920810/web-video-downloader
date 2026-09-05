@@ -42,6 +42,27 @@ describe('SiteLayout Google Analytics integration', () => {
     expect(layoutSource).not.toContain('function gtag(...args)');
   });
 
+  it('sets Consent Mode v2 defaults before measurement and keeps non-production traffic out of GA', () => {
+    expect(layoutSource).toContain("Astro.url.origin === new URL(site.canonicalOrigin).origin");
+    const consentDefault = layoutSource.indexOf("gtag('consent', 'default'");
+    const analyticsConfig = layoutSource.indexOf("gtag('config', analyticsId)");
+    expect(consentDefault).toBeGreaterThan(-1);
+    expect(consentDefault).toBeLessThan(analyticsConfig);
+    for (const consentType of ['ad_storage', 'ad_user_data', 'ad_personalization', 'analytics_storage']) {
+      expect(layoutSource).toContain(`'${consentType}'`);
+    }
+    expect(layoutSource).toContain("'wait_for_update': 500");
+  });
+
+  it('offers persistent analytics consent choices and a footer settings control', () => {
+    expect(layoutSource).toContain('data-cookie-consent');
+    expect(layoutSource).toContain('data-consent-accept');
+    expect(layoutSource).toContain('data-consent-necessary');
+    expect(layoutSource).toContain('data-cookie-settings');
+    expect(layoutSource).toContain("gtag('consent', 'update'");
+    expect(layoutSource).toContain('streamnest-consent-v1');
+  });
+
   it('renders CMS navigation children as a hover and keyboard dropdown', () => {
     expect(layoutSource).toContain('(item.children?.length ?? 0) > 0');
     expect(layoutSource).toContain('class="nav-dropdown"');

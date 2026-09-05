@@ -252,8 +252,8 @@ img { display: block; max-width: 100%; }
 .utility-site .site-header nav { color: #d6dcf2; }
 .utility-site .site-footer { max-width: none; padding-right: max(28px, calc((100vw - 1180px) / 2)); padding-left: max(28px, calc((100vw - 1180px) / 2)); color: #d6dcf2; background: var(--download-night); }
 .utility-site .footer-link-group h2 { color: #fff; }
-.utility-site .footer-link-group a { color: #b8c2e3; }
-.utility-site .footer-link-group a:hover { color: #d9b7ff; }
+.utility-site .footer-link-group a, .utility-site .footer-cookie-settings { color: #b8c2e3; }
+.utility-site .footer-link-group a:hover, .utility-site .footer-cookie-settings:hover { color: #d9b7ff; }
 .utility-site .footer-social-links a, .utility-site .footer-copyright { border-color: rgba(255,255,255,.14); }
 
 @media (max-width: 840px) {
@@ -391,8 +391,17 @@ img { display: block; max-width: 100%; }
 .footer-tool-groups { display: grid; grid-template-columns: 1.25fr 1.1fr .8fr .8fr; gap: 34px; }
 .footer-link-group { min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
 .footer-link-group h2 { margin: 0 0 5px; color: var(--ink); font-size: .82rem; line-height: 1.3; }
-.footer-link-group a { color: var(--muted); line-height: 1.4; }
-.footer-link-group a:hover { color: var(--green); }
+.footer-link-group a, .footer-cookie-settings { color: var(--muted); line-height: 1.4; }
+.footer-link-group a:hover, .footer-cookie-settings:hover { color: var(--green); }
+.footer-cookie-settings { padding: 0; border: 0; font: inherit; text-align: left; background: transparent; cursor: pointer; }
+.cookie-consent { position: fixed; right: 24px; bottom: 24px; left: 24px; z-index: 1000; max-width: 960px; margin: 0 auto; padding: 20px 22px; display: flex; align-items: center; justify-content: space-between; gap: 24px; border: 1px solid rgba(139, 92, 246, .35); border-radius: 18px; color: var(--ink); background: color-mix(in srgb, var(--paper) 96%, transparent); box-shadow: 0 18px 60px rgba(9, 15, 45, .24); backdrop-filter: blur(18px); }
+.cookie-consent[hidden] { display: none; }
+.cookie-consent h2 { margin: 0 0 6px; font-size: 1.05rem; }
+.cookie-consent p { max-width: 620px; margin: 0; color: var(--muted); line-height: 1.55; }
+.cookie-consent-actions { flex: 0 0 auto; display: flex; gap: 10px; }
+.cookie-consent-actions button { min-height: 42px; padding: 0 16px; border-radius: 10px; font: inherit; font-weight: 750; cursor: pointer; }
+.cookie-consent-actions .button-secondary { border: 1px solid var(--line); color: var(--ink); background: transparent; }
+.cookie-consent-actions .button-primary { border: 1px solid var(--theme-color); color: #15102e; background: var(--theme-color); }
 .footer-social-links { margin-top: 24px; display: flex; flex-wrap: wrap; gap: 10px; }
 .footer-social-links a { width: 38px; height: 38px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 50%; transition: color .2s, border-color .2s, transform .2s; }
 .footer-social-links a:hover { color: var(--green); border-color: var(--green); transform: translateY(-2px); }
@@ -522,6 +531,11 @@ img { display: block; max-width: 100%; }
 .download-site .footer-link-group h2 { color: #fff; }
 .download-site .footer-link-group a { color: #aaa7bc; }
 .download-site .footer-link-group a:hover { color: #d9b7ff; }
+.download-site .footer-cookie-settings { color: #aaa7bc; }
+.download-site .footer-cookie-settings:hover { color: #d9b7ff; }
+.download-site .cookie-consent, .utility-site .cookie-consent { color: #fff; background: rgba(9, 18, 63, .96); }
+.download-site .cookie-consent p, .utility-site .cookie-consent p { color: #c8d0ec; }
+.download-site .cookie-consent-actions .button-secondary, .utility-site .cookie-consent-actions .button-secondary { color: #fff; border-color: rgba(255, 255, 255, .28); }
 .download-site .footer-social-links a, .download-site .footer-copyright { border-color: rgba(255,255,255,.14); }
 
 .download-site .blog-hero { max-width: 860px; margin-top: 0; padding-top: 92px; color: #fff; }
@@ -636,6 +650,9 @@ img { display: block; max-width: 100%; }
 }
 
 @media (max-width: 620px) {
+  .cookie-consent { right: 14px; bottom: 14px; left: 14px; padding: 18px; align-items: stretch; flex-direction: column; gap: 16px; }
+  .cookie-consent-actions { flex-direction: column-reverse; }
+  .cookie-consent-actions button { width: 100%; }
   .site-header { height: auto; min-height: 70px; padding: 0 18px; }
   .header-cta { min-height: 38px; padding: 0 13px; font-size: .78rem; }
   .header-account span, .header-account small { display: none; }
