@@ -12,7 +12,13 @@ export default defineConfig({
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
   },
-  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+  projects: [{
+    name: 'chromium',
+    use: {
+      ...devices['Desktop Chrome'],
+      launchOptions: { args: ['--host-resolver-rules=MAP www.streamnest.io 127.0.0.1'] },
+    },
+  }],
   webServer: {
     command: 'node ./node_modules/astro/bin/astro.mjs dev --host 127.0.0.1 --port 4391',
     url: 'http://127.0.0.1:4391',

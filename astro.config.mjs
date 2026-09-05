@@ -13,6 +13,9 @@ export default defineConfig({
   output: 'server',
   adapter: vercel(),
   integrations: [react()],
-  vite: { plugins: [tailwindcss()] },
+  vite: {
+    plugins: [tailwindcss()],
+    server: { allowedHosts: ['www.streamnest.io'] },
+  },
 });
 

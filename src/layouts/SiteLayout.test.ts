@@ -43,7 +43,7 @@ describe('SiteLayout Google Analytics integration', () => {
   });
 
   it('sets Consent Mode v2 defaults before measurement and keeps non-production traffic out of GA', () => {
-    expect(layoutSource).toContain("Astro.url.origin === new URL(site.canonicalOrigin).origin");
+    expect(layoutSource).toContain("Astro.url.hostname === new URL(site.canonicalOrigin).hostname");
     const consentDefault = layoutSource.indexOf("gtag('consent', 'default'");
     const analyticsConfig = layoutSource.indexOf("gtag('config', analyticsId)");
     expect(consentDefault).toBeGreaterThan(-1);
@@ -52,6 +52,18 @@ describe('SiteLayout Google Analytics integration', () => {
       expect(layoutSource).toContain(`'${consentType}'`);
     }
     expect(layoutSource).toContain("'wait_for_update': 500");
+  });
+
+  it('does not contact Google Analytics until analytics consent is granted', () => {
+    expect(layoutSource).not.toContain('<script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${analyticsId}`}>');
+    expect(layoutSource).toContain("document.createElement('script')");
+    expect(layoutSource).toContain("script.src = `https://www.googletagmanager.com/gtag/js?id=${analyticsId}`");
+    expect(layoutSource).toContain("storedConsent === 'analytics'");
+    expect(layoutSource).toContain('https://developers.google.com/tag-platform/security/concepts/consent-mode#basic_consent_mode');
+    const consentUpdate = layoutSource.indexOf("gtag('consent', 'update'");
+    const appendGoogleTag = layoutSource.indexOf('document.head.append(script)');
+    expect(consentUpdate).toBeGreaterThan(-1);
+    expect(consentUpdate).toBeLessThan(appendGoogleTag);
   });
 
   it('offers persistent analytics consent choices and a footer settings control', () => {

@@ -65,6 +65,35 @@ test('visitors can persist and revisit analytics consent without loading GA on l
   expect(googleTagRequests).toEqual([]);
 });
 
+test('the production hostname contacts Google only after analytics consent and queues commands in order', async ({ page }) => {
+  const googleTagRequests: string[] = [];
+  await page.route('https://www.googletagmanager.com/**', async (route) => {
+    googleTagRequests.push(route.request().url());
+    await route.fulfill({ status: 200, contentType: 'application/javascript', body: '' });
+  });
+  await page.addInitScript(() => localStorage.removeItem('streamnest-consent-v1'));
+  await page.goto('http://www.streamnest.io:4391/');
+
+  const banner = page.locator('[data-cookie-consent]');
+  await expect(banner).toBeVisible();
+  expect(googleTagRequests).toEqual([]);
+  await page.getByRole('button', { name: 'Necessary only' }).click();
+  expect(googleTagRequests).toEqual([]);
+
+  await page.getByRole('button', { name: 'Cookie settings' }).click();
+  await page.getByRole('button', { name: 'Accept analytics' }).click();
+  await expect.poll(() => googleTagRequests.length).toBe(1);
+  const commands = await page.evaluate(() => (window as Window & { dataLayer?: IArguments[] }).dataLayer
+    ?.map((command) => Array.from(command)) ?? []);
+  expect(commands[0]?.slice(0, 2)).toEqual(['consent', 'default']);
+  const updateIndex = commands.findIndex((command) => command[0] === 'consent' && command[1] === 'update');
+  const jsIndex = commands.findIndex((command) => command[0] === 'js');
+  const configIndex = commands.findIndex((command) => command[0] === 'config');
+  expect(updateIndex).toBeGreaterThan(0);
+  expect(jsIndex).toBeGreaterThan(updateIndex);
+  expect(configIndex).toBeGreaterThan(jsIndex);
+});
+
 test('blog visitors can filter guides by category and preserve the selection in the URL', async ({ page }) => {
   await page.goto('/blog');
 
