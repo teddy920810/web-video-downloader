@@ -1,0 +1,14 @@
+{
+  "project": "视频下载 Web",
+  "outcome": "账户中心与权益兑换",
+  "status": "进行中",
+  "goal": "上线并验证账户中心，暂不接支付",
+  "scope": {
+    "allowed": ["src/components/account/", "src/lib/account/", "src/pages/account", "src/pages/account.astro", "src/pages/api/account/", "src/styles/account.css", "src/styles/global.css", "src/layouts/SiteLayout.astro", "src/content/settings/account.json", "src/content.config.ts", ".pages.yml", "db/migrations/003_account_center.sql", "scripts/verify-account-center.mjs", "tests/e2e/", "docs/account-center.md", "docs/account-center-delivery.json", "src/lib/config/"],
+    "protected": ["public/", "src/lib/auth.ts", "src/components/auth/", "src/content/blog/", "src/content/legal/", "src/lib/providers/"]
+  },
+  "changedPaths": [".pages.yml", "db/migrations/003_account_center.sql", "docs/account-center-delivery.json", "docs/account-center.md", "scripts/verify-account-center.mjs", "src/components/account/AccountCenter.tsx", "src/components/account/AccountPage.astro", "src/components/account/RewardCodes.tsx", "src/components/account/account-request.ts", "src/components/account/account-types.ts", "src/content.config.ts", "src/content/settings/account.json", "src/lib/account/contracts.test.ts", "src/lib/account/contracts.ts", "src/lib/account/settings.test.ts", "src/lib/account/settings.ts", "src/lib/account/store.test.ts", "src/lib/account/store.ts", "src/pages/account.astro", "src/pages/account/[section].astro", "src/pages/api/account/[action].ts", "src/pages/api/account/account.test.ts", "src/styles/account.css", "tests/e2e/account-center.spec.ts", "src/layouts/SiteLayout.astro", "src/styles/global.css", "tests/e2e/site-quality.spec.ts", "tests/e2e/cookie-preferences.spec.ts"],
+  "tdd": { "red": "passed", "minimalChange": "passed", "targetedGreen": "passed", "fullVerification": "passed" },
+  "gates": { "code": "passed", "repository": "pending", "deployment": "pending", "domain": "not_applicable", "identity": "pending", "productionFlow": "pending" },
+  "nextStep": "PR通过后发布并验证生产账户和Cookie"
+}

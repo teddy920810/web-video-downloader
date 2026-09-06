@@ -1,0 +1,18 @@
+---
+import { getEntry } from 'astro:content';
+import AccountCenter from './AccountCenter';
+import { accountSections, type AccountSection } from './account-types';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import '../../styles/account.css';
+interface Props { section: AccountSection }
+const { section } = Astro.props;
+const settings = (await getEntry('accountSettings', 'account'))!.data;
+const title = section === 'overview' ? 'Your tools, plan, and credits.' : accountSections.find((item) => item.id === section)!.label;
+Astro.response.headers.set('Cache-Control', 'private, no-store');
+---
+<SiteLayout siteMode={Astro.locals.siteMode} title={`${title} | Streamnest`} description="Manage your Streamnest account, credits, and preferences." noindex={true}>
+  <div class="utility-page account-shell">
+    <header class="account-hero"><span class="eyebrow">Account</span><h1>{title}</h1><p>Manage your profile, AI credits, and privacy preferences.</p></header>
+    <AccountCenter section={section} settings={settings} client:only="react" />
+  </div>
+</SiteLayout>

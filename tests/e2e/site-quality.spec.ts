@@ -51,7 +51,7 @@ test('visitors can persist and revisit analytics consent without loading GA on l
   const banner = page.locator('[data-cookie-consent]');
   await expect(banner).toBeVisible();
   expect(googleTagRequests).toEqual([]);
-  await page.getByRole('button', { name: 'Necessary only' }).click();
+  await page.getByRole('button', { name: 'Reject optional' }).click();
   await expect(banner).toBeHidden();
   expect(await page.evaluate(() => localStorage.getItem('streamnest-consent-v1'))).toBe('necessary');
 
@@ -59,7 +59,7 @@ test('visitors can persist and revisit analytics consent without loading GA on l
   await expect(banner).toBeHidden();
   await page.getByRole('button', { name: 'Cookie settings' }).click();
   await expect(banner).toBeVisible();
-  await page.getByRole('button', { name: 'Accept analytics' }).click();
+  await page.getByRole('button', { name: 'Accept all', exact: true }).click();
   await expect(banner).toBeHidden();
   expect(await page.evaluate(() => localStorage.getItem('streamnest-consent-v1'))).toBe('analytics');
   expect(googleTagRequests).toEqual([]);
@@ -77,11 +77,11 @@ test('the production hostname contacts Google only after analytics consent and q
   const banner = page.locator('[data-cookie-consent]');
   await expect(banner).toBeVisible();
   expect(googleTagRequests).toEqual([]);
-  await page.getByRole('button', { name: 'Necessary only' }).click();
+  await page.getByRole('button', { name: 'Reject optional' }).click();
   expect(googleTagRequests).toEqual([]);
 
   await page.getByRole('button', { name: 'Cookie settings' }).click();
-  await page.getByRole('button', { name: 'Accept analytics' }).click();
+  await page.getByRole('button', { name: 'Accept all', exact: true }).click();
   await expect.poll(() => googleTagRequests.length).toBe(1);
   const commands = await page.evaluate(() => (window as Window & { dataLayer?: IArguments[] }).dataLayer
     ?.map((command) => Array.from(command)) ?? []);

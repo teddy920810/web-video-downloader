@@ -215,13 +215,20 @@ const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultS
      </footer>
      {showConsentControls && (
        <aside class="cookie-consent" role="dialog" aria-labelledby="cookie-consent-title" aria-describedby="cookie-consent-description" data-cookie-consent hidden>
-         <div>
+         <div class="cookie-consent-copy">
            <h2 id="cookie-consent-title">Your privacy choices</h2>
-           <p id="cookie-consent-description">We use optional Google Analytics to understand how Streamnest is used. Necessary storage keeps sign-in and core features working.</p>
+           <p id="cookie-consent-description">Necessary cookies keep Streamnest working. With your permission, optional analytics help us improve our tools. <a href="/privacy">Privacy Policy</a></p>
+         </div>
+         <div class="cookie-preferences" id="cookie-preferences" data-consent-preferences hidden>
+           <label><span><strong>Necessary cookies</strong><small>Required for sign-in, security, and remembering your choices. Always on.</small></span><input type="checkbox" checked disabled aria-label="Necessary cookies" /></label>
+           <label><span><strong>Analytics cookies</strong><small>Allow Google Analytics to measure how our tools are used. Optional; off unless you agree.</small></span><input type="checkbox" data-consent-analytics-toggle aria-label="Analytics cookies" /></label>
+           <p>Advertising cookies are not enabled. Product-news email preferences are managed separately in your account.</p>
+           <button class="button-primary" type="button" data-consent-save>Save preferences</button>
          </div>
          <div class="cookie-consent-actions">
-           <button class="button-secondary" type="button" data-consent-necessary>Necessary only</button>
-           <button class="button-primary" type="button" data-consent-accept>Accept analytics</button>
+           <button class="button-primary" type="button" data-consent-accept>Accept all</button>
+           <button class="button-secondary" type="button" data-consent-necessary>Reject optional</button>
+           <button class="button-secondary" type="button" aria-expanded="false" aria-controls="cookie-preferences" data-consent-manage>Manage preferences</button>
          </div>
        </aside>
      )}
@@ -282,6 +289,15 @@ const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultS
        const consentSettings = document.querySelector<HTMLButtonElement>('[data-cookie-settings]');
        const acceptAnalytics = document.querySelector<HTMLButtonElement>('[data-consent-accept]');
        const necessaryOnly = document.querySelector<HTMLButtonElement>('[data-consent-necessary]');
+       const managePreferences = document.querySelector<HTMLButtonElement>('[data-consent-manage]');
+       const preferencesPanel = document.querySelector<HTMLElement>('[data-consent-preferences]');
+       const analyticsToggle = document.querySelector<HTMLInputElement>('[data-consent-analytics-toggle]');
+       const savePreferences = document.querySelector<HTMLButtonElement>('[data-consent-save]');
+       let consentReturnFocus: HTMLElement | null = null;
+       const closePreferences = () => {
+         if (preferencesPanel) preferencesPanel.hidden = true;
+         managePreferences?.setAttribute('aria-expanded', 'false');
+       };
        const consentStorageKey = 'streamnest-consent-v1';
        type ConsentChoice = 'analytics' | 'necessary';
        const readConsentChoice = (): ConsentChoice | null => {
@@ -304,16 +320,38 @@ const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultS
          if (choice === 'analytics') analyticsWindow.streamnestAnalyticsConsent?.grantAnalytics();
          else analyticsWindow.streamnestAnalyticsConsent?.denyAnalytics();
          if (consentBanner) consentBanner.hidden = true;
+         closePreferences();
+         consentReturnFocus?.focus();
        };
        if (consentBanner && !readConsentChoice()) consentBanner.hidden = false;
        consentSettings?.addEventListener('click', () => {
          if (consentBanner) {
+           consentReturnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+           closePreferences();
            consentBanner.hidden = false;
-           (readConsentChoice() === 'analytics' ? acceptAnalytics : necessaryOnly)?.focus();
+           managePreferences?.focus();
          }
        });
        acceptAnalytics?.addEventListener('click', () => updateConsent('analytics'));
        necessaryOnly?.addEventListener('click', () => updateConsent('necessary'));
+       managePreferences?.addEventListener('click', () => {
+         if (!preferencesPanel || !analyticsToggle) return;
+         const open = preferencesPanel.hidden;
+         preferencesPanel.hidden = !open;
+         managePreferences.setAttribute('aria-expanded', String(open));
+         if (open) {
+           analyticsToggle.checked = readConsentChoice() === 'analytics';
+           analyticsToggle.focus();
+         }
+       });
+       savePreferences?.addEventListener('click', () => updateConsent(analyticsToggle?.checked ? 'analytics' : 'necessary'));
+       consentBanner?.addEventListener('keydown', (event) => {
+         if (event.key !== 'Escape') return;
+         event.stopPropagation();
+         closePreferences();
+         if (readConsentChoice()) { consentBanner.hidden = true; consentReturnFocus?.focus(); }
+         else managePreferences?.focus();
+       });
      </script>
   </body>
 </html>

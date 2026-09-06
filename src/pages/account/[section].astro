@@ -1,0 +1,8 @@
+---
+import AccountPage from '../../components/account/AccountPage.astro';
+import { accountSections } from '../../components/account/account-types';
+export const prerender = false;
+const item = accountSections.find((entry) => entry.id === Astro.params.section && entry.id !== 'overview');
+if (!item) return new Response('Not found.', { status: 404, headers: { 'Cache-Control': 'private, no-store', 'X-Robots-Tag': 'noindex' } });
+---
+<AccountPage section={item.id} />

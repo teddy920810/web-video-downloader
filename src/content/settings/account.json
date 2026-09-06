@@ -1,0 +1,10 @@
+{
+  "supportEmail": "",
+  "faq": [
+    { "category": "Account", "question": "How do I sign in?", "answer": "Use your Google account. Your email and Google profile remain read-only; you can save a separate nickname in Profile." },
+    { "category": "Tools", "question": "Are my files uploaded?", "answer": "Browser-local video and image utilities process files on your device. Background Remover uses cloud AI processing and uploads the selected image when you start the job." },
+    { "category": "Credits", "question": "When are AI credits used?", "answer": "Background Remover reserves one credit when processing starts. A successful result consumes the reservation; a provider failure refunds it. Browser-local tools do not use AI credits." },
+    { "category": "Credits", "question": "How do reward codes work?", "answer": "Enter a valid code in Redeem Code. Each account can redeem a code once, before its expiry and while uses remain. Rewards add promotional credits, not cash or a subscription." },
+    { "category": "Subscription", "question": "Can I buy a subscription now?", "answer": "Paid checkout is not available yet. No action in this account center starts a subscription or charges a card." }
+  ]
+}
