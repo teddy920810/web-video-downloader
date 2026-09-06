@@ -1,0 +1,78 @@
+{
+  "toolId": "image-resizer",
+  "features": {
+    "heading": "What you can do with Image Resizer",
+    "intro": "Useful output choices, clear limits, and processing on your device.",
+    "items": [
+      {
+        "eyebrow": "Built for practical files",
+        "title": "Fit an image to a practical width",
+        "description": "Set a maximum width while keeping the original proportions. The tool does not enlarge an image that is already smaller than your chosen width.",
+        "facts": [
+          {
+            "label": "Maximum width setting",
+            "value": "Up to 8192 px"
+          },
+          {
+            "label": "Saved format",
+            "value": "WebP"
+          }
+        ]
+      },
+      {
+        "eyebrow": "On your device",
+        "title": "Stay in control of your source file",
+        "description": "Processing uses this browser rather than a server-side media job. Keep the tab open, and save the result before leaving the page.",
+        "facts": [
+          {
+            "label": "Processing location",
+            "value": "This browser"
+          },
+          {
+            "label": "AI credits required",
+            "value": "None"
+          }
+        ]
+      }
+    ]
+  },
+  "steps": {
+    "heading": "How to use Image Resizer",
+    "intro": "From your source file to a result you can save, in three steps.",
+    "items": [
+      {
+        "title": "Choose an image",
+        "body": "Select a JPG, PNG, or WebP image stored on this device."
+      },
+      {
+        "title": "Set a maximum width",
+        "body": "Enter the desired width. The aspect ratio is kept, and smaller sources are not enlarged."
+      },
+      {
+        "title": "Save the resized image",
+        "body": "Download the WebP and check its resulting dimensions."
+      }
+    ]
+  },
+  "faq": {
+    "heading": "Questions about Image Resizer",
+    "items": [
+      {
+        "question": "Can I stretch the image to a different aspect ratio?",
+        "answer": "No. This tool keeps the original proportions. It does not crop the picture or stretch it to a different shape."
+      },
+      {
+        "question": "Is my file uploaded?",
+        "answer": "The selected media is processed locally in this browser. It is not uploaded to our servers for this tool."
+      },
+      {
+        "question": "What if processing fails or takes too long?",
+        "answer": "Keep this tab open and try a shorter or smaller file when possible. Available memory and media support differ between devices and browsers. Your original file is not overwritten."
+      },
+      {
+        "question": "Do I need AI credits to use this tool?",
+        "answer": "No. This browser-local tool does not spend AI credits. File allowances and browser capabilities still apply."
+      }
+    ]
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "toolId": "video-converter",
+  "features": {
+    "heading": "What you can do with Video Converter",
+    "intro": "Useful output choices, clear limits, and processing on your device.",
+    "items": [
+      {
+        "eyebrow": "Built for practical files",
+        "title": "Choose a format for your next use",
+        "description": "Create an MP4 or WebM video, or save an MP3 audio version. The available result depends on the source and the browser media engine.",
+        "facts": [
+          {
+            "label": "Output options",
+            "value": "MP4 · WebM · MP3"
+          },
+          {
+            "label": "Input allowance",
+            "value": "Up to 250 MB"
+          }
+        ]
+      },
+      {
+        "eyebrow": "On your device",
+        "title": "Stay in control of your source file",
+        "description": "Processing uses this browser rather than a server-side media job. Keep the tab open, and save the result before leaving the page.",
+        "facts": [
+          {
+            "label": "Processing location",
+            "value": "This browser"
+          },
+          {
+            "label": "AI credits required",
+            "value": "None"
+          }
+        ]
+      }
+    ]
+  },
+  "steps": {
+    "heading": "How to use Video Converter",
+    "intro": "From your source file to a result you can save, in three steps.",
+    "items": [
+      {
+        "title": "Choose your video",
+        "body": "Select a video from this device. Keep this tab open while it is processed."
+      },
+      {
+        "title": "Set the output format",
+        "body": "Choose MP4, WebM, or MP3, then select Convert locally."
+      },
+      {
+        "title": "Save the converted file",
+        "body": "When processing finishes, save the result and check it in your player."
+      }
+    ]
+  },
+  "faq": {
+    "heading": "Questions about Video Converter",
+    "items": [
+      {
+        "question": "Does conversion improve video quality?",
+        "answer": "No. Converting changes the format; it does not restore detail that is missing in the source. Re-encoding can affect quality."
+      },
+      {
+        "question": "Is my file uploaded?",
+        "answer": "The selected media is processed locally in this browser. It is not uploaded to our servers for this tool."
+      },
+      {
+        "question": "What if processing fails or takes too long?",
+        "answer": "Keep this tab open and try a shorter or smaller file when possible. Available memory and media support differ between devices and browsers. Your original file is not overwritten."
+      },
+      {
+        "question": "Do I need AI credits to use this tool?",
+        "answer": "No. This browser-local tool does not spend AI credits. File allowances and browser capabilities still apply."
+      }
+    ]
+  }
+}

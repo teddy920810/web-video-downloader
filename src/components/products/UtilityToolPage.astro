@@ -1,5 +1,6 @@
 ---
 import SiteLayout from '../../layouts/SiteLayout.astro';
+import ToolGuideSections from './ToolGuideSections.astro';
 import type { SiteMode } from '../../lib/config/site-mode';
 
 interface PageCopy {
@@ -28,4 +29,5 @@ const { page, siteMode, headingId } = Astro.props;
       <ul>{page.notes.map((note) => <li>{note}</li>)}</ul>
     </section>
   </div>
+  <ToolGuideSections />
 </SiteLayout>

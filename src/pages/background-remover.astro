@@ -1,6 +1,7 @@
 ---
 import BackgroundRemover from '../components/image/BackgroundRemover';
 import SiteLayout from '../layouts/SiteLayout.astro';
+import ToolGuideSections from '../components/products/ToolGuideSections.astro';
 import { getCollection } from 'astro:content';
 
 export const prerender = false;
@@ -24,4 +25,5 @@ const { backgroundRemover, backgroundTool } = entry.data;
       <ul>{backgroundRemover.notes.map((note) => <li>{note}</li>)}</ul>
     </section>
   </div>
+  <ToolGuideSections />
 </SiteLayout>

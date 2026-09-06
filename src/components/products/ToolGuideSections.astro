@@ -1,0 +1,26 @@
+---
+import { getEntry } from 'astro:content';
+import '../../styles/tool-guides.css';
+
+const toolId = Astro.url.pathname.split('/').filter(Boolean).at(-1) ?? '';
+const guide = await getEntry('toolGuides', toolId);
+if (!guide) throw new Error(`Tool guide is missing for ${toolId}`);
+const { features, steps, faq } = guide.data;
+---
+<div class="tool-guide-surface"><div class="tool-guide" data-tool-guide>
+  <section class="tool-guide-features" aria-labelledby={`${toolId}-features`}>
+    <header class="tool-guide-heading"><span class="eyebrow">Features</span><h2 id={`${toolId}-features`}>{features.heading}</h2><p>{features.intro}</p></header>
+    {features.items.map((feature) => <article class="tool-guide-feature" data-guide-feature>
+      <div class="tool-guide-feature-copy"><span class="eyebrow">{feature.eyebrow}</span><h3>{feature.title}</h3><p>{feature.description}</p></div>
+      <dl class="tool-guide-facts">{feature.facts.map((fact) => <div><dt>{fact.label}</dt><dd>{fact.value}</dd></div>)}</dl>
+    </article>)}
+  </section>
+  <section class="tool-guide-how" aria-labelledby={`${toolId}-how`}>
+    <header class="tool-guide-heading"><span class="eyebrow">How to use</span><h2 id={`${toolId}-how`}>{steps.heading}</h2><p>{steps.intro}</p></header>
+    <ol class="tool-guide-steps">{steps.items.map((step, index) => <li data-guide-step><span class="tool-guide-step-number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span><div><h3>{step.title}</h3><p>{step.body}</p></div></li>)}</ol>
+  </section>
+  <section class="tool-guide-faq" aria-labelledby={`${toolId}-faq`}>
+    <header class="tool-guide-heading"><span class="eyebrow">FAQs</span><h2 id={`${toolId}-faq`}>{faq.heading}</h2></header>
+    <div class="tool-guide-questions">{faq.items.map((item) => <details><summary>{item.question}</summary><p>{item.answer}</p></details>)}</div>
+  </section>
+</div></div>

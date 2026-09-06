@@ -1,0 +1,78 @@
+{
+  "toolId": "video-trimmer",
+  "features": {
+    "heading": "What you can do with Video Trimmer",
+    "intro": "Useful output choices, clear limits, and processing on your device.",
+    "items": [
+      {
+        "eyebrow": "Built for practical files",
+        "title": "Keep the section that matters",
+        "description": "Select a start and end time to create a shorter clip. The original file remains unchanged, so you can try another range later.",
+        "facts": [
+          {
+            "label": "Time selection",
+            "value": "Start and end in seconds"
+          },
+          {
+            "label": "Saved format",
+            "value": "MP4"
+          }
+        ]
+      },
+      {
+        "eyebrow": "On your device",
+        "title": "Stay in control of your source file",
+        "description": "Processing uses this browser rather than a server-side media job. Keep the tab open, and save the result before leaving the page.",
+        "facts": [
+          {
+            "label": "Processing location",
+            "value": "This browser"
+          },
+          {
+            "label": "AI credits required",
+            "value": "None"
+          }
+        ]
+      }
+    ]
+  },
+  "steps": {
+    "heading": "How to use Video Trimmer",
+    "intro": "From your source file to a result you can save, in three steps.",
+    "items": [
+      {
+        "title": "Choose the source video",
+        "body": "Select one local video within the browser allowance."
+      },
+      {
+        "title": "Set a time range",
+        "body": "Enter the start and end time, then start processing the selected section."
+      },
+      {
+        "title": "Save the shorter clip",
+        "body": "Download the MP4 and play it to confirm the beginning and ending."
+      }
+    ]
+  },
+  "faq": {
+    "heading": "Questions about Video Trimmer",
+    "items": [
+      {
+        "question": "Can I crop the picture with this tool?",
+        "answer": "No. Trimming changes the time range. Cropping changes the visible picture area and is not offered by this tool."
+      },
+      {
+        "question": "Is my file uploaded?",
+        "answer": "The selected media is processed locally in this browser. It is not uploaded to our servers for this tool."
+      },
+      {
+        "question": "What if processing fails or takes too long?",
+        "answer": "Keep this tab open and try a shorter or smaller file when possible. Available memory and media support differ between devices and browsers. Your original file is not overwritten."
+      },
+      {
+        "question": "Do I need AI credits to use this tool?",
+        "answer": "No. This browser-local tool does not spend AI credits. File allowances and browser capabilities still apply."
+      }
+    ]
+  }
+}

@@ -30,6 +30,68 @@ actions:
       button: 发布到正式站
 
 content:
+  - name: tool-guides
+    label: 工具落地页详情 / Features, How to Use & FAQs
+    type: collection
+    path: src/content/tool-guides
+    format: json
+    filename: "{fields.toolId}.json"
+    operations:
+      create: false
+      rename: false
+      delete: false
+    view:
+      fields: [toolId]
+      primary: toolId
+      sort: [toolId]
+    fields:
+      - { name: toolId, label: 工具标识（不要修改）, type: string, required: true }
+      - name: features
+        label: 功能介绍 / Features
+        type: object
+        fields:
+          - { name: heading, label: 标题, type: string, required: true }
+          - { name: intro, label: 简介, type: text, required: true }
+          - name: items
+            label: 功能区块
+            type: object
+            list: true
+            fields:
+              - { name: eyebrow, label: 小标题, type: string, required: true }
+              - { name: title, label: 标题, type: string, required: true }
+              - { name: description, label: 说明, type: text, required: true }
+              - name: facts
+                label: 参数与能力
+                type: object
+                list: true
+                fields:
+                  - { name: label, label: 参数名, type: string, required: true }
+                  - { name: value, label: 参数值, type: string, required: true }
+      - name: steps
+        label: 使用步骤 / How to Use
+        type: object
+        fields:
+          - { name: heading, label: 标题, type: string, required: true }
+          - { name: intro, label: 简介, type: text, required: true }
+          - name: items
+            label: 三个步骤
+            type: object
+            list: true
+            fields:
+              - { name: title, label: 标题, type: string, required: true }
+              - { name: body, label: 说明, type: text, required: true }
+      - name: faq
+        label: 常见问题 / FAQs
+        type: object
+        fields:
+          - { name: heading, label: 标题, type: string, required: true }
+          - name: items
+            label: 问答
+            type: object
+            list: true
+            fields:
+              - { name: question, label: 问题, type: string, required: true }
+              - { name: answer, label: 回答, type: text, required: true }
   - name: account-settings
     label: 账户中心 / Account center
     type: file

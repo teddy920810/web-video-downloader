@@ -1,0 +1,78 @@
+{
+  "toolId": "video-merger",
+  "features": {
+    "heading": "What you can do with Video Merger",
+    "intro": "Useful output choices, clear limits, and processing on your device.",
+    "items": [
+      {
+        "eyebrow": "Built for practical files",
+        "title": "Join clips with compatible settings",
+        "description": "Combine clips in the order you select them. Matching dimensions and encoding settings give the most reliable result; this is not a full timeline editor.",
+        "facts": [
+          {
+            "label": "Number of clips",
+            "value": "2–10 clips"
+          },
+          {
+            "label": "Combined allowance",
+            "value": "Up to 250 MB"
+          }
+        ]
+      },
+      {
+        "eyebrow": "On your device",
+        "title": "Stay in control of your source file",
+        "description": "Processing uses this browser rather than a server-side media job. Keep the tab open, and save the result before leaving the page.",
+        "facts": [
+          {
+            "label": "Processing location",
+            "value": "This browser"
+          },
+          {
+            "label": "AI credits required",
+            "value": "None"
+          }
+        ]
+      }
+    ]
+  },
+  "steps": {
+    "heading": "How to use Video Merger",
+    "intro": "From your source file to a result you can save, in three steps.",
+    "items": [
+      {
+        "title": "Choose compatible clips",
+        "body": "Select two to ten clips, preferably from the same camera or device."
+      },
+      {
+        "title": "Check the selection order",
+        "body": "Review the selected clips before starting the merge. Use matching media settings."
+      },
+      {
+        "title": "Save the combined video",
+        "body": "Download the MP4 and check playback around each join."
+      }
+    ]
+  },
+  "faq": {
+    "heading": "Questions about Video Merger",
+    "items": [
+      {
+        "question": "Can I merge any combination of video files?",
+        "answer": "Not reliably. Clips with different codecs, dimensions or audio settings may fail. Start with clips recorded using the same settings."
+      },
+      {
+        "question": "Is my file uploaded?",
+        "answer": "The selected media is processed locally in this browser. It is not uploaded to our servers for this tool."
+      },
+      {
+        "question": "What if processing fails or takes too long?",
+        "answer": "Keep this tab open and try a shorter or smaller file when possible. Available memory and media support differ between devices and browsers. Your original file is not overwritten."
+      },
+      {
+        "question": "Do I need AI credits to use this tool?",
+        "answer": "No. This browser-local tool does not spend AI credits. File allowances and browser capabilities still apply."
+      }
+    ]
+  }
+}
