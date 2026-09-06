@@ -4,6 +4,7 @@ import { existsSync, readdirSync } from 'node:fs';
 import { z } from 'zod';
 import { homepageSchema } from './lib/content/homepage';
 import { siteSettingsSchema } from './lib/content/site-settings';
+import { accountSettingsSchema } from './lib/account/settings';
 import { imageSettingsSchema } from './lib/content/image-metadata';
 import { blogEntrySchema } from './lib/content/blog-entry';
 import { utilitiesSettingsSchema } from './lib/content/utilities-settings';
@@ -111,6 +112,7 @@ const landingPages = defineCollection({
 });
 
 export const collections = {
+  accountSettings: defineCollection({ loader: glob({ base: './src/content/settings', pattern: 'account.json' }), schema: accountSettingsSchema }),
   siteSettings,
   imageSettings,
   blogIndexSettings,

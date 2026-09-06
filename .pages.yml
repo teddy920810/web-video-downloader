@@ -30,6 +30,23 @@ actions:
       button: 发布到正式站
 
 content:
+  - name: account-settings
+    label: 账户中心 / Account center
+    type: file
+    path: src/content/settings/account.json
+    fields:
+      - { name: supportEmail, label: Support / 隐私请求邮箱（留空不显示）, type: string }
+      - name: faq
+        label: 常见问题
+        type: object
+        list: true
+        fields:
+          - name: category
+            type: select
+            options:
+              values: [Account, Tools, Credits, Subscription]
+          - { name: question, label: 问题, type: string, required: true }
+          - { name: answer, label: 回答, type: text, required: true }
   - name: site-settings
     label: 站点设置 / Site settings
     type: file
