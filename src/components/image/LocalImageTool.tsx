@@ -10,7 +10,7 @@ function canvasBlob(canvas: HTMLCanvasElement, type: string, quality: number) {
   return new Promise<Blob>((resolve, reject) => canvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error('The browser could not create this image.')), type, quality));
 }
 
-export default function LocalImageTool({ mode, heading }: { mode: ImageToolMode; heading: string }) {
+export default function LocalImageTool({ mode, heading, chooseLabel = 'Choose an image file' }: { mode: ImageToolMode; heading: string; chooseLabel?: string }) {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [result, setResult] = useState<{ url: string; name: string; bytes: number } | null>(null);
@@ -63,11 +63,11 @@ export default function LocalImageTool({ mode, heading }: { mode: ImageToolMode;
   }
 
   return <section className="local-media-tool local-image-tool" data-workspace={file ? 'true' : 'false'} aria-labelledby={`${mode}-image-tool-title`}>
-    <div className="local-media-heading"><span className="local-media-icon"><ImageIcon size={28} /></span><div><p>Private browser tool</p><h2 id={`${mode}-image-tool-title`}>{heading}</h2></div></div>
+    <div className="local-media-heading"><span className="local-media-icon"><ImageIcon size={28} /></span><div><p>Private browser tool</p><h2 id={`${mode}-image-tool-title`} tabIndex={-1}>{heading}</h2></div></div>
     <div className={file ? 'local-media-workspace' : undefined}>
       {preview ? <div className="local-image-preview"><img src={result?.url ?? preview} alt={result ? 'Processed image preview' : 'Selected image preview'} />{busy ? <ProcessingOverlay label="Processing locally…" /> : null}</div> : null}
       <div className="local-media-controls">
-        <label className="local-file-picker"><ImageIcon size={34} /><strong>{file?.name ?? 'Choose an image file'}</strong><span>{file ? `${(file.size / 1024 / 1024).toFixed(1)} MB` : 'JPG, PNG, or WebP · up to 50 MB'}</span><input type="file" accept="image/jpeg,image/png,image/webp" disabled={busy} onChange={select} /></label>
+        <label className="local-file-picker"><ImageIcon size={34} /><strong>{file?.name ?? chooseLabel}</strong><span>{file ? `${(file.size / 1024 / 1024).toFixed(1)} MB` : 'JPG, PNG, or WebP · up to 50 MB'}</span><input type="file" accept="image/jpeg,image/png,image/webp" disabled={busy} onChange={select} /></label>
         {mode === 'converter' ? <label className="local-media-field"><span>Output format</span><select value={format} onChange={(event) => setFormat(event.target.value as ImageFormat)}><option value="png">PNG</option><option value="jpeg">JPG</option><option value="webp">WebP</option></select></label> : null}
         {mode === 'compressor' ? <label className="local-media-field"><span>Output quality · {Math.round(quality * 100)}%</span><input type="range" min="0.35" max="0.9" step="0.01" value={quality} onChange={(event) => setQuality(Number(event.target.value))} /></label> : null}
         {mode === 'resizer' ? <label className="local-media-field"><span>Maximum width · pixels</span><input type="number" min="1" max="8192" value={width} onChange={(event) => setWidth(Number(event.target.value))} /></label> : null}

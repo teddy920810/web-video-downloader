@@ -7,4 +7,4 @@ const [entry] = await getCollection('utilitiesSettings');
 if (!entry) throw new Error('Utilities CMS settings are missing.');
 const page = entry.data.toolPages['image-compressor'];
 ---
-<UtilityToolPage page={page} siteMode={Astro.locals.siteMode} headingId="image-compressor-heading"><LocalImageTool client:only="react" mode="compressor" heading="Compress a local image" /></UtilityToolPage>
+<UtilityToolPage page={page} siteMode={Astro.locals.siteMode} headingId="image-compressor-heading"><LocalImageTool client:only="react" mode="compressor" heading="Choose an image and adjust the quality" chooseLabel="Choose an image" /></UtilityToolPage>

@@ -1,13 +1,13 @@
 {
   "toolId": "image-compressor",
   "features": {
-    "heading": "What you can do with Image Compressor",
-    "intro": "Useful output choices, clear limits, and processing on your device.",
+    "heading": "Image Compression with a Quality Setting You Control",
+    "intro": "Need to compress image online? Select one local JPG, PNG, or WebP file, choose the quality level, and download a separate WebP result when you are ready.",
     "items": [
       {
-        "eyebrow": "Built for practical files",
-        "title": "Choose a smaller image with a quality trade-off",
-        "description": "Adjust the quality to create a WebP result. An image that is already optimized may not become smaller; inspect the result before replacing your original.",
+        "eyebrow": "Quality control",
+        "title": "Control the balance between file size and detail",
+        "description": "Choose a setting from 35% to 90% based on how you plan to use the image. Start higher when fine edges or texture matter, then compare the downloaded WebP with your source file before you replace anything.",
         "facts": [
           {
             "label": "Quality selection",
@@ -17,28 +17,61 @@
             "label": "Saved format",
             "value": "WebP"
           }
-        ]
+        ],
+        "image": {
+          "src": "/uploads/image-compressor/feature-quality-control.webp",
+          "alt": "Quality control illustration with no text",
+          "width": 1672,
+          "height": 941
+        }
       },
       {
-        "eyebrow": "On your device",
-        "title": "Stay in control of your source file",
-        "description": "Processing uses this browser rather than a server-side media job. Keep the tab open, and save the result before leaving the page.",
+        "eyebrow": "Local processing",
+        "title": "Keep the selected image in this browser",
+        "description": "The image you choose is processed locally in this browser for this tool. It is not uploaded to Streamnest servers, so you can complete the compression task from the same page.",
         "facts": [
           {
             "label": "Processing location",
             "value": "This browser"
           },
           {
-            "label": "AI credits required",
+            "label": "Image upload",
             "value": "None"
           }
-        ]
+        ],
+        "image": {
+          "src": "/uploads/image-compressor/feature-local-processing.webp",
+          "alt": "Local browser processing illustration with no text",
+          "width": 1672,
+          "height": 941
+        }
+      },
+      {
+        "eyebrow": "Separate output",
+        "title": "Save a separate WebP result",
+        "description": "Start with a JPG, PNG, or WebP file and download a new WebP result. Your original file is not overwritten, giving you a straightforward way to compare the two versions before use.",
+        "facts": [
+          {
+            "label": "Input",
+            "value": "JPG, PNG, WebP"
+          },
+          {
+            "label": "Output",
+            "value": "A separate WebP"
+          }
+        ],
+        "image": {
+          "src": "/uploads/image-compressor/feature-webp-result.webp",
+          "alt": "Image result workflow illustration with no text",
+          "width": 1672,
+          "height": 941
+        }
       }
     ]
   },
   "steps": {
-    "heading": "How to use Image Compressor",
-    "intro": "From your source file to a result you can save, in three steps.",
+    "heading": "How to Compress Image Size",
+    "intro": "",
     "items": [
       {
         "title": "Choose a local image",
@@ -46,33 +79,87 @@
       },
       {
         "title": "Adjust the quality",
-        "body": "Choose a quality level and start processing. Lower quality can reduce detail as well as size."
+        "body": "Choose a setting from 35% to 90%. Lower settings can create a smaller result, but they can also reduce visible detail."
       },
       {
         "title": "Save and review",
-        "body": "Download the WebP and compare its appearance and size with the original."
+        "body": "Download the WebP result, then compare its appearance and file size with the original before you use it."
       }
     ]
   },
+  "supporting": [
+    {
+      "heading": "What Image Compression Changes",
+      "items": [
+        {
+          "title": "An Image Size Compressor Works Through a Trade-off",
+          "body": "An image size compressor reduces the bytes needed for a new file. With this tool, the quality setting lets you choose the balance between file size and visible detail. A lower setting can soften fine texture, edges, and other details, so evaluate the downloaded WebP at the size where you plan to use it."
+        },
+        {
+          "title": "What “Image Compress” Means Here",
+          "body": "“Image compress” is a common shorthand for creating a smaller image file. Here, the selected JPG, PNG, or WebP image becomes a separate WebP result. An image that has already been optimized may stay close to its original size."
+        },
+        {
+          "title": "Output Format",
+          "body": "This tool saves WebP. If you need another available output format after saving the result, use Image Converter.",
+          "link": {
+            "label": "Open Image Converter",
+            "href": "/image-converter"
+          }
+        }
+      ]
+    },
+    {
+      "heading": "When to Use This Image Compressor",
+      "items": [
+        {
+          "title": "",
+          "body": "Create a separate WebP version of a JPG, PNG, or WebP image for a website, message, or upload form."
+        },
+        {
+          "title": "",
+          "body": "Try a quality setting when file size matters and inspect the new result before replacing the source."
+        },
+        {
+          "title": "",
+          "body": "Keep the original file intact while you decide whether the WebP result is the version you want to share."
+        }
+      ]
+    }
+  ],
   "faq": {
-    "heading": "Questions about Image Compressor",
+    "heading": "Image Compressor FAQ",
     "items": [
       {
+        "question": "What image formats can I compress?",
+        "answer": "Choose a JPG, PNG, or WebP image up to 50 MB. The downloaded result is WebP."
+      },
+      {
+        "question": "Can I compress an image without losing quality?",
+        "answer": "The tool provides a 35%–90% quality setting. Lower settings can reduce visible detail, so compare the downloaded WebP with the original before you replace anything."
+      },
+      {
         "question": "Can I save a compressed JPG instead?",
-        "answer": "This compressor produces WebP. Use Image Converter if you need to change the resulting image to another available format."
+        "answer": "No. This compressor produces WebP. Use Image Converter if another available output format is needed after download."
       },
       {
-        "question": "Is my file uploaded?",
-        "answer": "The selected media is processed locally in this browser. It is not uploaded to our servers for this tool."
+        "question": "Is my image uploaded to Streamnest?",
+        "answer": "No. The selected image is processed locally in this browser for this tool and is not uploaded to Streamnest servers."
       },
       {
-        "question": "What if processing fails or takes too long?",
-        "answer": "Keep this tab open and try a shorter or smaller file when possible. Available memory and media support differ between devices and browsers. Your original file is not overwritten."
+        "question": "How can I compress an image online?",
+        "answer": "Choose a supported local image, adjust the quality setting, then download the separate WebP result. Keep the tab open while the result is created."
       },
       {
-        "question": "Do I need AI credits to use this tool?",
-        "answer": "No. This browser-local tool does not spend AI credits. File allowances and browser capabilities still apply."
+        "question": "Is Image Compressor free?",
+        "answer": "Yes. Image Compressor is a free browser-local tool."
       }
     ]
+  },
+  "finalCta": {
+    "heading": "Ready to Compress an Image?",
+    "body": "Choose a local JPG, PNG, or WebP image, set the quality, and save a separate WebP result.",
+    "label": "Choose an image",
+    "href": "#compressor-image-tool-title"
   }
 }

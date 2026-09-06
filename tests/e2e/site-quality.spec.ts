@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
+import { serveProductionHostLocally } from './local-production-host';
 
 test('critical public routes and SEO files are available', async ({ page, request }) => {
   for (const path of ['/', '/privacy', '/terms', '/refund-policy', '/robots.txt', '/sitemap.xml']) {
@@ -66,6 +67,7 @@ test('visitors can persist and revisit analytics consent without loading GA on l
 });
 
 test('the production hostname contacts Google only after analytics consent and queues commands in order', async ({ page }) => {
+  await serveProductionHostLocally(page);
   const googleTagRequests: string[] = [];
   await page.route('https://www.googletagmanager.com/**', async (route) => {
     googleTagRequests.push(route.request().url());

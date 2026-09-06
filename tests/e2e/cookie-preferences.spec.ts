@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test';
+import { serveProductionHostLocally } from './local-production-host';
 
 test('preference manager never grants analytics simply by opening and supports accept then revoke', async ({ page }) => {
+  await serveProductionHostLocally(page);
   const tags: string[] = [];
   await page.route('https://www.googletagmanager.com/**', async (route) => { tags.push(route.request().url()); await route.fulfill({ contentType: 'application/javascript', body: '' }); });
   await page.goto('http://www.streamnest.io:4391/');
