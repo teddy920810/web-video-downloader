@@ -1,5 +1,7 @@
 ---
 import '../styles/global.css';
+import '@fontsource-variable/inter';
+import '../styles/clarity.css';
 import AuthControls from '../components/auth/AuthControls';
 import SocialIcon from '../components/icons/SocialIcon';
 import { getCollection } from 'astro:content';
@@ -169,7 +171,7 @@ const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultS
     <link rel="icon" href={site.favicon} />
     {schemas.map((item) => <script is:inline type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', ...item })} />)}
   </head>
-  <body class:list={{ 'download-site': isDownloaderTheme, 'utility-site': utilitiesMode }} style={`--theme-color: ${site.themeColor}; --theme-color-fallback: ${site.themeColorFallback};`}>
+  <body class:list={['clarity-site', { 'download-site': isDownloaderTheme, 'utility-site': utilitiesMode }]} style={`--theme-color: ${site.themeColor}; --theme-color-fallback: ${site.themeColorFallback};`}>
     {!utilitiesMode && site.announcement.enabled && (
       <aside class="site-announcement" aria-label="Site announcement">
         <span>{site.announcement.text}</span>

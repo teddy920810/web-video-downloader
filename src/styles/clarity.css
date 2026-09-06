@@ -1,0 +1,158 @@
+/* Streamnest Clarity: shared semantic presentation, independent of product mode.
+   Existing product layout/asset rules remain in global.css. No CMS values or
+   processing behavior are changed by this theme. */
+body.clarity-site {
+  --ink: #0a0a0a;
+  --muted: #5a5a5c;
+  --paper: #fff;
+  --card: #fff;
+  --line: #e5e5e5;
+  --surface: #fafafa;
+  --surface-hover: #f3f4f4;
+  --green: #007a5e;
+  --green-dark: #005c47;
+  --mint: #e8f7f1;
+  --accent: #007a5e;
+  --red: #a32621;
+  --shadow: 0 8px 24px #0000000a;
+  color: var(--ink);
+  background: var(--paper);
+  font-family: 'Inter Variable', Inter, system-ui, sans-serif;
+  line-height: 1.6;
+  color-scheme: light;
+}
+.clarity-site :is(button, input, select, textarea) { font-family: inherit; }
+.clarity-site :is(a, button, input, select, textarea, summary):focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
+.clarity-site :is(h1, h2, h3) { font-weight: 600; }
+.clarity-site .eyebrow { color: var(--green); font-weight: 600; letter-spacing: .1em; }
+.clarity-site .site-header { max-width: none; min-height: 72px; height: auto; padding: 12px 32px; gap: 24px; color: var(--ink); background: var(--paper); border-bottom: 1px solid var(--line); }
+.clarity-site .site-header nav { color: var(--ink); gap: 26px; }
+.clarity-site:not(.utility-site) .site-header nav { gap: 16px; font-size: .82rem; }
+.clarity-site .site-header :is(nav > a, .nav-dropdown-trigger) { font-weight: 550; }
+.clarity-site .site-header nav a:hover { color: var(--green); }
+.clarity-site .brand { font-weight: 650; font-size: 19px; letter-spacing: -.04em; color: var(--ink); }
+.clarity-site .nav-dropdown-trigger { min-height: 44px; cursor: pointer; }
+.clarity-site .nav-dropdown-panel { color: var(--ink); background: var(--paper); border-color: var(--line); border-radius: 12px; box-shadow: 0 12px 32px #00000012; }
+.clarity-site .nav-dropdown-group-title { color: var(--muted); }
+.clarity-site .nav-coming-soon { color: #603c98; background: #f2eafa; font-size: 10px; border-radius: 5px; }
+.clarity-site .header-auth-loading { background: #f3f4f4; border-color: var(--line); }
+.clarity-site .header-account { color: var(--ink); background: var(--paper); border-color: transparent; padding: 5px 8px; }
+.clarity-site .header-account span { flex: 1; min-width: 0; font-weight: 500; }
+.clarity-site .header-account small { color: var(--muted); font-size: 12px; flex-shrink: 0; }
+.clarity-site :is(.header-cta, .button) { border-radius: 999px; font-weight: 550; min-height: 44px; transition: background-color .16s, border-color .16s; }
+.clarity-site :is(.header-cta, .button):hover { transform: none; }
+.clarity-site :is(.button-primary, .header-cta, .background-dropzone .button) { color: #fff; background: var(--ink); border-color: var(--ink); box-shadow: none; }
+.clarity-site :is(.button-primary, .header-cta):hover:not(:disabled) { background: #292929; }
+.clarity-site :is(.button-secondary, .button-ghost) { color: var(--ink); background: var(--paper); border-color: #cdcdcd; }
+.clarity-site :is(.button-secondary, .button-ghost):hover:not(:disabled) { background: var(--surface-hover); }
+.clarity-site button:disabled { opacity: .65; cursor: not-allowed; }
+.clarity-site :is(.site-footer, .footer-copyright) { color: var(--muted); background: var(--surface); border-color: var(--line); }
+.clarity-site .site-footer { max-width: none; padding-inline: max(24px, calc((100vw - 1240px) / 2)); }
+.clarity-site .site-footer :is(.brand, h2) { color: var(--ink); }
+.clarity-site .site-footer :is(a, .footer-cookie-settings) { color: var(--muted); }
+.clarity-site .site-footer a:hover, .clarity-site .footer-cookie-settings:hover { color: var(--green); }
+.clarity-site :is(.footer-social-links a, .footer-copyright) { border-color: var(--line); }
+.clarity-site .utility-page { color: var(--ink); background: var(--paper); }
+.clarity-site :is(.utility-hero h1, .utility-home-hero h1) { font-size: clamp(2.25rem, 4.4vw, 4rem); line-height: 1.08; letter-spacing: -.045em; }
+.clarity-site :is(.utility-hero h1 em, .utility-home-hero h1 em, .account-hero h1 em) { color: var(--green); }
+.clarity-site :is(.utility-hero > div > p, .utility-home-hero p, .utility-notes ul, .utility-tool-grid p, .utility-privacy-strip p, .account-hero p) { color: var(--muted); }
+.clarity-site :is(.local-media-tool, .background-workspace, .background-dropzone) { background: var(--paper); color: var(--ink); border-color: var(--line); border-radius: 16px; box-shadow: var(--shadow); backdrop-filter: none; }
+.clarity-site :is(.local-media-heading h2, .background-controls h2, .local-file-list li) { color: var(--ink); }
+.clarity-site :is(.local-media-heading p, .background-controls p, .utility-tool-grid span) { color: var(--green); font-weight: 600; }
+.clarity-site .local-media-icon { color: var(--green); background: var(--mint); border-radius: 12px; }
+.clarity-site .local-file-picker { background: var(--surface); border-color: #b8babc; border-radius: 12px; }
+.clarity-site :is(.local-file-picker:hover, .background-dropzone:hover) { border-color: var(--green); background: #f5fbf8; }
+.clarity-site :is(.local-file-picker span, .local-media-field > span, .local-file-list span, .local-image-result-meta, .local-media-progress div, .local-media-privacy, .background-dropzone > span:not(.button), .background-dropzone small, .background-file-meta span, .background-swatches legend) { color: var(--muted); }
+.clarity-site :is(.local-media-field select, .local-media-field input, .svg-code-field textarea) { background: var(--paper); color: #1c1c1e; border-color: #b8babc; border-radius: 8px; }
+.clarity-site .svg-code-field textarea { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+.clarity-site :is(.svg-source-tabs button, .background-file-meta) { background: var(--surface); color: var(--muted); border-color: var(--line); }
+.clarity-site .svg-source-tabs button.is-selected { background: var(--mint); border-color: var(--green); color: var(--green-dark); }
+.clarity-site :is(.local-file-list, .local-file-list li, .background-swatches) { border-color: var(--line); }
+.clarity-site :is(.local-media-field input[type=range], .local-media-progress progress, .tool-processing-overlay progress) { accent-color: var(--green); }
+.clarity-site .local-media-compatibility { color: var(--muted); background: var(--surface); border-color: var(--line); }
+.clarity-site .tool-processing-overlay { color: var(--ink); background: #ffffffeb; backdrop-filter: blur(4px); }
+.clarity-site .tool-processing-overlay.is-inline { background: var(--surface); border-color: var(--line); }
+.clarity-site .tool-processing-overlay > span:not(.tool-processing-spinner) { color: var(--muted); }
+.clarity-site .tool-processing-spinner { border-color: #d9eee5; border-top-color: var(--green); }
+.clarity-site .background-swatches button { border-color: #b8babc; }
+.clarity-site .background-swatches button.is-selected { border-color: var(--ink); box-shadow: 0 0 0 3px var(--mint); }
+.clarity-site .background-status { color: var(--green-dark) !important; background: var(--mint); }
+.clarity-site :is(.utility-notes, .utility-privacy-strip) { background: var(--surface); border-color: var(--line); border-radius: 12px; }
+.clarity-site .utility-tool-grid > a { min-height: 260px; padding: 28px; background: var(--paper); border-color: var(--line); border-radius: 12px; }
+.clarity-site .utility-tool-grid > a:hover { background: var(--surface); border-color: #b6d4c7; transform: none; }
+.clarity-site .utility-tool-grid h2 { margin: 22px 0 12px; font-size: 1.4rem; line-height: 1.3; }
+.clarity-site .utility-tool-grid strong { margin-top: auto; color: var(--green); font-weight: 550; }
+.clarity-site .pricing-page .account-hero h1 { font-size: clamp(2.25rem, 4.4vw, 4rem); line-height: 1.08; }
+.clarity-site .pricing-grid article { color: var(--ink); background: var(--paper); border-radius: 12px; padding: 32px; }
+.clarity-site .tool-guide-surface { background: var(--paper); }
+.clarity-site .tool-guide { color: var(--ink); }
+.clarity-site .tool-guide :is(h2, h3, dd, summary) { color: var(--ink); }
+.clarity-site .tool-guide :is(p, dt) { color: var(--muted); }
+.clarity-site .tool-guide :is(.eyebrow, .tool-guide-step-number) { color: var(--green); }
+.clarity-site .tool-guide :is(.tool-guide-feature, .tool-guide-facts, .tool-guide-facts > div, .tool-guide-how, .tool-guide-steps li, .tool-guide-questions, details) { border-color: var(--line); }
+.clarity-site :is(.tool-guide-facts, .tool-guide-how) { border-radius: 12px; background: var(--surface); box-shadow: none; }
+.clarity-site .tool-guide-questions :is(details[open], summary:hover) { background: var(--surface); }
+.clarity-site .tool-guide-questions summary::marker { color: var(--green); }
+.clarity-site .tool-guide-questions summary:focus-visible { outline-color: var(--green); }
+.clarity-site .tool-guide h2 { font-size: clamp(1.8rem, 3.2vw, 2.65rem); }
+.clarity-site :is(.legal-page h1, .legal-body h2, .legal-body h3) { color: var(--ink); }
+.clarity-site :is(.legal-body p, .legal-body ul) { color: #38383a; }
+.clarity-site .cookie-consent { border-color: var(--line); border-radius: 12px; box-shadow: 0 12px 40px #0000001a; }
+.clarity-site .cookie-consent :is(h2, strong) { color: var(--ink); }
+.clarity-site .cookie-consent :is(p, small) { color: var(--muted); }
+.clarity-site .cookie-consent p a { color: var(--green); }
+.clarity-site .cookie-consent button { border-radius: 999px; min-height: 44px; }
+.clarity-site .cookie-consent .button-primary { background: var(--ink); border-color: var(--ink); }
+.clarity-site .cookie-consent .button-secondary { background: var(--paper); border-color: var(--line); color: var(--ink); }
+.clarity-site .cookie-preferences input { accent-color: var(--green); }
+.clarity-site .cookie-consent :focus-visible { outline-color: var(--green); }
+.clarity-site .desktop-coming-soon-shell { background: var(--surface); }
+.clarity-site .desktop-coming-soon :is(h2, .desktop-coming-soon-cta) { color: var(--ink); }
+.clarity-site .desktop-coming-soon-copy p { color: var(--muted); }
+.clarity-site .desktop-coming-soon-copy .eyebrow { color: var(--green); }
+.clarity-site .desktop-coming-soon-cta { background: var(--paper); border-color: var(--line); }
+.clarity-site .download-home { background: var(--paper); }
+.clarity-site .download-proof :is(h2, h3), .clarity-site .download-home .trial-section h2 { color: var(--ink); }
+.clarity-site .download-proof p, .clarity-site .download-home .trial-section p { color: var(--muted); }
+.clarity-site .download-proof .eyebrow, .clarity-site .download-proof article > span, .clarity-site .download-home .trial-section .eyebrow { color: var(--green); }
+.clarity-site .download-home .trial-section ul { color: var(--ink); background: var(--surface); border-color: var(--line); }
+.clarity-site :is(.download-proof, .download-proof article, .download-home .trial-section) { border-color: var(--line); }
+/* Content pages retain their assets and content; reading surfaces share tokens. */
+.clarity-site :is(.blog-hero, .blog-empty, .article-page, .article-page-header, .article-content) { color: var(--ink); background: var(--paper); }
+.clarity-site :is(.blog-card, .blog-card.has-cover, .blog-filter-bar, .article-toc-card, .article-related-card, .article-end-card, .article-product-card) { color: var(--ink); background: var(--surface); border-color: var(--line); box-shadow: none; border-radius: 12px; }
+.clarity-site :is(.blog-card:hover, .blog-filter:hover) { transform: none; box-shadow: none; }
+.clarity-site :is(.blog-list h2, .article-page-header h1, .article-toc-card > strong, .article-content h3, .article-related-card a, .article-product-card h2) { color: var(--ink); }
+.clarity-site :is(.blog-hero p, .blog-list p, .blog-list small, .blog-empty p, .blog-results, .article-page-header > p, .article-meta, .article-breadcrumbs, .article-content > p, .article-toc-card li a, .article-related-card small, .article-product-card p, .article-end-card p) { color: var(--muted); }
+.clarity-site :is(.article-category, .blog-hero .eyebrow, .article-breadcrumbs a, .article-content a:not(.button), .article-product-card > span, .article-product-card a) { color: var(--green); }
+.clarity-site :is(.article-page-header, .article-cover, .article-content td, .article-content th, .article-related-card li) { border-color: var(--line); box-shadow: none; }
+.clarity-site :is(.article-content h2, .article-content blockquote, .article-content th, .article-related-card h2) { color: var(--ink); background: var(--surface); border-color: #b6d4c7; }
+.clarity-site .blog-filter { color: var(--muted); background: var(--paper); border-color: var(--line); }
+.clarity-site .blog-filter[aria-pressed=true] { color: var(--green-dark); background: var(--mint); border-color: #b6d4c7; box-shadow: none; }
+@media (max-width: 1200px) {
+  .clarity-site .site-header { grid-template-columns: minmax(0, 1fr) auto auto; gap: 14px; }
+  .clarity-site .mobile-menu-toggle { display: flex; grid-column: 3; grid-row: 1; min-width: 44px; min-height: 44px; color: var(--ink); background: var(--paper); border-color: var(--line); }
+  .clarity-site .header-auth { grid-column: 2; grid-row: 1; }
+  .clarity-site .site-header nav { display: none; grid-column: 1 / -1; grid-row: 2; width: 100%; gap: 6px; padding-block: 12px; }
+  .clarity-site .site-header.is-menu-open nav { display: flex; flex-direction: column; align-items: stretch; }
+  .clarity-site .site-header nav > a, .clarity-site .nav-dropdown-trigger { width: 100%; min-height: 44px; padding: 10px 12px; justify-content: space-between; }
+  .clarity-site .nav-dropdown-panel { position: static; width: auto; min-width: 0; display: none; opacity: 1; visibility: visible; transform: none; box-shadow: none; border: 0; padding: 12px; }
+  .clarity-site .nav-dropdown:hover .nav-dropdown-panel, .clarity-site .nav-dropdown:has(:focus-visible) .nav-dropdown-panel { display: none; transform: none; }
+  .clarity-site .nav-dropdown.is-open .nav-dropdown-panel { display: grid; transform: none; pointer-events: auto; }
+  .clarity-site .nav-dropdown-panel::before { display: none; }
+}
+@media (max-width: 620px) {
+  .clarity-site .site-header { padding: 12px 16px; gap: 10px; }
+  .clarity-site .brand { font-size: 16px; gap: 8px; }
+  .clarity-site .brand-logo { width: 30px; height: 30px; }
+  .clarity-site .header-auth { inline-size: 132px; }
+  .clarity-site .header-account small { display: block; margin-inline: auto; }
+  .clarity-site .header-account img { width: 28px; height: 28px; }
+  .clarity-site .header-cta { white-space: normal; line-height: 1.25; padding-inline: 10px; }
+  .clarity-site .nav-dropdown-mega { grid-template-columns: 1fr; }
+  .clarity-site .local-media-tool { padding: 20px; }
+}
+@media (max-width: 360px) { .clarity-site .header-auth { inline-size: 110px; } .clarity-site .brand { font-size: 14px; } }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .clarity-site *, .clarity-site *::before, .clarity-site *::after { animation: none !important; transition: none !important; }
+}

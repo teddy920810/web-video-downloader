@@ -149,9 +149,9 @@ test('shows the shared loading treatment while a local image is processing', asy
   await page.locator('input[type=file]').setInputFiles('public/assets/blog/download-youtube-videos.webp');
   await page.getByRole('button', { name: 'Convert locally' }).click();
 
-  await expect(page.getByRole('status')).toContainText('Processing locally…');
+  await expect(page.locator('.tool-processing-overlay')).toContainText('Processing locally…');
   await expect(page.getByRole('link', { name: 'Save converted.png' })).toBeVisible();
-  await expect(page.getByRole('status')).toHaveCount(0);
+  await expect(page.locator('.tool-processing-overlay')).toHaveCount(0);
 });
 
 test('bakes the selected background color into the downloaded PNG', async ({ page }) => {
