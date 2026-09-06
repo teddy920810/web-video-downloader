@@ -1,0 +1,78 @@
+{
+  "toolId": "image-compressor",
+  "features": {
+    "heading": "What you can do with Image Compressor",
+    "intro": "Useful output choices, clear limits, and processing on your device.",
+    "items": [
+      {
+        "eyebrow": "Built for practical files",
+        "title": "Choose a smaller image with a quality trade-off",
+        "description": "Adjust the quality to create a WebP result. An image that is already optimized may not become smaller; inspect the result before replacing your original.",
+        "facts": [
+          {
+            "label": "Quality selection",
+            "value": "35%–90%"
+          },
+          {
+            "label": "Saved format",
+            "value": "WebP"
+          }
+        ]
+      },
+      {
+        "eyebrow": "On your device",
+        "title": "Stay in control of your source file",
+        "description": "Processing uses this browser rather than a server-side media job. Keep the tab open, and save the result before leaving the page.",
+        "facts": [
+          {
+            "label": "Processing location",
+            "value": "This browser"
+          },
+          {
+            "label": "AI credits required",
+            "value": "None"
+          }
+        ]
+      }
+    ]
+  },
+  "steps": {
+    "heading": "How to use Image Compressor",
+    "intro": "From your source file to a result you can save, in three steps.",
+    "items": [
+      {
+        "title": "Choose a local image",
+        "body": "Select a JPG, PNG, or WebP image within the 50 MB allowance."
+      },
+      {
+        "title": "Adjust the quality",
+        "body": "Choose a quality level and start processing. Lower quality can reduce detail as well as size."
+      },
+      {
+        "title": "Save and review",
+        "body": "Download the WebP and compare its appearance and size with the original."
+      }
+    ]
+  },
+  "faq": {
+    "heading": "Questions about Image Compressor",
+    "items": [
+      {
+        "question": "Can I save a compressed JPG instead?",
+        "answer": "This compressor produces WebP. Use Image Converter if you need to change the resulting image to another available format."
+      },
+      {
+        "question": "Is my file uploaded?",
+        "answer": "The selected media is processed locally in this browser. It is not uploaded to our servers for this tool."
+      },
+      {
+        "question": "What if processing fails or takes too long?",
+        "answer": "Keep this tab open and try a shorter or smaller file when possible. Available memory and media support differ between devices and browsers. Your original file is not overwritten."
+      },
+      {
+        "question": "Do I need AI credits to use this tool?",
+        "answer": "No. This browser-local tool does not spend AI credits. File allowances and browser capabilities still apply."
+      }
+    ]
+  }
+}

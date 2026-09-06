@@ -1,0 +1,78 @@
+{
+  "toolId": "background-remover",
+  "features": {
+    "heading": "What you can do with Background Remover",
+    "intro": "A focused cutout workflow with clear credit and storage boundaries.",
+    "items": [
+      {
+        "eyebrow": "Built for practical files",
+        "title": "Create a cutout and choose its background",
+        "description": "Remove the image background with cloud AI. Then keep the result transparent or select a solid background color before saving the PNG.",
+        "facts": [
+          {
+            "label": "Image input",
+            "value": "JPG · PNG · WebP"
+          },
+          {
+            "label": "Maximum input",
+            "value": "10 MB"
+          }
+        ]
+      },
+      {
+        "eyebrow": "Clear AI usage",
+        "title": "Use AI with a visible credit cost",
+        "description": "The selected image is uploaded privately for AI processing. One AI credit is reserved when the job begins; failed processing refunds the reservation.",
+        "facts": [
+          {
+            "label": "Processing cost",
+            "value": "1 AI credit"
+          },
+          {
+            "label": "Saved result",
+            "value": "PNG"
+          }
+        ]
+      }
+    ]
+  },
+  "steps": {
+    "heading": "How to use Background Remover",
+    "intro": "From your source file to a result you can save, in three steps.",
+    "items": [
+      {
+        "title": "Choose an image",
+        "body": "Select one image to open the full working area. Sign in with Google before starting AI processing."
+      },
+      {
+        "title": "Remove and review",
+        "body": "Start background removal. When the result is ready, inspect the cutout and choose a transparent or solid background."
+      },
+      {
+        "title": "Save your finished PNG",
+        "body": "Download the PNG. A selected solid background color is included in the saved image."
+      }
+    ]
+  },
+  "faq": {
+    "heading": "Questions about Background Remover",
+    "items": [
+      {
+        "question": "Does the downloaded image include my chosen color?",
+        "answer": "Yes. Selecting a solid background color applies it to the saved PNG. Choose the transparent option if you want a transparent background."
+      },
+      {
+        "question": "Where is my image processed?",
+        "answer": "Background removal is a cloud AI feature. The image you choose is uploaded privately for temporary processing; it is not a browser-local operation."
+      },
+      {
+        "question": "What happens to my credit if processing fails?",
+        "answer": "The reserved AI credit is refunded when the processing job fails. You can check your balance and credit history in your account."
+      },
+      {
+        "question": "Is background removal free?",
+        "answer": "Background removal uses one AI credit per successful job. Your account shows your available balance; local video and image utilities do not use AI credits."
+      }
+    ]
+  }
+}

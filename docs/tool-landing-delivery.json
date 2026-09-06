@@ -1,0 +1,81 @@
+{
+  "project": "视频下载站",
+  "outcome": "工具落地页下半屏优化",
+  "status": "进行中",
+  "goal": "保留Hero，发布Features步骤FAQ",
+  "scope": {
+    "allowed": [
+      ".pages.yml",
+      "src/content.config.ts",
+      "src/content/tool-guides/",
+      "src/lib/content/tool-guides.ts",
+      "src/lib/content/tool-guides.test.ts",
+      "src/lib/content/tool-hero-regression.test.ts",
+      "src/lib/content/__snapshots__/tool-hero-regression.test.ts.snap",
+      "src/components/products/",
+      "src/pages/video-converter.astro",
+      "src/pages/video-compressor.astro",
+      "src/pages/background-remover.astro",
+      "src/styles/tool-guides.css",
+      "tests/e2e/tool-guides.spec.ts",
+      "docs/tool-landing-and-handoff.md",
+      "docs/tool-landing-delivery.json"
+    ],
+    "protected": [
+      "public/",
+      "src/content/settings/utilities.json",
+      "src/content/legal/",
+      "src/content/blog/",
+      "src/lib/auth.ts",
+      "src/lib/media/",
+      "src/components/media/",
+      "src/components/image/",
+      "src/components/account/",
+      "src/layouts/SiteLayout.astro",
+      "src/styles/global.css"
+    ]
+  },
+  "changedPaths": [
+    ".pages.yml",
+    "src/components/products/UtilityToolPage.astro",
+    "src/content.config.ts",
+    "src/pages/background-remover.astro",
+    "src/pages/video-compressor.astro",
+    "src/pages/video-converter.astro",
+    "docs/tool-landing-and-handoff.md",
+    "src/components/products/ToolGuideSections.astro",
+    "src/content/tool-guides/audio-extractor.json",
+    "src/content/tool-guides/background-remover.json",
+    "src/content/tool-guides/image-compressor.json",
+    "src/content/tool-guides/image-converter.json",
+    "src/content/tool-guides/image-resizer.json",
+    "src/content/tool-guides/svg-to-image.json",
+    "src/content/tool-guides/video-compressor.json",
+    "src/content/tool-guides/video-converter.json",
+    "src/content/tool-guides/video-merger.json",
+    "src/content/tool-guides/video-to-gif.json",
+    "src/content/tool-guides/video-trimmer.json",
+    "src/lib/content/__snapshots__/tool-hero-regression.test.ts.snap",
+    "src/lib/content/tool-guides.test.ts",
+    "src/lib/content/tool-guides.ts",
+    "src/lib/content/tool-hero-regression.test.ts",
+    "src/styles/tool-guides.css",
+    "tests/e2e/tool-guides.spec.ts",
+    "docs/tool-landing-delivery.json"
+  ],
+  "tdd": {
+    "red": "passed",
+    "minimalChange": "passed",
+    "targetedGreen": "passed",
+    "fullVerification": "passed"
+  },
+  "gates": {
+    "code": "passed",
+    "repository": "pending",
+    "deployment": "pending",
+    "domain": "not_applicable",
+    "identity": "not_applicable",
+    "productionFlow": "pending"
+  },
+  "nextStep": "PR与CI通过后上线并实测页面和工具"
+}

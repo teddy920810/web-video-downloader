@@ -1,6 +1,7 @@
 ---
 import LocalVideoTool from '../components/media/LocalVideoTool';
 import SiteLayout from '../layouts/SiteLayout.astro';
+import ToolGuideSections from '../components/products/ToolGuideSections.astro';
 import { getCollection } from 'astro:content';
 
 export const prerender = false;
@@ -24,4 +25,5 @@ const { converter, tool } = entry.data;
       <ul>{converter.notes.map((note) => <li>{note}</li>)}</ul>
     </section>
   </div>
+  <ToolGuideSections />
 </SiteLayout>

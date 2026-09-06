@@ -1,0 +1,78 @@
+{
+  "toolId": "video-compressor",
+  "features": {
+    "heading": "What you can do with Video Compressor",
+    "intro": "Useful output choices, clear limits, and processing on your device.",
+    "items": [
+      {
+        "eyebrow": "Built for practical files",
+        "title": "Balance file size and picture detail",
+        "description": "Pick a preset for quick sharing or a higher-resolution result. A smaller file is not guaranteed when the source is already efficiently encoded.",
+        "facts": [
+          {
+            "label": "Quality presets",
+            "value": "480p · 720p · 1080p"
+          },
+          {
+            "label": "Input allowance",
+            "value": "Up to 250 MB"
+          }
+        ]
+      },
+      {
+        "eyebrow": "On your device",
+        "title": "Stay in control of your source file",
+        "description": "Processing uses this browser rather than a server-side media job. Keep the tab open, and save the result before leaving the page.",
+        "facts": [
+          {
+            "label": "Processing location",
+            "value": "This browser"
+          },
+          {
+            "label": "AI credits required",
+            "value": "None"
+          }
+        ]
+      }
+    ]
+  },
+  "steps": {
+    "heading": "How to use Video Compressor",
+    "intro": "From your source file to a result you can save, in three steps.",
+    "items": [
+      {
+        "title": "Choose a local video",
+        "body": "Select the video you want to reduce without uploading it to a server."
+      },
+      {
+        "title": "Choose a compression preset",
+        "body": "Select Small, Balanced, or Higher quality, then start Compress locally."
+      },
+      {
+        "title": "Save and compare",
+        "body": "Save the processed video. Compare its size and appearance with your original before sharing."
+      }
+    ]
+  },
+  "faq": {
+    "heading": "Questions about Video Compressor",
+    "items": [
+      {
+        "question": "Will compression reduce visual quality?",
+        "answer": "It can. Lower resolution and more compression trade detail for file size. Choose a higher-quality preset when detail matters."
+      },
+      {
+        "question": "Is my file uploaded?",
+        "answer": "The selected media is processed locally in this browser. It is not uploaded to our servers for this tool."
+      },
+      {
+        "question": "What if processing fails or takes too long?",
+        "answer": "Keep this tab open and try a shorter or smaller file when possible. Available memory and media support differ between devices and browsers. Your original file is not overwritten."
+      },
+      {
+        "question": "Do I need AI credits to use this tool?",
+        "answer": "No. This browser-local tool does not spend AI credits. File allowances and browser capabilities still apply."
+      }
+    ]
+  }
+}

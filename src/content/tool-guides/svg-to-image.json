@@ -1,0 +1,78 @@
+{
+  "toolId": "svg-to-image",
+  "features": {
+    "heading": "What you can do with SVG to Image",
+    "intro": "Useful output choices, clear limits, and processing on your device.",
+    "items": [
+      {
+        "eyebrow": "Built for practical files",
+        "title": "Turn vector artwork into a familiar image",
+        "description": "Paste SVG code or fetch a public SVG URL, then rasterize it into an image. Active content and external references are restricted for safer processing.",
+        "facts": [
+          {
+            "label": "Input options",
+            "value": "SVG code · Public URL"
+          },
+          {
+            "label": "Output options",
+            "value": "PNG · JPG · WebP"
+          }
+        ]
+      },
+      {
+        "eyebrow": "On your device",
+        "title": "Stay in control of your source file",
+        "description": "Processing uses this browser rather than a server-side media job. Keep the tab open, and save the result before leaving the page.",
+        "facts": [
+          {
+            "label": "Processing location",
+            "value": "This browser"
+          },
+          {
+            "label": "AI credits required",
+            "value": "None"
+          }
+        ]
+      }
+    ]
+  },
+  "steps": {
+    "heading": "How to use SVG to Image",
+    "intro": "From your source file to a result you can save, in three steps.",
+    "items": [
+      {
+        "title": "Add SVG code or a URL",
+        "body": "Paste your SVG markup, or enter a public SVG URL that allows browser access."
+      },
+      {
+        "title": "Choose an image format",
+        "body": "Select PNG, JPG, or WebP and set the available output options."
+      },
+      {
+        "title": "Save the raster image",
+        "body": "Save the converted file and inspect the dimensions and appearance."
+      }
+    ]
+  },
+  "faq": {
+    "heading": "Questions about SVG to Image",
+    "items": [
+      {
+        "question": "Why does an SVG URL sometimes fail?",
+        "answer": "The source may block browser access, require sign-in or return something other than SVG. If you own the file, try pasting its SVG code instead."
+      },
+      {
+        "question": "Is my file uploaded?",
+        "answer": "Pasted SVG code is converted in the browser. URL input makes a request to the external site hosting the SVG, which must allow that request. The SVG is not uploaded for server-side conversion."
+      },
+      {
+        "question": "What if processing fails or takes too long?",
+        "answer": "Keep this tab open and try a shorter or smaller file when possible. Available memory and media support differ between devices and browsers. Your original file is not overwritten."
+      },
+      {
+        "question": "Do I need AI credits to use this tool?",
+        "answer": "No. This browser-local tool does not spend AI credits. File allowances and browser capabilities still apply."
+      }
+    ]
+  }
+}

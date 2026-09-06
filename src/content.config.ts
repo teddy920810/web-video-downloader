@@ -8,6 +8,7 @@ import { accountSettingsSchema } from './lib/account/settings';
 import { imageSettingsSchema } from './lib/content/image-metadata';
 import { blogEntrySchema } from './lib/content/blog-entry';
 import { utilitiesSettingsSchema } from './lib/content/utilities-settings';
+import { toolGuideSchema } from './lib/content/tool-guides';
 import { sitemapSettingsSchema } from './lib/content/sitemap-settings';
 import {
   blogIndexSettingsSchema,
@@ -112,6 +113,7 @@ const landingPages = defineCollection({
 });
 
 export const collections = {
+  toolGuides: defineCollection({ loader: glob({ base: './src/content/tool-guides', pattern: '*.json' }), schema: toolGuideSchema }),
   accountSettings: defineCollection({ loader: glob({ base: './src/content/settings', pattern: 'account.json' }), schema: accountSettingsSchema }),
   siteSettings,
   imageSettings,

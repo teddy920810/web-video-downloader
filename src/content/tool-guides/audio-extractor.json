@@ -1,0 +1,78 @@
+{
+  "toolId": "audio-extractor",
+  "features": {
+    "heading": "What you can do with Audio Extractor",
+    "intro": "Useful output choices, clear limits, and processing on your device.",
+    "items": [
+      {
+        "eyebrow": "Built for practical files",
+        "title": "Save the audio without the picture",
+        "description": "Choose a compact MP3 for listening or PCM WAV for editing. WAV preserves the decoded audio but cannot restore information lost in the original recording.",
+        "facts": [
+          {
+            "label": "Audio outputs",
+            "value": "MP3 · WAV"
+          },
+          {
+            "label": "MP3 bitrate",
+            "value": "192 kbps"
+          }
+        ]
+      },
+      {
+        "eyebrow": "On your device",
+        "title": "Stay in control of your source file",
+        "description": "Processing uses this browser rather than a server-side media job. Keep the tab open, and save the result before leaving the page.",
+        "facts": [
+          {
+            "label": "Processing location",
+            "value": "This browser"
+          },
+          {
+            "label": "AI credits required",
+            "value": "None"
+          }
+        ]
+      }
+    ]
+  },
+  "steps": {
+    "heading": "How to use Audio Extractor",
+    "intro": "From your source file to a result you can save, in three steps.",
+    "items": [
+      {
+        "title": "Choose a video with audio",
+        "body": "Select a local video that contains an audio track."
+      },
+      {
+        "title": "Select the audio format",
+        "body": "Choose MP3 or WAV, then start extracting the audio."
+      },
+      {
+        "title": "Save and listen",
+        "body": "Save the audio file and check that the track plays as expected."
+      }
+    ]
+  },
+  "faq": {
+    "heading": "Questions about Audio Extractor",
+    "items": [
+      {
+        "question": "Why is a WAV result larger than MP3?",
+        "answer": "PCM WAV stores uncompressed audio samples. MP3 uses lossy compression to reduce file size, which makes it more convenient for everyday listening."
+      },
+      {
+        "question": "Is my file uploaded?",
+        "answer": "The selected media is processed locally in this browser. It is not uploaded to our servers for this tool."
+      },
+      {
+        "question": "What if processing fails or takes too long?",
+        "answer": "Keep this tab open and try a shorter or smaller file when possible. Available memory and media support differ between devices and browsers. Your original file is not overwritten."
+      },
+      {
+        "question": "Do I need AI credits to use this tool?",
+        "answer": "No. This browser-local tool does not spend AI credits. File allowances and browser capabilities still apply."
+      }
+    ]
+  }
+}

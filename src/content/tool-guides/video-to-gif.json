@@ -1,0 +1,78 @@
+{
+  "toolId": "video-to-gif",
+  "features": {
+    "heading": "What you can do with Video to GIF",
+    "intro": "Useful output choices, clear limits, and processing on your device.",
+    "items": [
+      {
+        "eyebrow": "Built for practical files",
+        "title": "Make an animation from a short moment",
+        "description": "Select a short section and a practical width. GIF files can become large quickly, so shorter clips and smaller dimensions usually work best.",
+        "facts": [
+          {
+            "label": "Selected duration",
+            "value": "Up to 30 seconds"
+          },
+          {
+            "label": "Width options",
+            "value": "480 · 640 · 960 px"
+          }
+        ]
+      },
+      {
+        "eyebrow": "On your device",
+        "title": "Stay in control of your source file",
+        "description": "Processing uses this browser rather than a server-side media job. Keep the tab open, and save the result before leaving the page.",
+        "facts": [
+          {
+            "label": "Processing location",
+            "value": "This browser"
+          },
+          {
+            "label": "AI credits required",
+            "value": "None"
+          }
+        ]
+      }
+    ]
+  },
+  "steps": {
+    "heading": "How to use Video to GIF",
+    "intro": "From your source file to a result you can save, in three steps.",
+    "items": [
+      {
+        "title": "Choose the source video",
+        "body": "Select a local clip containing the moment you want to animate."
+      },
+      {
+        "title": "Set the range and width",
+        "body": "Choose a section no longer than 30 seconds and the desired output width."
+      },
+      {
+        "title": "Save the animation",
+        "body": "Create and save the GIF, then check how it loops before sharing."
+      }
+    ]
+  },
+  "faq": {
+    "heading": "Questions about Video to GIF",
+    "items": [
+      {
+        "question": "Will the GIF keep the original sound?",
+        "answer": "No. GIF does not contain audio. Keep or convert the original video if sound is important."
+      },
+      {
+        "question": "Is my file uploaded?",
+        "answer": "The selected media is processed locally in this browser. It is not uploaded to our servers for this tool."
+      },
+      {
+        "question": "What if processing fails or takes too long?",
+        "answer": "Keep this tab open and try a shorter or smaller file when possible. Available memory and media support differ between devices and browsers. Your original file is not overwritten."
+      },
+      {
+        "question": "Do I need AI credits to use this tool?",
+        "answer": "No. This browser-local tool does not spend AI credits. File allowances and browser capabilities still apply."
+      }
+    ]
+  }
+}

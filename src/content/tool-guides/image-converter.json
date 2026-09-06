@@ -1,0 +1,78 @@
+{
+  "toolId": "image-converter",
+  "features": {
+    "heading": "What you can do with Image Converter",
+    "intro": "Useful output choices, clear limits, and processing on your device.",
+    "items": [
+      {
+        "eyebrow": "Built for practical files",
+        "title": "Pick an image format for the job",
+        "description": "Use PNG for a transparent-capable output, JPG for a common photo format, or WebP for a modern web image. Check transparency when changing formats.",
+        "facts": [
+          {
+            "label": "Image formats",
+            "value": "PNG · JPG · WebP"
+          },
+          {
+            "label": "Input allowance",
+            "value": "Up to 50 MB"
+          }
+        ]
+      },
+      {
+        "eyebrow": "On your device",
+        "title": "Stay in control of your source file",
+        "description": "Processing uses this browser rather than a server-side media job. Keep the tab open, and save the result before leaving the page.",
+        "facts": [
+          {
+            "label": "Processing location",
+            "value": "This browser"
+          },
+          {
+            "label": "AI credits required",
+            "value": "None"
+          }
+        ]
+      }
+    ]
+  },
+  "steps": {
+    "heading": "How to use Image Converter",
+    "intro": "From your source file to a result you can save, in three steps.",
+    "items": [
+      {
+        "title": "Choose your image",
+        "body": "Select a JPG, PNG, or WebP image from this device."
+      },
+      {
+        "title": "Choose an output format",
+        "body": "Select PNG, JPG, or WebP and start the conversion."
+      },
+      {
+        "title": "Save the image",
+        "body": "Download the result and check its appearance in your intended application."
+      }
+    ]
+  },
+  "faq": {
+    "heading": "Questions about Image Converter",
+    "items": [
+      {
+        "question": "Does JPG preserve a transparent background?",
+        "answer": "No. JPG cannot store transparency. Choose PNG or WebP when you need to preserve a transparent background."
+      },
+      {
+        "question": "Is my file uploaded?",
+        "answer": "The selected media is processed locally in this browser. It is not uploaded to our servers for this tool."
+      },
+      {
+        "question": "What if processing fails or takes too long?",
+        "answer": "Keep this tab open and try a shorter or smaller file when possible. Available memory and media support differ between devices and browsers. Your original file is not overwritten."
+      },
+      {
+        "question": "Do I need AI credits to use this tool?",
+        "answer": "No. This browser-local tool does not spend AI credits. File allowances and browser capabilities still apply."
+      }
+    ]
+  }
+}

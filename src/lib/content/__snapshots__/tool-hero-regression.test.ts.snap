@@ -1,0 +1,411 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`preserves the approved Hero markup and existing tool CMS content > Existing utilities CMS values 1`] = `
+{
+  "backgroundRemover": {
+    "hero": {
+      "accent": "background cleanly.",
+      "eyebrow": "AI image utility",
+      "heading": "Remove an image",
+      "intro": "Upload one image, create a transparent result, and choose a simple preview background before downloading.",
+    },
+    "meta": {
+      "description": "Remove a JPG, PNG, or WebP image background and download a transparent PNG with Streamnest.",
+      "title": "AI Background Remover – Create a Transparent PNG",
+    },
+    "notes": [
+      "JPG, PNG, and WebP input",
+      "Files up to 10 MB",
+      "Google sign-in protects the processing endpoint",
+      "Processed files use temporary private storage and result links",
+    ],
+    "notesEyebrow": "Before you start",
+    "notesHeading": "Built for quick image cutouts",
+  },
+  "backgroundTool": {
+    "backgroundLabel": "Preview background",
+    "chooseAnotherLabel": "Choose another",
+    "downloadLabel": "Download PNG",
+    "dropHeading": "Drag and drop your image here",
+    "dropIntro": "Choose one image to begin",
+    "formatHelp": "JPG, PNG, or WebP · up to 10 MB",
+    "previewAlt": "Selected image preview",
+    "privacyLabel": "Your image is uploaded privately and processed only to complete this request.",
+    "privateLabel": "Private AI image tool",
+    "processError": "The background could not be removed right now.",
+    "processingLabel": "Removing the background…",
+    "removeBackgroundLabel": "Remove background",
+    "removeLabel": "Remove selected image",
+    "resultAlt": "Image with background removed",
+    "resultHeading": "Your transparent image is ready",
+    "selectedHeading": "Ready to remove the background",
+    "transparentLabel": "Transparent preview",
+    "uploadError": "The image could not be uploaded. Please try again.",
+    "uploadLabel": "Upload image",
+    "uploadingLabel": "Uploading your image securely…",
+    "workingLabel": "Working…",
+  },
+  "compressor": {
+    "hero": {
+      "accent": "easier to share.",
+      "eyebrow": "Local video utility",
+      "heading": "Make video files",
+      "intro": "Choose a practical size and quality balance, then compress the video directly on this device without sending it to a server.",
+    },
+    "meta": {
+      "description": "Reduce a local video file in your browser with practical quality presets and no server upload.",
+      "title": "Free Local Video Compressor – Compress Video in Your Browser",
+    },
+    "notes": [
+      "Small: compact 480p output for quick sharing",
+      "Balanced: practical 720p output for everyday use",
+      "Higher quality: preserves up to 1080p",
+      "The result depends on the source codec, motion, duration, and original bitrate",
+    ],
+    "notesEyebrow": "Three presets",
+    "notesHeading": "Choose the result you need",
+  },
+  "converter": {
+    "hero": {
+      "accent": "on your device.",
+      "eyebrow": "Local video utility",
+      "heading": "Convert video formats",
+      "intro": "Choose a video from your computer and convert it in this browser. The file stays on your device throughout processing.",
+    },
+    "meta": {
+      "description": "Convert a local video to MP4, WebM, or MP3 in your browser without uploading the file to a server.",
+      "title": "Free Local Video Converter – Convert Video in Your Browser",
+    },
+    "notes": [
+      "Files up to 250 MB",
+      "MP4, WebM, and MP3 output",
+      "Processing stops if this tab closes",
+      "Large, batch, or 4K workflows are better suited to the future desktop app",
+    ],
+    "notesEyebrow": "Before you start",
+    "notesHeading": "Designed for practical, local jobs",
+  },
+  "home": {
+    "hero": {
+      "accent": "in one place.",
+      "eyebrow": "Practical media tools",
+      "heading": "Work with media",
+      "intro": "Convert and compress video on your device, or create a clean transparent image with AI background removal.",
+    },
+    "meta": {
+      "description": "Convert and compress video locally, or remove image backgrounds with Streamnest media tools.",
+      "title": "Streamnest Media Tools – Video and Image Utilities",
+    },
+    "privacyBody": "Video conversion and compression stay in your browser. Background removal securely uploads only the image you choose for temporary processing.",
+    "privacyEyebrow": "Clear processing boundaries",
+    "privacyHeading": "Local video. Private image processing.",
+    "tools": [
+      {
+        "description": "Convert a local video to MP4, WebM, or MP3 with a browser-based media engine.",
+        "href": "/video-converter",
+        "linkLabel": "Open converter →",
+        "number": "01",
+        "title": "Video Converter",
+      },
+      {
+        "description": "Choose a practical 480p, 720p, or 1080p quality preset and reduce a local file.",
+        "href": "/video-compressor",
+        "linkLabel": "Open compressor →",
+        "number": "02",
+        "title": "Video Compressor",
+      },
+      {
+        "description": "Choose a start and end time, then create a shorter MP4 locally.",
+        "href": "/video-trimmer",
+        "linkLabel": "Open trimmer →",
+        "number": "03",
+        "title": "Video Trimmer",
+      },
+      {
+        "description": "Join compatible clips from the same camera or device without uploading them.",
+        "href": "/video-merger",
+        "linkLabel": "Open merger →",
+        "number": "04",
+        "title": "Video Merger",
+      },
+      {
+        "description": "Extract MP3 or WAV audio from a local video in your browser.",
+        "href": "/audio-extractor",
+        "linkLabel": "Extract audio →",
+        "number": "05",
+        "title": "Audio Extractor",
+      },
+      {
+        "description": "Turn a short section of a video into a shareable animated GIF.",
+        "href": "/video-to-gif",
+        "linkLabel": "Create a GIF →",
+        "number": "06",
+        "title": "Video to GIF",
+      },
+      {
+        "description": "Convert JPG, PNG, and WebP images locally with no upload.",
+        "href": "/image-converter",
+        "linkLabel": "Convert an image →",
+        "number": "07",
+        "title": "Image Converter",
+      },
+      {
+        "description": "Create a smaller WebP image and choose the output quality.",
+        "href": "/image-compressor",
+        "linkLabel": "Compress an image →",
+        "number": "08",
+        "title": "Image Compressor",
+      },
+      {
+        "description": "Resize a local image to a practical maximum width while keeping its proportions.",
+        "href": "/image-resizer",
+        "linkLabel": "Resize an image →",
+        "number": "09",
+        "title": "Image Resizer",
+      },
+      {
+        "description": "Paste SVG code or enter an SVG URL, then save a PNG, JPG, or WebP locally.",
+        "href": "/svg-to-image",
+        "linkLabel": "Convert an SVG →",
+        "number": "10",
+        "title": "SVG to Image",
+      },
+      {
+        "description": "Use one AI credit to create a transparent PNG from a JPG, PNG, or WebP image.",
+        "href": "/background-remover",
+        "linkLabel": "Remove a background →",
+        "number": "11",
+        "title": "Background Remover",
+      },
+    ],
+  },
+  "tool": {
+    "balancedLabel": "Balanced · up to 720p",
+    "cancelLabel": "Cancel",
+    "chooseFile": "Choose a video file",
+    "compressLabel": "Compress locally",
+    "compressionLevelLabel": "Compression level",
+    "compressorHeading": "Compress a local video",
+    "convertLabel": "Convert locally",
+    "converterHeading": "Convert a local video",
+    "formatHelp": "MP4, MOV, WebM, MKV and other browser-readable video files",
+    "loadingLabel": "Loading the local media engine…",
+    "mp3Label": "MP3 audio",
+    "mp4Label": "MP4 video",
+    "outputFormatLabel": "Output format",
+    "privacyLabel": "Your selected video stays on this device and is not uploaded to our servers.",
+    "privateLabel": "Private browser tool",
+    "processingLabel": "Processing in this browser…",
+    "qualityLabel": "Higher quality · up to 1080p",
+    "saveLabel": "Save",
+    "smallLabel": "Small file · up to 480p",
+    "webmLabel": "WebM video",
+  },
+  "toolPages": {
+    "audio-extractor": {
+      "hero": {
+        "accent": "from a local video.",
+        "eyebrow": "Local audio utility",
+        "heading": "Extract audio",
+        "intro": "Create an MP3 for everyday listening or a WAV file for editing, entirely on this device.",
+      },
+      "meta": {
+        "description": "Extract MP3 or WAV audio from a local video in your browser without uploading it.",
+        "title": "Free Audio Extractor – Extract MP3 or WAV Locally",
+      },
+      "notes": [
+        "MP3 at 192 kbps",
+        "Lossless PCM WAV",
+        "Files up to 250 MB",
+        "No media upload",
+      ],
+      "notesEyebrow": "Two formats",
+      "notesHeading": "Choose a practical audio result",
+    },
+    "image-compressor": {
+      "hero": {
+        "accent": "smaller and easier to share.",
+        "eyebrow": "Local image utility",
+        "heading": "Make image files",
+        "intro": "Choose the output quality and create a compact WebP without sending the image to a server.",
+      },
+      "meta": {
+        "description": "Compress a JPG, PNG, or WebP image into a smaller WebP result locally in your browser.",
+        "title": "Free Local Image Compressor – Make Images Smaller",
+      },
+      "notes": [
+        "35% to 90% quality range",
+        "Efficient WebP output",
+        "Files up to 50 MB",
+        "No image upload",
+      ],
+      "notesEyebrow": "Adjustable quality",
+      "notesHeading": "Balance size and appearance",
+    },
+    "image-converter": {
+      "hero": {
+        "accent": "without an upload.",
+        "eyebrow": "Local image utility",
+        "heading": "Convert image formats",
+        "intro": "Choose an image and create a PNG, JPG, or WebP result directly in this browser.",
+      },
+      "meta": {
+        "description": "Convert JPG, PNG, and WebP images locally in your browser without uploading them.",
+        "title": "Free Local Image Converter – JPG, PNG and WebP",
+      },
+      "notes": [
+        "JPG, PNG, and WebP input",
+        "PNG, JPG, and WebP output",
+        "Files up to 50 MB",
+        "The image stays on this device",
+      ],
+      "notesEyebrow": "Browser-native",
+      "notesHeading": "Practical image conversion",
+    },
+    "image-resizer": {
+      "hero": {
+        "accent": "while keeping its proportions.",
+        "eyebrow": "Local image utility",
+        "heading": "Resize an image",
+        "intro": "Choose a maximum width and create a resized WebP directly on this device.",
+      },
+      "meta": {
+        "description": "Resize a JPG, PNG, or WebP image to a practical width locally without uploading it.",
+        "title": "Free Local Image Resizer – Resize Images in Your Browser",
+      },
+      "notes": [
+        "Widths up to 8192 pixels",
+        "The tool never enlarges the source",
+        "Efficient WebP output",
+        "No image upload",
+      ],
+      "notesEyebrow": "Proportional resize",
+      "notesHeading": "Keep the original aspect ratio",
+    },
+    "svg-to-image": {
+      "hero": {
+        "accent": "into a practical image.",
+        "eyebrow": "Local vector utility",
+        "heading": "Convert SVG",
+        "intro": "Paste SVG code or enter a public SVG URL, choose an output format, and save the result directly from this browser.",
+      },
+      "meta": {
+        "description": "Convert SVG code or an SVG URL to PNG, JPG, or WebP locally in your browser.",
+        "title": "Free SVG to PNG, JPG or WebP Converter",
+      },
+      "notes": [
+        "SVG code or public URL input",
+        "PNG, JPG, and WebP output",
+        "Up to 8192 pixels per dimension",
+        "SVG code and conversion stay in this browser",
+      ],
+      "notesEyebrow": "Browser-native",
+      "notesHeading": "Rasterize SVG without an upload",
+    },
+    "video-merger": {
+      "hero": {
+        "accent": "on your device.",
+        "eyebrow": "Local video utility",
+        "heading": "Merge compatible clips",
+        "intro": "Select clips captured with compatible settings and join them into one MP4 in this browser.",
+      },
+      "meta": {
+        "description": "Merge compatible local video clips in your browser without uploading them to a server.",
+        "title": "Free Local Video Merger – Join Compatible Clips",
+      },
+      "notes": [
+        "Choose 2 to 10 clips",
+        "250 MB total browser limit",
+        "Use clips from the same camera or device",
+        "The selected clips are never uploaded",
+      ],
+      "notesEyebrow": "Best results",
+      "notesHeading": "Use clips with matching media settings",
+    },
+    "video-to-gif": {
+      "hero": {
+        "accent": "into a GIF.",
+        "eyebrow": "Local animation utility",
+        "heading": "Turn a video clip",
+        "intro": "Choose a short section and practical output width, then create an animated GIF on this device.",
+      },
+      "meta": {
+        "description": "Turn a short video section into an animated GIF in your browser without uploading the source.",
+        "title": "Free Video to GIF Converter – Create GIFs Locally",
+      },
+      "notes": [
+        "Up to 30 seconds",
+        "480, 640, or 960 pixel width",
+        "12 frames per second",
+        "No video upload",
+      ],
+      "notesEyebrow": "Keep it short",
+      "notesHeading": "GIFs work best for small moments",
+    },
+    "video-trimmer": {
+      "hero": {
+        "accent": "to the moment you need.",
+        "eyebrow": "Local video utility",
+        "heading": "Trim a video",
+        "intro": "Choose the start and end time, then create a shorter MP4 directly on this device.",
+      },
+      "meta": {
+        "description": "Trim a local video to a selected time range in your browser without uploading it.",
+        "title": "Free Local Video Trimmer – Trim Video in Your Browser",
+      },
+      "notes": [
+        "Choose start and end times in seconds",
+        "MP4 output",
+        "Files up to 250 MB",
+        "The selected video is never uploaded",
+      ],
+      "notesEyebrow": "Precise and private",
+      "notesHeading": "Shorten practical clips locally",
+    },
+  },
+}
+`;
+
+exports[`preserves the approved Hero markup and existing tool CMS content > components/products/UtilityToolPage.astro 1`] = `
+"<section class="utility-hero" aria-labelledby={headingId}>
+      <div class="utility-hero-copy">
+        <span class="eyebrow">{page.hero.eyebrow}</span>
+        <h1 id={headingId}>{page.hero.heading}<br /><em>{page.hero.accent}</em></h1>
+        <p>{page.hero.intro}</p>
+      </div>
+      <slot />
+    </section>"
+`;
+
+exports[`preserves the approved Hero markup and existing tool CMS content > pages/background-remover.astro 1`] = `
+"<section class="utility-hero background-remover-hero" aria-labelledby="background-remover-heading">
+      <div class="utility-hero-copy">
+        <span class="eyebrow">{backgroundRemover.hero.eyebrow}</span>
+        <h1 id="background-remover-heading">{backgroundRemover.hero.heading}<br /><em>{backgroundRemover.hero.accent}</em></h1>
+        <p>{backgroundRemover.hero.intro}</p>
+      </div>
+      <BackgroundRemover client:only="react" copy={backgroundTool} />
+    </section>"
+`;
+
+exports[`preserves the approved Hero markup and existing tool CMS content > pages/video-compressor.astro 1`] = `
+"<section class="utility-hero" aria-labelledby="compressor-heading">
+      <div class="utility-hero-copy">
+        <span class="eyebrow">{compressor.hero.eyebrow}</span>
+        <h1 id="compressor-heading">{compressor.hero.heading}<br /><em>{compressor.hero.accent}</em></h1>
+        <p>{compressor.hero.intro}</p>
+      </div>
+      <LocalVideoTool client:only="react" mode="compressor" copy={tool} />
+    </section>"
+`;
+
+exports[`preserves the approved Hero markup and existing tool CMS content > pages/video-converter.astro 1`] = `
+"<section class="utility-hero" aria-labelledby="converter-heading">
+      <div class="utility-hero-copy">
+        <span class="eyebrow">{converter.hero.eyebrow}</span>
+        <h1 id="converter-heading">{converter.hero.heading}<br /><em>{converter.hero.accent}</em></h1>
+        <p>{converter.hero.intro}</p>
+      </div>
+      <LocalVideoTool client:only="react" mode="converter" copy={tool} />
+    </section>"
+`;
