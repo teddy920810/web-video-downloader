@@ -67,14 +67,14 @@ test('pricing and account surfaces describe current entitlements without enablin
   await useAnonymousSession(page);
   await page.goto('/pricing');
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Local tools stay free');
-  await expect(page.locator('.account-hero p')).toHaveCSS('color', 'rgb(203, 213, 245)');
-  await expect(page.getByRole('heading', { level: 2, name: 'Free' })).toHaveCSS('color', 'rgb(23, 35, 33)');
+  await expect(page.locator('.account-hero p')).toHaveCSS('color', 'rgb(90, 90, 92)');
+  await expect(page.getByRole('heading', { level: 2, name: 'Free' })).toHaveCSS('color', 'rgb(10, 10, 10)');
   await expect(page.getByRole('button', { name: 'Checkout coming soon' })).toBeDisabled();
   await page.goto('/account');
   await expect(page.getByRole('heading', { level: 1 })).toContainText('tools, plan, and credits');
-  await expect(page.locator('.account-hero p')).toHaveCSS('color', 'rgb(203, 213, 245)');
+  await expect(page.locator('.account-hero p')).toHaveCSS('color', 'rgb(90, 90, 92)');
   await expect(page.getByRole('button', { name: 'Sign in with Google' }).first()).toBeVisible();
-  await expect(page.locator('.account-empty')).toHaveCSS('color', 'rgb(23, 35, 33)');
+  await expect(page.locator('.account-empty')).toHaveCSS('color', 'rgb(10, 10, 10)');
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex, follow');
 });
 
@@ -109,7 +109,7 @@ test('desktop Tools menu stays readable and closes when the mouse leaves', async
   await expect(panel.getByText('Image tools', { exact: true })).toBeVisible();
   const converter = panel.getByRole('link', { name: 'Video Converter' });
   await expect(converter).toBeVisible();
-  await expect(converter).toHaveCSS('color', 'rgb(23, 35, 33)');
+  await expect(converter).toHaveCSS('color', 'rgb(10, 10, 10)');
   await trigger.click();
   await expect(trigger).toHaveAttribute('aria-expanded', 'true');
   await page.locator('main').hover({ position: { x: 5, y: 5 } });

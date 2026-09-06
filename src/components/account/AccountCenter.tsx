@@ -15,6 +15,7 @@ export default function AccountCenter({ section, settings }: { section: AccountS
   const [nickname, setNickname] = useState('');
   const [marketing, setMarketing] = useState(false);
   const [grantKey, setGrantKey] = useState('');
+  const [navigationOpen, setNavigationOpen] = useState(false);
 
   useEffect(() => {
     if (!session?.user.id) return;
@@ -41,7 +42,7 @@ export default function AccountCenter({ section, settings }: { section: AccountS
   if (!session?.user) return <div className="account-empty"><p>Sign in to manage your profile, credits, and privacy settings.</p><button className="button button-primary" type="button" onClick={() => void run(async () => { const result = await authClient.signIn.social({ provider: 'google', callbackURL: window.location.href }); if (result.error) throw new Error('Unable to start Google sign-in.'); })} disabled={busy}>Sign in with Google</button>{error && <p role="alert">{error}</p>}</div>;
 
   return <div className="account-center">
-    <aside className="account-nav"><span className="eyebrow">Your account</span><nav aria-label="Account navigation">{accountSections.map((item) => <a key={item.id} href={item.href} aria-current={section === item.id ? 'page' : undefined}>{item.label}</a>)}</nav></aside>
+    <aside className={`account-nav${navigationOpen ? ' is-expanded' : ''}`} onKeyDown={(event) => { if (event.key === 'Escape') setNavigationOpen(false); }}><span className="eyebrow account-nav-label">Your account</span><button className="account-nav-toggle" type="button" aria-expanded={navigationOpen} aria-controls="account-navigation" onClick={() => setNavigationOpen(!navigationOpen)}>Your account</button><nav id="account-navigation" aria-label="Account navigation">{accountSections.map((item) => <a key={item.id} href={item.href} aria-current={section === item.id ? 'page' : undefined}>{item.label}</a>)}</nav></aside>
     <div className="account-content">
       {error && <div className="account-panel" role="alert">{error} <button type="button" onClick={() => { setError(''); setRefresh((value) => value + 1); }}>Reload account</button></div>}
       {message && <p className="account-notice" role="status">{message}</p>}
@@ -54,7 +55,7 @@ export default function AccountCenter({ section, settings }: { section: AccountS
           </section>
           {section === 'overview' && <section className="account-panel"><h2>Recent AI activity</h2>{payload.usage.length ? <ul className="account-list">{payload.usage.map((item, index) => <li key={index}><span>{item.toolId.replaceAll('-', ' ')}</span><span>{item.status === 'failed' ? 'Failed · credits refunded' : `Succeeded · ${item.credits} credit used`}</span></li>)}</ul> : <p>No AI tool activity yet.</p>}<div className="account-actions"><a className="button button-primary" href="/background-remover">Background Remover</a><a href="/video-converter">Video Converter</a></div></section>}
           {section === 'credits' && <>
-            <section className="account-panel"><h2>Your subscription</h2><p>Paid checkout is coming soon. There is no automatic renewal or card charge available here.</p><p>Local browser tools do not use AI credits. Promotional codes add free-wallet credits; they do not activate Pro.</p><a href="/pricing">View plans</a></section>
+            <section className="account-panel"><h2>Your subscription</h2><p>Paid checkout is coming soon. There is no automatic renewal or card charge available here.</p><p>Local browser tools do not use AI credits. Promotional codes add free-wallet credits; they do not activate Pro.</p><a className="button button-primary" href="/pricing">View plans</a></section>
             <section className="account-panel"><h2>Credit history</h2><p>Latest 50 ledger entries. Reservations reduce the available balance; consumption confirms a reservation without charging again. Welcome balance may predate the ledger.</p>{payload.ledger.length ? <div className="account-table-scroll"><table><thead><tr><th>Date</th><th>Event</th><th>Free / promotional</th><th>Paid</th></tr></thead><tbody>{payload.ledger.map((item) => <tr key={item.id}><td>{dateLabel(item.createdAt)}</td><td>{item.eventType}</td><td>{item.freeDelta > 0 ? '+' : ''}{item.freeDelta}</td><td>{item.paidDelta > 0 ? '+' : ''}{item.paidDelta}</td></tr>)}</tbody></table></div> : <p>No credit transactions yet.</p>}</section>
           </>}
         </>}

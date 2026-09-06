@@ -55,7 +55,7 @@ test('offers privacy controls and readable responsive navigation without payment
   await expect(page.getByRole('heading', { name: 'Sign-in & security' })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   await page.goto('/account/credits');
-  await expect(page.getByRole('heading', { name: 'Credit history' })).toHaveCSS('color', 'rgb(255, 255, 255)');
+  await expect(page.getByRole('heading', { name: 'Credit history' })).toHaveCSS('color', 'rgb(10, 10, 10)');
   await expect(page.getByRole('button', { name: /checkout|subscribe|card/i })).toHaveCount(0);
 });
 
