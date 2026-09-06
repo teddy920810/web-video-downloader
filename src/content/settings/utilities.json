@@ -64,9 +64,9 @@
       "notesEyebrow": "Browser-native", "notesHeading": "Practical image conversion", "notes": ["JPG, PNG, and WebP input", "PNG, JPG, and WebP output", "Files up to 50 MB", "The image stays on this device"]
     },
     "image-compressor": {
-      "meta": { "title": "Free Local Image Compressor – Make Images Smaller", "description": "Compress a JPG, PNG, or WebP image into a smaller WebP result locally in your browser." },
-      "hero": { "eyebrow": "Local image utility", "heading": "Make image files", "accent": "smaller and easier to share.", "intro": "Choose the output quality and create a compact WebP without sending the image to a server." },
-      "notesEyebrow": "Adjustable quality", "notesHeading": "Balance size and appearance", "notes": ["35% to 90% quality range", "Efficient WebP output", "Files up to 50 MB", "No image upload"]
+      "meta": { "title": "Free Image Compressor Online", "description": "Compress JPG, PNG, and WebP images locally in your browser. Choose 35–90% quality and download a smaller WebP result. Files up to 50 MB." },
+      "hero": { "eyebrow": "Local image compression", "heading": "Compress Images", "accent": "Online", "intro": "Use this free image compressor to turn a JPG, PNG, or WebP image up to 50 MB into a smaller WebP file. Choose a quality setting from 35% to 90%, then save a separate result without uploading the selected image to Streamnest servers for this tool." },
+      "notesEyebrow": "Local browser processing", "notesHeading": "Choose an image and adjust the quality", "notes": ["JPG, PNG, or WebP. File allowance: up to 50 MB.", "35%–90%. A lower setting can reduce visible detail as well as file size.", "A separate WebP file. Your original is not overwritten.", "The selected image is handled in this browser for this tool and is not uploaded to Streamnest servers."]
     },
     "image-resizer": {
       "meta": { "title": "Free Local Image Resizer – Resize Images in Your Browser", "description": "Resize a JPG, PNG, or WebP image to a practical width locally without uploading it." },

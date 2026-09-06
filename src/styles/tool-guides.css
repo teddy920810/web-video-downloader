@@ -10,6 +10,13 @@
 .tool-guide-feature + .tool-guide-feature { border-top: 1px solid #29345a; }
 .tool-guide-feature:nth-of-type(even) .tool-guide-feature-copy { order: 2; }
 .tool-guide-feature-copy { max-width: 510px; }
+.tool-guide-image { display: block; width: 100%; height: auto; border-radius: 12px; }
+.tool-guide-supporting-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; }
+.tool-guide-supporting-grid article { padding: 24px; border: 1px solid var(--line, #374266); border-radius: 12px; }
+.tool-guide-supporting-grid h3 { font-size: 1.25rem; }
+.tool-guide-supporting-grid a { display: inline-block; margin-top: 16px; color: var(--green, #d7acff); text-decoration: underline; }
+.tool-guide-final-cta { text-align: center; padding: 44px 24px; background: var(--surface, #121b3d); border-radius: 16px; }
+.tool-guide-final-cta .button { margin-top: 24px; }
 .tool-guide-facts { margin: 0; padding: 12px 32px; min-height: 260px; display: grid; align-content: center; border: 1px solid #37426b; border-radius: 28px; background: #121d45; box-shadow: 0 18px 44px #02091f40; }
 .tool-guide-facts > div { padding: 22px 0; }
 .tool-guide-facts > div + div { border-top: 1px solid #334164; }
@@ -34,6 +41,7 @@
 .tool-guide-questions details[open] { background: #101a3b; }
 .tool-guide-questions details > p { padding: 0 38px 28px; }
 @media (max-width: 900px) {
+  .tool-guide-supporting-grid { grid-template-columns: 1fr; }
   .tool-guide-feature { gap: 32px; }
   .tool-guide-how { padding: 32px; gap: 32px; grid-template-columns: 1fr; }
 }

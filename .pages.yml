@@ -51,7 +51,7 @@ content:
         type: object
         fields:
           - { name: heading, label: 标题, type: string, required: true }
-          - { name: intro, label: 简介, type: text, required: true }
+          - { name: intro, label: 简介, type: text }
           - name: items
             label: 功能区块
             type: object
@@ -60,6 +60,14 @@ content:
               - { name: eyebrow, label: 小标题, type: string, required: true }
               - { name: title, label: 标题, type: string, required: true }
               - { name: description, label: 说明, type: text, required: true }
+              - name: image
+                label: 配图（可选） / Illustration
+                type: object
+                fields:
+                  - { name: src, label: 图片, type: image }
+                  - { name: alt, label: 替代文本, type: string }
+                  - { name: width, label: 原始宽度, type: number }
+                  - { name: height, label: 原始高度, type: number }
               - name: facts
                 label: 参数与能力
                 type: object
@@ -72,7 +80,7 @@ content:
         type: object
         fields:
           - { name: heading, label: 标题, type: string, required: true }
-          - { name: intro, label: 简介, type: text, required: true }
+          - { name: intro, label: 简介, type: text }
           - name: items
             label: 三个步骤
             type: object
@@ -92,6 +100,32 @@ content:
             fields:
               - { name: question, label: 问题, type: string, required: true }
               - { name: answer, label: 回答, type: text, required: true }
+      - name: supporting
+        label: 补充说明与场景（可选）
+        type: object
+        list: true
+        fields:
+          - { name: heading, label: 标题, type: string, required: true }
+          - name: items
+            type: object
+            list: true
+            fields:
+              - { name: title, label: 小标题, type: string }
+              - { name: body, label: 正文, type: text, required: true }
+              - name: link
+                label: 站内链接（可选）
+                type: object
+                fields:
+                  - { name: label, label: 链接文字, type: string }
+                  - { name: href, label: 站内路径, type: string }
+      - name: finalCta
+        label: 底部入口（可选）
+        type: object
+        fields:
+          - { name: heading, label: 标题, type: string }
+          - { name: body, label: 正文, type: text }
+          - { name: label, label: 按钮文字, type: string }
+          - { name: href, label: 站内路径或锚点, type: string }
   - name: account-settings
     label: 账户中心 / Account center
     type: file

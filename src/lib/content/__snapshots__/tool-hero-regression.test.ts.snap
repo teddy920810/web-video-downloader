@@ -224,23 +224,23 @@ exports[`preserves the approved Hero markup and existing tool CMS content > Exis
     },
     "image-compressor": {
       "hero": {
-        "accent": "smaller and easier to share.",
-        "eyebrow": "Local image utility",
-        "heading": "Make image files",
-        "intro": "Choose the output quality and create a compact WebP without sending the image to a server.",
+        "accent": "Online",
+        "eyebrow": "Local image compression",
+        "heading": "Compress Images",
+        "intro": "Use this free image compressor to turn a JPG, PNG, or WebP image up to 50 MB into a smaller WebP file. Choose a quality setting from 35% to 90%, then save a separate result without uploading the selected image to Streamnest servers for this tool.",
       },
       "meta": {
-        "description": "Compress a JPG, PNG, or WebP image into a smaller WebP result locally in your browser.",
-        "title": "Free Local Image Compressor – Make Images Smaller",
+        "description": "Compress JPG, PNG, and WebP images locally in your browser. Choose 35–90% quality and download a smaller WebP result. Files up to 50 MB.",
+        "title": "Free Image Compressor Online",
       },
       "notes": [
-        "35% to 90% quality range",
-        "Efficient WebP output",
-        "Files up to 50 MB",
-        "No image upload",
+        "JPG, PNG, or WebP. File allowance: up to 50 MB.",
+        "35%–90%. A lower setting can reduce visible detail as well as file size.",
+        "A separate WebP file. Your original is not overwritten.",
+        "The selected image is handled in this browser for this tool and is not uploaded to Streamnest servers.",
       ],
-      "notesEyebrow": "Adjustable quality",
-      "notesHeading": "Balance size and appearance",
+      "notesEyebrow": "Local browser processing",
+      "notesHeading": "Choose an image and adjust the quality",
     },
     "image-converter": {
       "hero": {

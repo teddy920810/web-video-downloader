@@ -28,6 +28,6 @@ describe('tool landing content', () => {
     const collection = cms.content.find((item: { name: string }) => item.name === 'tool-guides');
     expect(collection.path).toBe('src/content/tool-guides');
     expect(collection.operations).toEqual({ create: false, rename: false, delete: false });
-    expect(collection.fields.map((field: { name: string }) => field.name)).toEqual(['toolId', 'features', 'steps', 'faq']);
+    expect(collection.fields.map((field: { name: string }) => field.name)).toEqual(['toolId', 'features', 'steps', 'faq', 'supporting', 'finalCta']);
   });
 });
