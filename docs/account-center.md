@@ -6,6 +6,8 @@
 - [x] Administrator code creation, disable and redemption audit.
 - [x] Responsive account shell, FAQ, support and privacy settings.
 - [x] Targeted tests, database concurrency checks and full verification.
+- [x] Cookie choices and expandable preferences: default-off analytics, locked necessary cookies, reopen and revoke consent.
+- [x] Repeat full verification after the requested Cookie UI extension: 297 unit tests, static checks/build, 23 browser tests and 8 utilities browser tests passed; 1 optional sample-video test skipped.
 - [ ] PR, CI, merge, production and authenticated functional verification.
 
 Billing, checkout, payment methods, invoices and Desktop licenses are deferred.
@@ -23,4 +25,6 @@ Verification evidence: 20 focused unit tests pass. The real configured Neon data
 Pre-release full verification: 297 unit tests; static checks and production build; 21 downloader-mode E2E and 8 utilities-mode E2E pass. One optional real-video E2E is skipped because no sample path was supplied. Dependency audit reports zero vulnerabilities. This is the pre-merge checklist; the release PR records subsequent CI and production acceptance.
 
 Database release: apply additive migration 003 before releasing Web. Existing tool and credit APIs remain compatible.
+
+Cookie extension: regression tests first failed for missing preference controls, then five focused browser tests passed. The official Analytics head bootstrap and consent defaults are unchanged; the UI invokes the existing consent bridge. Opening preferences does not grant consent. Advertising stays denied. Revocation updates consent without reloading and destroying a browser-local media job; the next navigation does not load Analytics. VidShift feature research is separate from this release; no additional media tools are implemented here.
 Use `node scripts/verify-account-center.mjs` for isolated database tests; it creates and cleans up only its own synthetic records, without invoking any media provider.
