@@ -13,9 +13,9 @@
 
 ## Behavior and boundaries
 
-Choose multiple files to enter the queue automatically, or use **Batch processing** to add tasks individually. Dropping files into any file tool enters the same queue. The SVG tool supports local SVG files in batch; its existing code and URL controls remain available in single mode. The optional URL downloader is not a file-upload tool and its one-use account policy is unchanged.
+Choose one or more files to enter the shared workspace automatically. Dropping files into any file tool enters the same queue. An explicit Back to single file action retains the earlier single-file editor. The SVG tool supports local SVG files in batch; its existing code and URL controls remain available. The optional URL downloader is not a file-upload tool and its one-use account policy is unchanged. See BATCH_WORKSPACE_UX.md for selection, previews and ZIP export.
 
-Queues exist only in the current tab. Closing or reloading loses queued files and local results. One task runs at a time; active settings are frozen. Adding files while processing uses the settings captured when Start queue was clicked. Stop after current completes that task (especially important for paid AI work) and leaves the rest queued. Start queue resumes pending tasks without re-running completed or failed tasks. Explicitly add a file again for a new attempt; interrupted AI results should first be checked in Account.
+Queues exist only in the current tab. Closing or reloading loses queued files and local results. One task runs at a time; active settings and the set of approved tasks are frozen. Files added during processing remain waiting until another explicit Start queue action. Stop after current completes that task (especially important for paid AI work) and leaves the rest queued. Start queue resumes pending tasks without re-running completed or failed tasks. Explicitly add a file again for a new attempt; interrupted AI results should first be checked in Account.
 
 Limits: 20 tasks, 500 MB total retained source files, 500 MB retained results. Existing individual image/video/AI/SVG validation remains enforced. Each merge group has 2–10 clips totaling at most 250 MB. Remove completed tasks to release object URLs and memory. FFmpeg workers terminate after each attempt. Result filenames include a queue ID and original stem to prevent collisions.
 

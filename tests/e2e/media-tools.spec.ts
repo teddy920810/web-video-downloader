@@ -1,6 +1,12 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
+// Keep explicit coverage of the retained single-file editor alongside the default shared workspace.
+async function singleEditor(page: import('@playwright/test').Page) {
+  page.once('dialog', dialog => dialog.accept());
+  await page.getByRole('button', { name: 'Back to single file', exact: true }).click();
+}
+
 const tinyWebm = Buffer.from('GkXfo59ChoEBQveBAULygQRC84EIQoKEd2VibUKHgQJChYECGFOAZwEAAAAAAANXEU2bdLpNu4tTq4QVSalmU6yBoU27i1OrhBZUrmtTrIHYTbuMU6uEElTDZ1OsggElTbuMU6uEHFO7a1OsggNB7AEAAAAAAABZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVSalmsirXsYMPQkBNgI1MYXZmNjIuMTMuMTAyV0GNTGF2ZjYyLjEzLjEwMkSJiEBxgAAAAAAAFlSua8iuAQAAAAAAAD/XgQFzxYghnd5Mt4yKdZyBACK1nIN1bmSIgQCGhVZfVlA4g4EBI+ODhAJiWgDgkLCBoLqBWpqBAlWwhFW5gQESVMNn/HNzoGPAgGfImkWjh0VOQ09ERVJEh41MYXZmNjIuMTMuMTAyc3PWY8CLY8WIIZ3eTLeMinVnyKFFo4dFTkNPREVSRIeUTGF2YzYyLjMwLjEwMCBsaWJ2cHhnyKFFo4hEVVJBVElPTkSHkzAwOjAwOjAwLjI4MDAwMDAwMAAfQ7Z1QZXngQCj1oEAAIAwBgCdASqgAFoAAEcIhYWImYSIAgICdaoD+AP6AgbKlqTnr0ZeI569GXiOevRl4jnr0ZeI569GXiOUAP7+wOv/8KVkoB7/wpr/6OJYrSZ/6LgAo7SBACgAsQMABRCsABgHT/gagfMNAAVsCsAFYAKwAVgArABWACD+8DhD22bZtjP/q7UOjRYAo7KBAFAAcQMABRCsABgAGLf0DAAEGgALAAWAAsABYACwAFf4/vA4Q9tm2bYz/6u1Do0WAKOygQB4AHEDAAUQrAAYABi39AwABBoACwAFgALAAWAAsABX+P7wOEPbZtm2M/+rtQ6NFgCjsoEAoABxAwAFEKwAGAAYt/QMAAQaAAsABYACwAFgALAAV/j+8DhD22bZtjP/q7UOjRYAo7KBAMgAcQMABRCsABgAGLf0DAAEGgALAAWAAsABYACwAFf4/vA4Q9tm2bYz/6u1Do0WAKOygQDwAHEDAAUQrAAYABi39AwABBoACwAFgALAAWAAsABX+P7wOEPbZtm2M/+rtQ6NFgAcU7trkbuPs4EAt4r3gQHxggGm8IED', 'base64');
 
 function trackProcessingApiRequests(page: import('@playwright/test').Page) {
@@ -39,6 +45,7 @@ test('converts and compresses a tiny generated video entirely in the browser', a
   const apiRequests = trackProcessingApiRequests(page);
   await page.goto('/video-converter');
   await page.locator('input[type=file]').setInputFiles({ name: 'tiny.webm', mimeType: 'video/webm', buffer: tinyWebm });
+  await singleEditor(page);
   await page.getByRole('button', { name: 'Convert locally' }).click();
 
   const result = page.getByRole('link', { name: 'Save converted.mp4' });
@@ -50,6 +57,7 @@ test('converts and compresses a tiny generated video entirely in the browser', a
 
   await page.goto('/video-compressor');
   await page.locator('input[type=file]').setInputFiles({ name: 'tiny.webm', mimeType: 'video/webm', buffer: tinyWebm });
+  await singleEditor(page);
   await page.getByRole('button', { name: 'Compress locally' }).click();
   const compressed = page.getByRole('link', { name: 'Save compressed-balanced.mp4' });
   await expect(compressed).toBeVisible({ timeout: 90_000 });
@@ -69,6 +77,7 @@ test('processes an optional real video through fast conversion and adaptive comp
   ]) {
     await page.goto(tool.path);
     await page.locator('input[type=file]').setInputFiles(mediaSmokeFile!);
+    await singleEditor(page);
     await page.getByRole('button', { name: tool.action }).click();
     const result = page.getByRole('link', { name: tool.result });
     await expect(result).toBeVisible({ timeout: 8 * 60_000 });
@@ -90,6 +99,7 @@ test('processes an image locally and publishes every low-cost tool route', async
   }
   await page.goto('/image-converter');
   await page.locator('input[type=file]').setInputFiles('public/assets/blog/download-youtube-videos.webp');
+  await singleEditor(page);
   await page.getByRole('button', { name: 'Convert locally' }).click();
   const result = page.getByRole('link', { name: 'Save converted.png' });
   await expect(result).toBeVisible();
@@ -147,6 +157,7 @@ test('shows the shared loading treatment while a local image is processing', asy
   });
   await page.goto('/image-converter');
   await page.locator('input[type=file]').setInputFiles('public/assets/blog/download-youtube-videos.webp');
+  await singleEditor(page);
   await page.getByRole('button', { name: 'Convert locally' }).click();
 
   await expect(page.locator('.tool-processing-overlay')).toContainText('Processing locally…');
@@ -194,9 +205,10 @@ test('bakes the selected background color into the downloaded PNG', async ({ pag
   }));
 
   await page.locator('input[type=file]').first().setInputFiles({ name: 'transparent.png', mimeType: 'image/png', buffer: Buffer.from(transparentPng) });
+  await singleEditor(page);
   await page.getByRole('button', { name: 'Remove background' }).click();
   await expect(page.getByRole('button', { name: 'Download PNG' })).toBeVisible();
-  await page.getByRole('button', { name: '#3b82f6' }).click();
+  await page.getByRole('button', { name: 'Blue', exact: true }).click();
   const downloadPromise = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Download PNG' }).click();
   const download = await downloadPromise;

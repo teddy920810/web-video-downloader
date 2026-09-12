@@ -2,6 +2,15 @@ import { describe, expect, it } from 'vitest';
 import { SerialQueue } from './serial-queue';
 
 describe('serial tool queue', () => {
+  it('requires another explicit start for files added during a run', async () => {
+    const queue = new SerialQueue<number, number>();
+    queue.add([1]);
+    await queue.start(async n => { queue.add([2]); return n; });
+    expect(queue.items.map(i => i.status)).toEqual(['ready', 'queued']);
+    await queue.start(async n => n);
+    expect(queue.items.map(i => i.result)).toEqual([1, 2]);
+  });
+
   it('runs only one job, continues after failure and retains each result', async () => {
     const queue = new SerialQueue<number, number>();
     queue.add([1, 2, 3]);

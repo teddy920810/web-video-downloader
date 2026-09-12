@@ -102,6 +102,7 @@ export default function LocalVideoTool({ mode, copy, heading }: Props) {
     setFile(selected);
     setVideoMetadata({});
     setPreviewUrl(URL.createObjectURL(selected));
+    setBatch([selected]);
   }
 
   async function processVideo() {

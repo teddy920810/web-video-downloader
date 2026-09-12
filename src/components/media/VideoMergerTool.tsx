@@ -36,6 +36,7 @@ export default function VideoMergerTool() {
     setFiles(selected);
     setRetrying(false);
     setPhase('idle');
+    setBatch(selected);
   }
 
   async function merge() {

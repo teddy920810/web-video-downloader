@@ -9,12 +9,14 @@ import BatchWorkspace from '../shared/BatchWorkspace';
 import TargetSizeField from '../shared/TargetSizeField';
 import { processLocalImage } from '../shared/batch-processors';
 import { targetBytes } from '../../lib/media/target-size';
+import ColorSwatches from '../shared/ColorSwatches';
 
 export default function LocalImageTool({ mode, heading, chooseLabel = 'Choose an image file' }: { mode: ImageToolMode; heading: string; chooseLabel?: string }) {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [result, setResult] = useState<{ url: string; name: string; bytes: number } | null>(null);
   const [format, setFormat] = useState<ImageFormat>('png');
+  const [background, setBackground] = useState('#ffffff');
   const [quality, setQuality] = useState(0.72);
   const [width, setWidth] = useState(1280);
   const [busy, setBusy] = useState(false);
@@ -36,6 +38,7 @@ export default function LocalImageTool({ mode, heading, chooseLabel = 'Choose an
     setPreview(URL.createObjectURL(selected));
     setResult(null);
     setError(null);
+    setBatch([selected]);
   }
 
   async function process() {
@@ -46,7 +49,7 @@ export default function LocalImageTool({ mode, heading, chooseLabel = 'Choose an
     trackToolEvent(toolId, 'started', 'local');
     setError(null);
     try {
-      const { blob, name } = await processLocalImage(file, mode, { format, quality, width, ...(mode === 'compressor' && size ? { targetBytes: targetBytes(size, unit) } : {}) });
+      const { blob, name } = await processLocalImage(file, mode, { format, quality, width, background, ...(mode === 'compressor' && size ? { targetBytes: targetBytes(size, unit) } : {}) });
       setResult({ url: URL.createObjectURL(blob), name, bytes: blob.size });
       trackToolEvent(toolId, 'succeeded', 'local');
     } catch (cause) {
@@ -55,13 +58,14 @@ export default function LocalImageTool({ mode, heading, chooseLabel = 'Choose an
     } finally { setBusy(false); }
   }
 
-  if (batch) return <section className="local-media-tool" data-workspace="true"><h2>{heading}</h2><BatchWorkspace initialFiles={batch} accept="image/jpeg,image/png,image/webp" onClose={() => setBatch(null)}
+  if (batch) return <section className="local-media-tool" data-workspace="true"><h2 id={`${mode}-image-tool-title`}>{heading}</h2><BatchWorkspace toolId={`image-${mode}`} initialFiles={batch} accept="image/jpeg,image/png,image/webp" onClose={() => setBatch(null)}
     settings={<>
       {mode === 'converter' ? <label className="local-media-field">Output format<select value={format} onChange={e => setFormat(e.target.value as ImageFormat)}><option value="png">PNG</option><option value="jpeg">JPG</option><option value="webp">WebP</option></select></label> : null}
+      {mode === 'converter' && format === 'jpeg' ? <ColorSwatches label="Fill transparent areas" value={background} onChange={setBackground} transparent={false} /> : null}
       {mode === 'resizer' ? <label className="local-media-field">Maximum width · pixels<input type="number" value={width} onChange={e => setWidth(Number(e.target.value))} /></label> : null}
       {mode === 'compressor' ? <><label className="local-media-field">Output quality<input type="range" min="0.35" max="0.9" step="0.01" value={quality} onChange={e => setQuality(Number(e.target.value))} /></label><TargetSizeField value={size} unit={unit} onValue={setSize} onUnit={setUnit} /><p>Target applies to each image. Very small targets may require resizing first.</p></> : null}
     </>}
-    process={files => processLocalImage(files[0], mode, { format, quality, width, ...(mode === 'compressor' && size ? { targetBytes: targetBytes(size, unit) } : {}) })} /></section>;
+    process={files => processLocalImage(files[0], mode, { format, quality, width, background, ...(mode === 'compressor' && size ? { targetBytes: targetBytes(size, unit) } : {}) })} /></section>;
 
   return <section className="local-media-tool local-image-tool" data-workspace={file ? 'true' : 'false'} aria-labelledby={`${mode}-image-tool-title`} onDragOver={e => e.preventDefault()} onDrop={e => { e.preventDefault(); if (!busy && e.dataTransfer.files.length) setBatch(Array.from(e.dataTransfer.files)); }}>
     <div className="local-media-heading"><span className="local-media-icon"><ImageIcon size={28} /></span><div><p>Private browser tool</p><h2 id={`${mode}-image-tool-title`} tabIndex={-1}>{heading}</h2></div></div>
@@ -71,6 +75,7 @@ export default function LocalImageTool({ mode, heading, chooseLabel = 'Choose an
         <label className="local-file-picker"><ImageIcon size={34} /><strong>{file?.name ?? chooseLabel}</strong><span>{file ? `${(file.size / 1024 / 1024).toFixed(1)} MB` : 'JPG, PNG, or WebP · up to 50 MB'}</span><input type="file" accept="image/jpeg,image/png,image/webp" multiple disabled={busy} onChange={select} /></label>
         <button type="button" className="button button-ghost" disabled={busy} onClick={() => setBatch(file ? [file] : [])}>Batch processing</button>
         {mode === 'converter' ? <label className="local-media-field"><span>Output format</span><select value={format} onChange={(event) => setFormat(event.target.value as ImageFormat)}><option value="png">PNG</option><option value="jpeg">JPG</option><option value="webp">WebP</option></select></label> : null}
+        {mode === 'converter' && format === 'jpeg' ? <ColorSwatches label="Fill transparent areas" value={background} onChange={setBackground} transparent={false} disabled={busy} /> : null}
         {mode === 'compressor' ? <label className="local-media-field"><span>Output quality · {Math.round(quality * 100)}%</span><input type="range" min="0.35" max="0.9" step="0.01" value={quality} onChange={(event) => setQuality(Number(event.target.value))} /></label> : null}
         {mode === 'compressor' ? <TargetSizeField value={size} unit={unit} onValue={setSize} onUnit={setUnit} disabled={busy} /> : null}
         {mode === 'resizer' ? <label className="local-media-field"><span>Maximum width · pixels</span><input type="number" min="1" max="8192" value={width} onChange={(event) => setWidth(Number(event.target.value))} /></label> : null}
