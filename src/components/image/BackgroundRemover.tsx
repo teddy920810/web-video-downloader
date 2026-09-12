@@ -10,13 +10,14 @@ import { validateUploadMetadata } from '../../lib/upload/validation';
 import type { BackgroundRemoverCopy } from '../../lib/content/utilities-settings';
 import { trackToolEvent } from '../../lib/analytics/tool-events';
 import ProcessingOverlay from '../shared/ProcessingOverlay';
-import { downloadBackgroundResult } from '../../lib/image/background-export';
+import { composeBackground, downloadBackgroundResult } from '../../lib/image/background-export';
+import BatchWorkspace from '../shared/BatchWorkspace';
 
 type Phase = 'idle' | 'selected' | 'uploading' | 'processing' | 'exporting' | 'ready' | 'error';
 type ApiError = { error?: string };
 
 async function readApi<T>(url: string, init: RequestInit): Promise<T> {
-  const response = await fetch(url, init);
+  const response = await fetch(url, { ...init, signal: AbortSignal.timeout(180_000) });
   const body = await response.json() as T & ApiError;
   if (!response.ok) throw new Error(body.error ?? 'Unable to complete this request.');
   return body;
@@ -31,6 +32,7 @@ export default function BackgroundRemover({ copy }: { copy: BackgroundRemoverCop
   const [message, setMessage] = useState<string | null>(null);
   const [background, setBackground] = useState('transparent');
   const [creditBalance, setCreditBalance] = useState<number | null>(null);
+  const [batch, setBatch] = useState<File[] | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => () => {
@@ -63,12 +65,15 @@ export default function BackgroundRemover({ copy }: { copy: BackgroundRemoverCop
   }
 
   function onInput(event: ChangeEvent<HTMLInputElement>) {
+    if ((event.target.files?.length ?? 0) > 1) { setBatch(Array.from(event.target.files!)); return; }
     const selected = event.target.files?.[0];
     if (selected) choose(selected);
   }
 
   function onDrop(event: DragEvent<HTMLLabelElement>) {
     event.preventDefault();
+    if (busy) return;
+    if (event.dataTransfer.files.length > 1) { setBatch(Array.from(event.dataTransfer.files)); return; }
     const selected = event.dataTransfer.files?.[0];
     if (selected) choose(selected);
   }
@@ -135,16 +140,42 @@ export default function BackgroundRemover({ copy }: { copy: BackgroundRemoverCop
   const displayUrl = resultUrl ?? previewUrl;
   const swatches = ['transparent', '#ffffff', '#111827', '#f3f4f6', '#ef4444', '#f59e0b', '#22c55e', '#3b82f6', '#8b5cf6'];
 
+  if (batch) return <section className="background-remover-tool" data-workspace="true">
+    {!session?.user ? <button className="button button-primary" disabled={sessionPending} onClick={() => authClient.signIn.social({ provider: 'google', callbackURL: window.location.href })}>Sign in with Google</button> : null}
+    <BatchWorkspace initialFiles={batch} accept="image/jpeg,image/png,image/webp" cloud ready={Boolean(session?.user) && !sessionPending} onClose={() => setBatch(null)}
+      settings={<label className="local-media-field">Background color<select value={background} onChange={e => setBackground(e.target.value)}>{swatches.map(color => <option key={color} value={color}>{color === 'transparent' ? 'Transparent' : color}</option>)}</select></label>}
+      process={async files => {
+        if (!session?.user) throw new Error('Sign in before starting AI tasks.');
+        const next = files[0];
+        const check = validateUploadMetadata({ contentType: next.type, size: next.size });
+        if (!check.ok) throw new Error(check.message);
+        const upload = await readApi<{ jobId: string; inputKey: string; uploadUrl: string }>('/api/background-remover/upload-url', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contentType: next.type, size: next.size }),
+        });
+        const stored = await putFileWithRetry(upload.uploadUrl, next, next.type, { fetcher: (url, init) => fetch(url, { ...init, signal: AbortSignal.timeout(60_000) }) });
+        if (!stored.ok) throw new Error(copy.uploadError);
+        const output = await readApi<{ downloadUrl: string }>('/api/background-remover', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jobId: upload.jobId, inputKey: upload.inputKey }),
+        });
+        const response = await fetch(output.downloadUrl, { cache: 'no-store', signal: AbortSignal.timeout(30_000) });
+        if (!response.ok) throw new Error('The AI result is saved in your account, but could not be downloaded here. Check your account before submitting again.');
+        const blob = await composeBackground(await response.blob(), background);
+        setCreditBalance(balance => balance === null ? null : Math.max(0, balance - 1));
+        return { blob, name: 'background-removed.png' };
+      }} />
+  </section>;
+
   return (
-    <section className="background-remover-tool" data-workspace={selected ? 'true' : 'false'} aria-labelledby="background-tool-title">
+    <section className="background-remover-tool" data-workspace={selected ? 'true' : 'false'} aria-labelledby="background-tool-title" onDragOver={e => e.preventDefault()} onDrop={e => { e.preventDefault(); if (!busy && e.dataTransfer.files.length) setBatch(Array.from(e.dataTransfer.files)); }}>
+      <button className="button button-ghost" type="button" disabled={busy} onClick={() => setBatch(file ? [file] : [])}>Batch processing</button>
       {!selected ? (
-        <label className="background-dropzone" onDragOver={(event) => event.preventDefault()} onDrop={onDrop}>
+        <label className="background-dropzone" onDragOver={(event) => event.preventDefault()} onDrop={e => { e.stopPropagation(); onDrop(e); }}>
           <ImageIcon size={44} aria-hidden="true" />
           <strong id="background-tool-title">{copy.dropHeading}</strong>
           <span>{copy.dropIntro}</span>
           <span className="button button-primary"><UploadSimpleIcon size={18} />{copy.uploadLabel}</span>
           <small>{copy.formatHelp}</small>
-          <input ref={inputRef} type="file" accept="image/jpeg,image/png,image/webp" onChange={onInput} />
+          <input ref={inputRef} type="file" accept="image/jpeg,image/png,image/webp" multiple disabled={busy} onChange={onInput} />
         </label>
       ) : (
         <div className="background-workspace">
@@ -168,7 +199,7 @@ export default function BackgroundRemover({ copy }: { copy: BackgroundRemoverCop
               {resultUrl ? <button className="button button-primary" type="button" disabled={busy} onClick={downloadResult}><DownloadSimpleIcon size={18} />{copy.downloadLabel}</button> : null}
               <button className="button button-ghost" type="button" disabled={busy} onClick={() => inputRef.current?.click()}>{copy.chooseAnotherLabel}</button>
             </div>
-            <input ref={inputRef} className="sr-only" type="file" accept="image/jpeg,image/png,image/webp" onChange={onInput} />
+            <input ref={inputRef} className="sr-only" type="file" accept="image/jpeg,image/png,image/webp" multiple disabled={busy} onChange={onInput} />
             <p className="local-media-privacy"><ShieldCheckIcon size={20} />{copy.privacyLabel}</p>
           </aside>
         </div>

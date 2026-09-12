@@ -7,6 +7,7 @@ import { ShieldCheckIcon } from '@phosphor-icons/react/ShieldCheck';
 import { rasterizeSvg, outputForSvgFormat, type SvgOutputFormat, MAX_SVG_SOURCE_BYTES } from '../../lib/image/svg-raster';
 import { trackToolEvent } from '../../lib/analytics/tool-events';
 import ProcessingOverlay from '../shared/ProcessingOverlay';
+import BatchWorkspace from '../shared/BatchWorkspace';
 
 async function svgFromUrl(value: string) {
   let url: URL;
@@ -40,6 +41,7 @@ export default function SvgToImageTool() {
   const [preview, setPreview] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [batch, setBatch] = useState<File[] | null>(null);
 
   useEffect(() => () => { if (preview) URL.revokeObjectURL(preview); }, [preview]);
 
@@ -70,11 +72,21 @@ export default function SvgToImageTool() {
   const canSave = sourceMode === 'code' ? code.trim().length > 0 : svgUrl.trim().length > 0;
   const saveLabel = format === 'png' ? 'Save PNG' : format === 'jpeg' ? 'Save JPG' : 'Save WebP';
 
-  return <section className="local-media-tool svg-image-tool" data-workspace={preview ? 'true' : 'false'} aria-labelledby="svg-image-tool-title">
+  if (batch) return <section className="local-media-tool" data-workspace="true"><BatchWorkspace initialFiles={batch} accept=".svg,image/svg+xml" onClose={() => setBatch(null)}
+    settings={<label className="local-media-field">Output format<select value={format} onChange={e => setFormat(e.target.value as SvgOutputFormat)}><option value="png">PNG</option><option value="jpeg">JPG</option><option value="webp">WebP</option></select></label>}
+    process={async files => {
+      const file = files[0];
+      if (!file.name.toLowerCase().endsWith('.svg') || file.size > MAX_SVG_SOURCE_BYTES) throw new Error('Choose SVG files up to 2 MB.');
+      return { blob: await rasterizeSvg(await file.text(), format), name: `converted.${outputForSvgFormat(format).extension}` };
+    }} /></section>;
+
+  return <section className="local-media-tool svg-image-tool" data-workspace={preview ? 'true' : 'false'} aria-labelledby="svg-image-tool-title" onDragOver={e => e.preventDefault()} onDrop={e => { e.preventDefault(); if (!busy && e.dataTransfer.files.length) setBatch(Array.from(e.dataTransfer.files)); }}>
     <div className="local-media-heading"><span className="local-media-icon"><ImageIcon size={28} /></span><div><p>Private browser tool</p><h2 id="svg-image-tool-title">Convert SVG to an image</h2></div></div>
     <div className={preview ? 'local-media-workspace' : undefined}>
       {preview ? <div className="local-image-preview"><img src={preview} alt="Converted SVG preview" />{busy ? <ProcessingOverlay label="Rendering SVG locally…" /> : null}</div> : null}
       <div className="local-media-controls">
+        <button className="button button-ghost" type="button" disabled={busy} onClick={() => setBatch([])}>Batch processing · SVG files</button>
+        <label className="local-file-picker"><strong>Choose SVG files or drag them here</strong><input type="file" accept=".svg,image/svg+xml" multiple disabled={busy} onChange={e => { if (e.target.files?.length) setBatch(Array.from(e.target.files)); }} /></label>
         <div className="svg-source-tabs" aria-label="SVG input type">
           <button className={sourceMode === 'code' ? 'is-selected' : ''} type="button" aria-pressed={sourceMode === 'code'} onClick={() => chooseMode('code')}><CodeIcon size={18} />Use code</button>
           <button className={sourceMode === 'url' ? 'is-selected' : ''} type="button" aria-pressed={sourceMode === 'url'} onClick={() => chooseMode('url')}><LinkIcon size={18} />Use URL</button>

@@ -736,3 +736,14 @@ img { display: block; max-width: 100%; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
 
+/* Serial file processing: scoped so landing content and existing single-file UI stay unchanged. */
+.batch-workspace { min-width: 0; width: 100%; }
+.batch-workspace > p { margin-block: 12px; }
+.batch-settings { border: 1px solid var(--line, #dedee3); border-radius: 12px; padding: 16px; margin-block: 16px; min-width: 0; }
+.batch-settings legend { padding-inline: 8px; }
+.batch-list { list-style: none; padding: 0; display: grid; gap: 12px; }
+.batch-list > li { padding: 16px; border: 1px solid var(--line, #dedee3); border-radius: 12px; min-width: 0; }
+.batch-item-title { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+.batch-item-title strong, .batch-list a { overflow-wrap: anywhere; word-break: break-word; }
+.batch-list .button { white-space: normal; margin: 4px; max-width: 100%; }
+.batch-list [data-status=processing] { border-color: var(--green-dark, #08745c); }

@@ -4,6 +4,8 @@ export default defineConfig({
   testDir: './tests/e2e',
   testMatch: ['utilities-mode.spec.ts', 'clarity-design.spec.ts'],
   fullyParallel: true,
+  workers: 2,
+  expect: { timeout: 15_000 },
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : 'line',

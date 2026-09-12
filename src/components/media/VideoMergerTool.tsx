@@ -7,6 +7,7 @@ import { assessBrowserMediaRisk, buildMergePlanAttempts, describeBrowserMediaErr
 import { BrowserMediaJobCancelledError, runBrowserMediaPlans } from '../../lib/media/browser-job';
 import type { BrowserMediaRuntime } from '../../lib/media/ffmpeg-runtime';
 import ProcessingOverlay from '../shared/ProcessingOverlay';
+import VideoBatchWorkspace from '../shared/VideoBatchWorkspace';
 
 const MAX_TOTAL_BYTES = 250 * 1024 * 1024;
 
@@ -17,6 +18,7 @@ export default function VideoMergerTool() {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<string | null>(null);
   const [retrying, setRetrying] = useState(false);
+  const [batch, setBatch] = useState<File[] | null>(null);
   const runtime = useRef<BrowserMediaRuntime | null>(null);
   const cancelRequested = useRef(false);
 
@@ -72,9 +74,11 @@ export default function VideoMergerTool() {
   }
 
   const busy = phase === 'loading' || phase === 'processing';
-  return <section className="local-media-tool" data-workspace={files.length > 0 ? 'true' : 'false'} aria-labelledby="video-merger-tool-title">
+  if (batch) return <VideoBatchWorkspace files={batch} mode="merger" onClose={() => setBatch(null)} />;
+  return <section className="local-media-tool" data-workspace={files.length > 0 ? 'true' : 'false'} aria-labelledby="video-merger-tool-title" onDragOver={e => e.preventDefault()} onDrop={e => { e.preventDefault(); if (!busy && e.dataTransfer.files.length) setBatch(Array.from(e.dataTransfer.files)); }}>
     <div className="local-media-heading"><span className="local-media-icon"><FileVideoIcon size={28} /></span><div><p>Private browser tool</p><h2 id="video-merger-tool-title">Merge compatible video clips</h2></div></div>
     <div className="local-media-controls">
+      <button type="button" className="button button-ghost" disabled={busy} onClick={() => setBatch(files)}>Batch processing</button>
       <label className="local-file-picker"><FileVideoIcon size={34} /><strong>{files.length ? `${files.length} clips selected` : 'Choose 2–10 video clips'}</strong><span>For best results, use clips from the same camera or device · 250 MB total</span><input type="file" accept="video/*" multiple disabled={busy} onChange={selectFiles} /></label>
       {files.length ? <ol className="local-file-list">{files.map((file) => <li key={`${file.name}-${file.lastModified}`}>{file.name}<span>{(file.size / 1024 / 1024).toFixed(1)} MB</span></li>)}</ol> : null}
       {busy ? <ProcessingOverlay inline label={retrying ? 'Retrying with a browser-safe profile…' : phase === 'loading' ? 'Loading the local media engine…' : 'Merging in this browser…'} progress={progress} /> : null}

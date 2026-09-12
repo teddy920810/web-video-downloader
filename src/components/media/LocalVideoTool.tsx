@@ -21,6 +21,10 @@ import type { BrowserMediaRuntime } from '../../lib/media/ffmpeg-runtime';
 import type { LocalMediaToolCopy } from '../../lib/content/utilities-settings';
 import { trackToolEvent } from '../../lib/analytics/tool-events';
 import ProcessingOverlay from '../shared/ProcessingOverlay';
+import VideoBatchWorkspace from '../shared/VideoBatchWorkspace';
+import TargetSizeField from '../shared/TargetSizeField';
+import { processLocalVideo } from '../shared/batch-processors';
+import { targetBytes } from '../../lib/media/target-size';
 
 type Mode = 'converter' | 'compressor' | 'trimmer' | 'audio' | 'gif';
 type Props = { mode: Mode; copy: LocalMediaToolCopy; heading?: string };
@@ -54,6 +58,9 @@ export default function LocalVideoTool({ mode, copy, heading }: Props) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [videoMetadata, setVideoMetadata] = useState<{ durationSeconds?: number; width?: number; height?: number }>({});
   const [retrying, setRetrying] = useState(false);
+  const [batch, setBatch] = useState<File[] | null>(null);
+  const [size, setSize] = useState('');
+  const [unit, setUnit] = useState<'KB' | 'MB'>('MB');
   const runtime = useRef<BrowserMediaRuntime | null>(null);
   const cancelRequested = useRef(false);
 
@@ -75,6 +82,7 @@ export default function LocalVideoTool({ mode, copy, heading }: Props) {
   }
 
   function selectFile(event: ChangeEvent<HTMLInputElement>) {
+    if ((event.target.files?.length ?? 0) > 1) { setBatch(Array.from(event.target.files!)); return; }
     resetResult();
     const selected = event.target.files?.[0] ?? null;
     if (!selected) {
@@ -104,6 +112,14 @@ export default function LocalVideoTool({ mode, copy, heading }: Props) {
     const toolId = mode === 'audio' ? 'audio-extractor' : mode === 'gif' ? 'video-to-gif' : `video-${mode}`;
     trackToolEvent(toolId, 'started', 'local');
     try {
+      if (mode === 'compressor' && size) {
+        setPhase('processing');
+        const output = await processLocalVideo([file], mode, { targetBytes: targetBytes(size, unit) }, { progress: setProgress, runtime: current => { runtime.current = current; }, cancelled: () => cancelRequested.current });
+        setResult({ url: URL.createObjectURL(output.blob), name: output.name });
+        setProgress(1); setPhase('ready');
+        trackToolEvent(toolId, 'succeeded', 'local');
+        return;
+      }
       const risk = assessBrowserMediaRisk({ size: file.size, ...videoMetadata });
       const plans = mode === 'converter'
         ? buildConversionPlanAttempts(file.name, target, risk)
@@ -158,8 +174,10 @@ export default function LocalVideoTool({ mode, copy, heading }: Props) {
   const productIcon = mode === 'converter' ? '/assets/tools/converter-logo.svg' : mode === 'compressor' ? '/assets/tools/compressor-logo.svg' : null;
   const toolHeading = heading ?? (mode === 'converter' ? copy.converterHeading : copy.compressorHeading);
 
+  if (batch) return <VideoBatchWorkspace files={batch} mode={mode} onClose={() => setBatch(null)} initial={{ target, preset: compressionPreset, audio: audioTarget, start: startSeconds, end: endSeconds, duration: gifDuration, width: gifWidth }} />;
+
   return (
-    <section className="local-media-tool" data-workspace={file ? 'true' : 'false'} aria-labelledby={`${mode}-tool-title`}>
+    <section className="local-media-tool" data-workspace={file ? 'true' : 'false'} aria-labelledby={`${mode}-tool-title`} onDragOver={e => e.preventDefault()} onDrop={e => { e.preventDefault(); if (!busy && e.dataTransfer.files.length) setBatch(Array.from(e.dataTransfer.files)); }}>
       <div className="local-media-heading">
         <span className="local-media-icon" aria-hidden="true">{productIcon ? <img className="local-media-product-icon" src={productIcon} alt="" /> : <FileVideoIcon size={28} />}</span>
         <div>
@@ -175,8 +193,10 @@ export default function LocalVideoTool({ mode, copy, heading }: Props) {
             <FileVideoIcon size={34} aria-hidden="true" />
             <strong>{file ? file.name : copy.chooseFile}</strong>
             <span>{file ? formatBytes(file.size) : copy.formatHelp}</span>
-            <input type="file" accept="video/*" disabled={busy} onChange={selectFile} />
+            <input type="file" accept="video/*" multiple disabled={busy} onChange={selectFile} />
           </label>
+          <button type="button" className="button button-ghost" disabled={busy} onClick={() => setBatch(file ? [file] : [])}>Batch processing</button>
+          {mode === 'compressor' ? <TargetSizeField value={size} unit={unit} disabled={busy} onValue={setSize} onUnit={setUnit} /> : null}
 
       {mode === 'converter' ? (
         <label className="local-media-field">
