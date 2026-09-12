@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { CodeIcon } from '@phosphor-icons/react/Code';
 import { DownloadSimpleIcon } from '@phosphor-icons/react/DownloadSimple';
 import { ImageIcon } from '@phosphor-icons/react/Image';
@@ -42,12 +42,32 @@ export default function SvgToImageTool() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [batch, setBatch] = useState<File[] | null>(null);
+  const selectionId = useRef(0);
 
   useEffect(() => () => { if (preview) URL.revokeObjectURL(preview); }, [preview]);
 
   function chooseMode(mode: 'code' | 'url') {
+    selectionId.current++;
     setSourceMode(mode);
     setError(null);
+  }
+
+  async function selectFiles(files: File[]) {
+    if (busy || !files.length) return;
+    const current = ++selectionId.current;
+    setError(null);
+    setPreview(null);
+    if (files.length > 1) { setCode(''); setSvgUrl(''); setBatch(files); return; }
+    const file = files[0];
+    try {
+      if (!file.name.toLowerCase().endsWith('.svg') || file.size > MAX_SVG_SOURCE_BYTES) throw new Error('Choose SVG files up to 2 MB.');
+      const source = await file.text();
+      if (selectionId.current !== current) return;
+      setSourceMode('code');
+      setCode(source);
+    } catch (cause) {
+      if (selectionId.current === current) setError(cause instanceof Error ? cause.message : 'The SVG file could not be read.');
+    }
   }
 
   async function convertAndSave() {
@@ -80,18 +100,17 @@ export default function SvgToImageTool() {
       return { blob: await rasterizeSvg(await file.text(), format), name: `converted.${outputForSvgFormat(format).extension}` };
     }} /></section>;
 
-  return <section className="local-media-tool svg-image-tool" data-workspace={preview ? 'true' : 'false'} aria-labelledby="svg-image-tool-title" onDragOver={e => e.preventDefault()} onDrop={e => { e.preventDefault(); if (!busy && e.dataTransfer.files.length) setBatch(Array.from(e.dataTransfer.files)); }}>
+  return <section className="local-media-tool svg-image-tool" data-workspace={preview ? 'true' : 'false'} aria-labelledby="svg-image-tool-title" onDragOver={e => e.preventDefault()} onDrop={e => { e.preventDefault(); void selectFiles(Array.from(e.dataTransfer.files)); }}>
     <div className="local-media-heading"><span className="local-media-icon"><ImageIcon size={28} /></span><div><p>Private browser tool</p><h2 id="svg-image-tool-title">Convert SVG to an image</h2></div></div>
     <div className={preview ? 'local-media-workspace' : undefined}>
       {preview ? <div className="local-image-preview"><img src={preview} alt="Converted SVG preview" />{busy ? <ProcessingOverlay label="Rendering SVG locally…" /> : null}</div> : null}
       <div className="local-media-controls">
-        <button className="button button-ghost" type="button" disabled={busy} onClick={() => setBatch([])}>Batch processing · SVG files</button>
-        <label className="local-file-picker"><strong>Choose SVG files or drag them here</strong><input type="file" accept=".svg,image/svg+xml" multiple disabled={busy} onChange={e => { if (e.target.files?.length) setBatch(Array.from(e.target.files)); }} /></label>
+        <label className="local-file-picker"><strong>Choose SVG files or drag them here</strong><input type="file" accept=".svg,image/svg+xml" multiple disabled={busy} onChange={e => { void selectFiles(Array.from(e.target.files ?? [])); e.target.value = ''; }} /></label>
         <div className="svg-source-tabs" aria-label="SVG input type">
           <button className={sourceMode === 'code' ? 'is-selected' : ''} type="button" aria-pressed={sourceMode === 'code'} onClick={() => chooseMode('code')}><CodeIcon size={18} />Use code</button>
           <button className={sourceMode === 'url' ? 'is-selected' : ''} type="button" aria-pressed={sourceMode === 'url'} onClick={() => chooseMode('url')}><LinkIcon size={18} />Use URL</button>
         </div>
-        {sourceMode === 'code' ? <label className="local-media-field svg-code-field"><span>SVG code</span><textarea value={code} placeholder={'<svg viewBox="0 0 100 100">…</svg>'} disabled={busy} onChange={(event) => setCode(event.target.value)} /></label> : <label className="local-media-field"><span>SVG URL</span><input type="url" value={svgUrl} placeholder="https://example.com/icon.svg" disabled={busy} onChange={(event) => setSvgUrl(event.target.value)} /></label>}
+        {sourceMode === 'code' ? <label className="local-media-field svg-code-field"><span>SVG code</span><textarea value={code} placeholder={'<svg viewBox="0 0 100 100">…</svg>'} disabled={busy} onChange={(event) => { selectionId.current++; setCode(event.target.value); }} /></label> : <label className="local-media-field"><span>SVG URL</span><input type="url" value={svgUrl} placeholder="https://example.com/icon.svg" disabled={busy} onChange={(event) => setSvgUrl(event.target.value)} /></label>}
         <label className="local-media-field"><span>Output format</span><select value={format} disabled={busy} onChange={(event) => setFormat(event.target.value as SvgOutputFormat)}><option value="png">PNG</option><option value="jpeg">JPG</option><option value="webp">WebP</option></select></label>
         {error ? <p className="error-message" role="alert">{error}</p> : null}
         {busy ? <ProcessingOverlay label="Rendering SVG locally…" inline /> : null}

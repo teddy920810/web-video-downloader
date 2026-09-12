@@ -156,9 +156,11 @@ export default function BatchWorkspace({ initialFiles = EMPTY_FILES, accept, gro
   const source = previewFile && active?.input.includes(previewFile) ? previewFile : active?.input[0];
   const previewBlob = showResult ? output.blob : source;
   const previewUrl = showResult ? output.url : source && sources.current.get(source);
+  const singleMerge = group && queue.items.length <= 1;
+  const workspaceLabel = singleMerge ? 'Merge video clips' : 'Batch processing';
 
-  return <section className="batch-workspace" aria-label="Batch processing" onDragOver={e => e.preventDefault()} onDrop={e => { e.preventDefault(); add(Array.from(e.dataTransfer.files)); }}>
-    <div className="batch-heading"><div><h3>Batch processing</h3><p aria-live="polite">{completed.length} of {queue.items.length} complete{failed ? ` · ${failed} failed` : ''}{pending ? ` · ${pending} waiting` : ''}</p></div>
+  return <section className="batch-workspace" aria-label={workspaceLabel} onDragOver={e => e.preventDefault()} onDrop={e => { e.preventDefault(); add(Array.from(e.dataTransfer.files)); }}>
+    <div className="batch-heading"><div><h3>{workspaceLabel}</h3><p aria-live="polite">{completed.length} of {queue.items.length} complete{failed ? ` · ${failed} failed` : ''}{pending ? ` · ${pending} waiting` : ''}</p></div>
       <label className={`local-file-picker ${queue.items.length ? 'batch-add' : ''}`}><strong>{group ? 'Add a merge task · choose 2–10 clips' : 'Add files or drag them here'}</strong><input type="file" accept={accept} multiple disabled={preparing && !queue.running} onChange={e => { add(Array.from(e.target.files ?? [])); e.target.value = ''; }} /></label>
     </div>
     <p className="batch-help">Tasks run one at a time in this tab. Keep this page open. {cloud ? `Each successful image uses 1 AI credit.${creditBalance == null ? '' : ` ${creditBalance} credits available.`} Stop finishes the current paid task.` : 'Files stay on your device.'} New files added during processing wait for your next start.</p>
@@ -197,8 +199,8 @@ export default function BatchWorkspace({ initialFiles = EMPTY_FILES, accept, gro
       </aside>
     </div>
     {message ? <p role="status" className="batch-message">{message}</p> : null}
-    <div className="batch-action-bar"><div><button className="button button-primary" disabled={!ready || preparing || queue.running || !pending || packing || recoloring} onClick={start}>Start queue</button><span>{pending} {group ? 'merge tasks' : 'files'}{cloud ? ` · ${pending} AI credits` : ''}</span>
-      {queue.running ? <button className="button button-ghost" disabled={stopping} onClick={() => { queue.stop(); setStopping(true); }}>Stop after current</button> : <button className="button button-ghost" disabled={packing || recoloring || preparing} onClick={() => { if (!queue.items.length || window.confirm('Leave this workspace? Files and results in this tab will be discarded. Download what you need first.')) onClose(); }}>Back to single file</button>}</div>
+    <div className="batch-action-bar"><div><button className="button button-primary" disabled={!ready || preparing || queue.running || !pending || packing || recoloring} onClick={start}>{singleMerge ? 'Merge locally' : 'Start queue'}</button><span>{pending} {group ? 'merge tasks' : 'files'}{cloud ? ` · ${pending} AI credits` : ''}</span>
+      {queue.running ? <button className="button button-ghost" disabled={stopping} onClick={() => { queue.stop(); setStopping(true); }}>Stop after current</button> : <button className="button button-ghost" disabled={packing || recoloring || preparing} onClick={() => { if (!queue.items.length || window.confirm('Leave this workspace? Files and results in this tab will be discarded. Download what you need first.')) onClose(); }}>Choose other files</button>}</div>
       <div><span>{selection.length} selected · {sizeLabel(selection.reduce((n, i) => n + i.result!.bytes, 0))}</span><button className="button button-primary" disabled={!selection.length || packing || recoloring} onClick={() => void pack()}>Download selected · ZIP</button><button className="button button-ghost" disabled={!completed.length || packing || recoloring} onClick={() => void pack(true)}>Download all · ZIP</button></div>
     </div>
     {packing ? <div role="status" className="batch-pack-progress"><progress value={packProgress} max={100} /> Packing {Math.round(packProgress)}%<button type="button" className="button button-ghost" onClick={() => archiveController.current?.abort()}>Cancel packing</button></div> : null}

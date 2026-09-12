@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ChangeEvent } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { DownloadSimpleIcon } from '@phosphor-icons/react/DownloadSimple';
 import { FileVideoIcon } from '@phosphor-icons/react/FileVideo';
 import { ShieldCheckIcon } from '@phosphor-icons/react/ShieldCheck';
@@ -25,10 +25,11 @@ export default function VideoMergerTool() {
   useEffect(() => () => runtime.current?.terminate(), []);
   useEffect(() => () => { if (result) URL.revokeObjectURL(result); }, [result]);
 
-  function selectFiles(event: ChangeEvent<HTMLInputElement>) {
-    const selected = Array.from(event.target.files ?? []);
+  function selectFiles(selected: File[]) {
+    if (busy || !selected.length) return;
     setError(null);
     setResult(null);
+    setFiles([]);
     if (selected.length < 2 || selected.length > 10) return setError('Choose between 2 and 10 compatible clips.');
     const invalid = selected.find((file) => !validateLocalVideo(file).ok);
     if (invalid) return setError('Choose supported video clips under 250 MB each.');
@@ -75,12 +76,11 @@ export default function VideoMergerTool() {
   }
 
   const busy = phase === 'loading' || phase === 'processing';
-  if (batch) return <VideoBatchWorkspace files={batch} mode="merger" onClose={() => setBatch(null)} />;
-  return <section className="local-media-tool" data-workspace={files.length > 0 ? 'true' : 'false'} aria-labelledby="video-merger-tool-title" onDragOver={e => e.preventDefault()} onDrop={e => { e.preventDefault(); if (!busy && e.dataTransfer.files.length) setBatch(Array.from(e.dataTransfer.files)); }}>
+  if (batch) return <VideoBatchWorkspace files={batch} mode="merger" onClose={() => { setBatch(null); setFiles([]); setResult(null); setPhase('idle'); }} />;
+  return <section className="local-media-tool" data-workspace={files.length > 0 ? 'true' : 'false'} aria-labelledby="video-merger-tool-title" onDragOver={e => e.preventDefault()} onDrop={e => { e.preventDefault(); selectFiles(Array.from(e.dataTransfer.files)); }}>
     <div className="local-media-heading"><span className="local-media-icon"><FileVideoIcon size={28} /></span><div><p>Private browser tool</p><h2 id="video-merger-tool-title">Merge compatible video clips</h2></div></div>
     <div className="local-media-controls">
-      <button type="button" className="button button-ghost" disabled={busy} onClick={() => setBatch(files)}>Batch processing</button>
-      <label className="local-file-picker"><FileVideoIcon size={34} /><strong>{files.length ? `${files.length} clips selected` : 'Choose 2–10 video clips'}</strong><span>For best results, use clips from the same camera or device · 250 MB total</span><input type="file" accept="video/*" multiple disabled={busy} onChange={selectFiles} /></label>
+      <label className="local-file-picker"><FileVideoIcon size={34} /><strong>{files.length ? `${files.length} clips selected` : 'Choose 2–10 video clips'}</strong><span>For best results, use clips from the same camera or device · 250 MB total</span><input type="file" accept="video/*" multiple disabled={busy} onChange={e => { selectFiles(Array.from(e.target.files ?? [])); e.target.value = ''; }} /></label>
       {files.length ? <ol className="local-file-list">{files.map((file) => <li key={`${file.name}-${file.lastModified}`}>{file.name}<span>{(file.size / 1024 / 1024).toFixed(1)} MB</span></li>)}</ol> : null}
       {busy ? <ProcessingOverlay inline label={retrying ? 'Retrying with a browser-safe profile…' : phase === 'loading' ? 'Loading the local media engine…' : 'Merging in this browser…'} progress={progress} /> : null}
       {error ? <p className="error-message" role="alert">{error}</p> : null}

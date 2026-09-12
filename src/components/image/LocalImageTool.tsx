@@ -1,4 +1,4 @@
-import { useEffect, useState, type ChangeEvent } from 'react';
+import { useEffect, useState } from 'react';
 import { DownloadSimpleIcon } from '@phosphor-icons/react/DownloadSimple';
 import { ImageIcon } from '@phosphor-icons/react/Image';
 import { ShieldCheckIcon } from '@phosphor-icons/react/ShieldCheck';
@@ -28,17 +28,20 @@ export default function LocalImageTool({ mode, heading, chooseLabel = 'Choose an
   useEffect(() => () => { if (preview) URL.revokeObjectURL(preview); }, [preview]);
   useEffect(() => () => { if (result) URL.revokeObjectURL(result.url); }, [result]);
 
-  function select(event: ChangeEvent<HTMLInputElement>) {
-    if ((event.target.files?.length ?? 0) > 1) { setBatch(Array.from(event.target.files!)); return; }
-    const selected = event.target.files?.[0];
-    if (!selected) return;
+  function selectFiles(files: File[]) {
+    if (busy || !files.length) return;
+    if (files.length > 1) {
+      setFile(null); setPreview(null); setResult(null); setError(null);
+      setBatch(files);
+      return;
+    }
+    const selected = files[0];
     const validation = validateLocalImage(selected);
-    if (!validation.ok) { setError(validation.message); event.target.value = ''; return; }
+    if (!validation.ok) { setError(validation.message); return; }
     setFile(selected);
     setPreview(URL.createObjectURL(selected));
     setResult(null);
     setError(null);
-    setBatch([selected]);
   }
 
   async function process() {
@@ -67,13 +70,12 @@ export default function LocalImageTool({ mode, heading, chooseLabel = 'Choose an
     </>}
     process={files => processLocalImage(files[0], mode, { format, quality, width, background, ...(mode === 'compressor' && size ? { targetBytes: targetBytes(size, unit) } : {}) })} /></section>;
 
-  return <section className="local-media-tool local-image-tool" data-workspace={file ? 'true' : 'false'} aria-labelledby={`${mode}-image-tool-title`} onDragOver={e => e.preventDefault()} onDrop={e => { e.preventDefault(); if (!busy && e.dataTransfer.files.length) setBatch(Array.from(e.dataTransfer.files)); }}>
+  return <section className="local-media-tool local-image-tool" data-workspace={file ? 'true' : 'false'} aria-labelledby={`${mode}-image-tool-title`} onDragOver={e => e.preventDefault()} onDrop={e => { e.preventDefault(); selectFiles(Array.from(e.dataTransfer.files)); }}>
     <div className="local-media-heading"><span className="local-media-icon"><ImageIcon size={28} /></span><div><p>Private browser tool</p><h2 id={`${mode}-image-tool-title`} tabIndex={-1}>{heading}</h2></div></div>
     <div className={file ? 'local-media-workspace' : undefined}>
       {preview ? <div className="local-image-preview"><img src={result?.url ?? preview} alt={result ? 'Processed image preview' : 'Selected image preview'} />{busy ? <ProcessingOverlay label="Processing locally…" /> : null}</div> : null}
       <div className="local-media-controls">
-        <label className="local-file-picker"><ImageIcon size={34} /><strong>{file?.name ?? chooseLabel}</strong><span>{file ? `${(file.size / 1024 / 1024).toFixed(1)} MB` : 'JPG, PNG, or WebP · up to 50 MB'}</span><input type="file" accept="image/jpeg,image/png,image/webp" multiple disabled={busy} onChange={select} /></label>
-        <button type="button" className="button button-ghost" disabled={busy} onClick={() => setBatch(file ? [file] : [])}>Batch processing</button>
+        <label className="local-file-picker"><ImageIcon size={34} /><strong>{file?.name ?? chooseLabel}</strong><span>{file ? `${(file.size / 1024 / 1024).toFixed(1)} MB` : 'JPG, PNG, or WebP · up to 50 MB'}</span><input type="file" accept="image/jpeg,image/png,image/webp" multiple disabled={busy} onChange={e => { selectFiles(Array.from(e.target.files ?? [])); e.target.value = ''; }} /></label>
         {mode === 'converter' ? <label className="local-media-field"><span>Output format</span><select value={format} onChange={(event) => setFormat(event.target.value as ImageFormat)}><option value="png">PNG</option><option value="jpeg">JPG</option><option value="webp">WebP</option></select></label> : null}
         {mode === 'converter' && format === 'jpeg' ? <ColorSwatches label="Fill transparent areas" value={background} onChange={setBackground} transparent={false} disabled={busy} /> : null}
         {mode === 'compressor' ? <label className="local-media-field"><span>Output quality · {Math.round(quality * 100)}%</span><input type="range" min="0.35" max="0.9" step="0.01" value={quality} onChange={(event) => setQuality(Number(event.target.value))} /></label> : null}

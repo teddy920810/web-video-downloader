@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ChangeEvent } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ArrowCounterClockwiseIcon } from '@phosphor-icons/react/ArrowCounterClockwise';
 import { DownloadSimpleIcon } from '@phosphor-icons/react/DownloadSimple';
 import { FileVideoIcon } from '@phosphor-icons/react/FileVideo';
@@ -81,28 +81,28 @@ export default function LocalVideoTool({ mode, copy, heading }: Props) {
     setRetrying(false);
   }
 
-  function selectFile(event: ChangeEvent<HTMLInputElement>) {
-    if ((event.target.files?.length ?? 0) > 1) { setBatch(Array.from(event.target.files!)); return; }
+  function selectFiles(files: File[]) {
+    if (busy || !files.length) return;
     resetResult();
-    const selected = event.target.files?.[0] ?? null;
-    if (!selected) {
-      setFile(null);
-      setPreviewUrl(null);
-      setVideoMetadata({});
+    setFile(null);
+    setPreviewUrl(null);
+    setVideoMetadata({});
+    if (files.length > 1) {
+      runtime.current?.terminate(); runtime.current = null;
+      setBatch(files);
       return;
     }
+    const selected = files[0];
     const validation = validateLocalVideo(selected);
     if (!validation.ok) {
       setFile(null);
       setError(validation.message);
       setPhase('failed');
-      event.target.value = '';
       return;
     }
     setFile(selected);
     setVideoMetadata({});
     setPreviewUrl(URL.createObjectURL(selected));
-    setBatch([selected]);
   }
 
   async function processVideo() {
@@ -178,7 +178,7 @@ export default function LocalVideoTool({ mode, copy, heading }: Props) {
   if (batch) return <VideoBatchWorkspace files={batch} mode={mode} onClose={() => setBatch(null)} initial={{ target, preset: compressionPreset, audio: audioTarget, start: startSeconds, end: endSeconds, duration: gifDuration, width: gifWidth }} />;
 
   return (
-    <section className="local-media-tool" data-workspace={file ? 'true' : 'false'} aria-labelledby={`${mode}-tool-title`} onDragOver={e => e.preventDefault()} onDrop={e => { e.preventDefault(); if (!busy && e.dataTransfer.files.length) setBatch(Array.from(e.dataTransfer.files)); }}>
+    <section className="local-media-tool" data-workspace={file ? 'true' : 'false'} aria-labelledby={`${mode}-tool-title`} onDragOver={e => e.preventDefault()} onDrop={e => { e.preventDefault(); selectFiles(Array.from(e.dataTransfer.files)); }}>
       <div className="local-media-heading">
         <span className="local-media-icon" aria-hidden="true">{productIcon ? <img className="local-media-product-icon" src={productIcon} alt="" /> : <FileVideoIcon size={28} />}</span>
         <div>
@@ -194,9 +194,8 @@ export default function LocalVideoTool({ mode, copy, heading }: Props) {
             <FileVideoIcon size={34} aria-hidden="true" />
             <strong>{file ? file.name : copy.chooseFile}</strong>
             <span>{file ? formatBytes(file.size) : copy.formatHelp}</span>
-            <input type="file" accept="video/*" multiple disabled={busy} onChange={selectFile} />
+            <input type="file" accept="video/*" multiple disabled={busy} onChange={e => { selectFiles(Array.from(e.target.files ?? [])); e.target.value = ''; }} />
           </label>
-          <button type="button" className="button button-ghost" disabled={busy} onClick={() => setBatch(file ? [file] : [])}>Batch processing</button>
           {mode === 'compressor' ? <TargetSizeField value={size} unit={unit} disabled={busy} onValue={setSize} onUnit={setUnit} /> : null}
 
       {mode === 'converter' ? (

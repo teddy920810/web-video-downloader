@@ -1,6 +1,16 @@
 # Batch workspace delivery
 
-Scope: all 11 existing file tools share the same workspace for one or multiple files. Keep the legacy single-file editor accessible explicitly. Preserve CMS content, branding, backend billing and public media.
+Scope: file tools expose one upload entry, without a single/batch mode button. One file opens its single-file editor; two or more open the shared batch workspace. Picker and drag/drop follow the same rule. Video merger treats 2–10 clips as one merge task, not separate file jobs; adding another group creates another queued merge. Preserve CMS content, branding, backend billing and public media.
+
+## Automatic selection follow-up
+
+- [x] Remove the initial Batch processing buttons across all 11 tools.
+- [x] Single selection and single drop open the editor; multiple files open the queue automatically.
+- [x] Cancelled/empty selections keep the current input; choosing the same file again remains possible.
+- [x] SVG file selection loads one file into the code editor without rendering untrusted SVG markup; multiple SVGs use the queue.
+- [x] Queue reset says Choose other files, not a mode switch.
+- [x] A single merge group is labelled Merge video clips and starts with Merge locally; multiple groups retain the queue action.
+- [x] Run focused and complete verification for this follow-up: 318 unit tests, 57 default and 12 utilities browser tests passed; one optional external-video test skipped. Lint/types/build passed. Release authorized; PR/CI and production acceptance follow below.
 
 ## Checklist
 
