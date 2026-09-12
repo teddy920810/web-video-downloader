@@ -72,7 +72,7 @@ export default function SvgToImageTool() {
   const canSave = sourceMode === 'code' ? code.trim().length > 0 : svgUrl.trim().length > 0;
   const saveLabel = format === 'png' ? 'Save PNG' : format === 'jpeg' ? 'Save JPG' : 'Save WebP';
 
-  if (batch) return <section className="local-media-tool" data-workspace="true"><BatchWorkspace initialFiles={batch} accept=".svg,image/svg+xml" onClose={() => setBatch(null)}
+  if (batch) return <section className="local-media-tool" data-workspace="true"><BatchWorkspace toolId="svg-to-image" initialFiles={batch} accept=".svg,image/svg+xml" onClose={() => setBatch(null)}
     settings={<label className="local-media-field">Output format<select value={format} onChange={e => setFormat(e.target.value as SvgOutputFormat)}><option value="png">PNG</option><option value="jpeg">JPG</option><option value="webp">WebP</option></select></label>}
     process={async files => {
       const file = files[0];

@@ -31,10 +31,11 @@ export class SerialQueue<Input, Output> {
     if (this.running) return;
     this.running = true;
     this.stopped = false;
+    const approved = new Set(this.items.filter(item => item.status === 'queued').map(item => item.id));
     this.changed();
     try {
       while (!this.stopped) {
-        const item = this.items.find(entry => entry.status === 'queued');
+        const item = this.items.find(entry => entry.status === 'queued' && approved.has(entry.id));
         if (!item) break;
         item.status = 'processing';
         this.changed();

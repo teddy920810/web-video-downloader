@@ -9,7 +9,7 @@ export default function VideoBatchWorkspace({ files, mode, onClose, initial = {}
   const [size, setSize] = useState('');
   const [unit, setUnit] = useState<'KB' | 'MB'>('MB');
   const set = (patch: Partial<VideoOptions>) => setOptions(old => ({ ...old, ...patch }));
-  return <section className="local-media-tool" data-workspace="true"><BatchWorkspace initialFiles={files} accept="video/*" group={mode === 'merger'} onClose={onClose}
+  return <section className="local-media-tool" data-workspace="true"><BatchWorkspace toolId={mode === 'audio' ? 'audio-extractor' : mode === 'gif' ? 'video-to-gif' : `video-${mode}`} initialFiles={files} accept="video/*" group={mode === 'merger'} onClose={onClose}
     settings={<>
       {mode === 'converter' ? <label className="local-media-field">Output format<select value={options.target ?? 'mp4'} onChange={e => set({ target: e.target.value as VideoOptions['target'] })}><option value="mp4">MP4</option><option value="webm">WebM</option><option value="mp3">MP3</option></select></label> : null}
       {mode === 'compressor' ? <><label className="local-media-field">Compression level<select value={options.preset ?? 'balanced'} onChange={e => set({ preset: e.target.value as VideoOptions['preset'] })}><option value="small">Small</option><option value="balanced">Balanced</option><option value="quality">Quality</option></select></label><TargetSizeField value={size} unit={unit} onValue={setSize} onUnit={setUnit} /><p>Target applies to each video. Target mode may lower resolution and quality; it never cuts the video short.</p></> : null}

@@ -10,8 +10,9 @@ import { validateUploadMetadata } from '../../lib/upload/validation';
 import type { BackgroundRemoverCopy } from '../../lib/content/utilities-settings';
 import { trackToolEvent } from '../../lib/analytics/tool-events';
 import ProcessingOverlay from '../shared/ProcessingOverlay';
-import { composeBackground, downloadBackgroundResult } from '../../lib/image/background-export';
+import { downloadBackgroundResult } from '../../lib/image/background-export';
 import BatchWorkspace from '../shared/BatchWorkspace';
+import ColorSwatches from '../shared/ColorSwatches';
 
 type Phase = 'idle' | 'selected' | 'uploading' | 'processing' | 'exporting' | 'ready' | 'error';
 type ApiError = { error?: string };
@@ -62,6 +63,7 @@ export default function BackgroundRemover({ copy }: { copy: BackgroundRemoverCop
     setResultUrl(null);
     setMessage(null);
     setPhase('selected');
+    setBatch([next]);
   }
 
   function onInput(event: ChangeEvent<HTMLInputElement>) {
@@ -138,12 +140,17 @@ export default function BackgroundRemover({ copy }: { copy: BackgroundRemoverCop
   const selected = Boolean(file && previewUrl);
   const busy = phase === 'uploading' || phase === 'processing' || phase === 'exporting';
   const displayUrl = resultUrl ?? previewUrl;
-  const swatches = ['transparent', '#ffffff', '#111827', '#f3f4f6', '#ef4444', '#f59e0b', '#22c55e', '#3b82f6', '#8b5cf6'];
 
   if (batch) return <section className="background-remover-tool" data-workspace="true">
     {!session?.user ? <button className="button button-primary" disabled={sessionPending} onClick={() => authClient.signIn.social({ provider: 'google', callbackURL: window.location.href })}>Sign in with Google</button> : null}
-    <BatchWorkspace initialFiles={batch} accept="image/jpeg,image/png,image/webp" cloud ready={Boolean(session?.user) && !sessionPending} onClose={() => setBatch(null)}
-      settings={<label className="local-media-field">Background color<select value={background} onChange={e => setBackground(e.target.value)}>{swatches.map(color => <option key={color} value={color}>{color === 'transparent' ? 'Transparent' : color}</option>)}</select></label>}
+    <BatchWorkspace toolId="background-remover" initialFiles={batch} accept="image/jpeg,image/png,image/webp" cloud ready={Boolean(session?.user) && !sessionPending} onClose={() => setBatch(null)} background={background} creditBalance={creditBalance}
+      beforeStart={async count => {
+        const body = await readApi<{ account: { freeCredits: number; paidCredits: number } }>('/api/me', { method: 'GET' });
+        const balance = Number(body.account.freeCredits) + Number(body.account.paidCredits);
+        setCreditBalance(balance);
+        if (!Number.isFinite(balance) || balance < count) throw new Error(`This batch needs ${count} AI credits. Your available balance is ${Number.isFinite(balance) ? balance : 'unavailable'}. Remove waiting files or add credits before starting. No files were processed.`);
+      }}
+      settings={<ColorSwatches value={background} onChange={setBackground} />}
       process={async files => {
         if (!session?.user) throw new Error('Sign in before starting AI tasks.');
         const next = files[0];
@@ -159,9 +166,9 @@ export default function BackgroundRemover({ copy }: { copy: BackgroundRemoverCop
         });
         const response = await fetch(output.downloadUrl, { cache: 'no-store', signal: AbortSignal.timeout(30_000) });
         if (!response.ok) throw new Error('The AI result is saved in your account, but could not be downloaded here. Check your account before submitting again.');
-        const blob = await composeBackground(await response.blob(), background);
+        const blob = await response.blob();
         setCreditBalance(balance => balance === null ? null : Math.max(0, balance - 1));
-        return { blob, name: 'background-removed.png' };
+        return { blob, rawBlob: blob, name: 'background-removed.png' };
       }} />
   </section>;
 
@@ -189,9 +196,7 @@ export default function BackgroundRemover({ copy }: { copy: BackgroundRemoverCop
             <div className="background-file-meta"><strong>{file?.name}</strong><span>{file ? `${(file.size / 1024 / 1024).toFixed(1)} MB` : ''}</span></div>
             <p className="background-credit-note">1 AI credit per successful result{creditBalance === null ? '' : ` · ${creditBalance} available`}</p>
             {resultUrl ? (
-              <fieldset className="background-swatches"><legend>{copy.backgroundLabel}</legend>{swatches.map((color) => (
-                <button key={color} type="button" disabled={busy} className={background === color ? 'is-selected' : ''} style={{ backgroundColor: color === 'transparent' ? '#d8dbe5' : color }} onClick={() => setBackground(color)} aria-label={color === 'transparent' ? copy.transparentLabel : color} />
-              ))}</fieldset>
+              <ColorSwatches label={copy.backgroundLabel} value={background} onChange={setBackground} disabled={busy} />
             ) : null}
             {message ? <p className="error-message" role="alert">{message}</p> : null}
             <div className="local-media-actions">

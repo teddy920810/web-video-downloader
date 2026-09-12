@@ -87,7 +87,8 @@ test('background remover expands into the shared workspace after image selection
     buffer: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M/wHwAF/gL+Av7+WQAAAABJRU5ErkJggg==', 'base64'),
   });
   await expect(page.locator('[data-workspace="true"]')).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Remove background' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Start queue', exact: true })).toBeVisible();
+  await expect(page.locator('.batch-preview')).toBeVisible();
 });
 
 test('utilities mode remains usable on a mobile viewport', async ({ page }) => {
