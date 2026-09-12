@@ -9,12 +9,10 @@ const svg = Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" width="4" heigh
 const video = () => readFileSync(new URL('../fixtures/batch-video.webm', import.meta.url));
 test.beforeEach(async ({ page }) => { page.on('dialog', dialog => dialog.accept()); });
 
-test('one file opens the workspace, another appends, and file preview does not change download selection', async ({ page }) => {
+test('multiple files open the workspace and file preview does not change download selection', async ({ page }) => {
   await page.goto('/image-resizer');
   const item = { name: 'photo.webp', mimeType: 'image/webp', buffer: image };
-  await page.locator('input[type=file]').setInputFiles(item);
-  await expect(page.locator('.batch-list > li')).toHaveCount(1);
-  await page.locator('input[type=file]').setInputFiles(item);
+  await page.locator('input[type=file]').setInputFiles([item, item]);
   await expect(page.locator('.batch-list > li')).toHaveCount(2);
   await page.getByRole('button', { name: 'Start queue', exact: true }).click();
   await expect(page.locator('.batch-list > li[data-status=ready]')).toHaveCount(2);
@@ -65,8 +63,9 @@ test('all 11 file tools accept dropped files into a queue without starting paid 
   page.on('request', r => { if (r.method() === 'POST' && r.url().includes('/api/background-remover')) paid.push(r.url()); });
   for (const tool of TOOLS) {
     await page.goto(tool.route);
-    await expect(page.getByRole('button', { name: /Batch processing/ })).toBeVisible();
-    await expect(page.locator('astro-island[ssr]').filter({ has: page.getByRole('button', { name: /Batch processing/ }) })).toHaveCount(0);
+    await expect(page.locator('input[type=file]')).toHaveCount(1);
+    await expect(page.locator('astro-island[ssr]').filter({ has: page.locator('input[type=file]') })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: /Batch processing/ })).toHaveCount(0);
     const svgTool = tool.id === 'svg-to-image';
     const videoTool = tool.category !== 'image';
     const dropped = await page.evaluateHandle(({ svgTool, videoTool }) => {
@@ -114,10 +113,10 @@ test('invalid image does not block later files; impossible target has no success
   await page.getByRole('button', { name: 'Start queue', exact: true }).click();
   await expect(page.locator('.batch-list > li[data-status="failed"]')).toHaveCount(1);
   await expect(page.locator('.batch-list > li[data-status="ready"]')).toHaveCount(1);
-  await page.getByRole('button', { name: 'Back to single file' }).click();
+  await page.getByRole('button', { name: 'Choose other files' }).click();
   await page.locator('input[type=file]').setInputFiles({ name: 'ok.webp', mimeType: 'image/webp', buffer: image });
   await page.getByLabel('Target size (optional)').fill('0.01');
-  await page.getByRole('button', { name: 'Start queue', exact: true }).click();
+  await page.getByRole('button', { name: 'Compress locally', exact: true }).click();
   await expect(page.getByRole('alert')).toContainText('target size');
   await expect(page.locator('a[download]')).toHaveCount(0);
 });
@@ -129,7 +128,6 @@ for (const route of ['video-converter', 'video-compressor', 'video-trimmer', 'au
     page.on('request', r => { if (r.method() === 'POST') processing.push(r.url()); });
     await page.goto(`/${route}`);
     const item = { name: 'test.webm', mimeType: 'video/webm', buffer: video() };
-    if (route === 'video-merger') await page.getByRole('button', { name: 'Batch processing', exact: true }).click();
     await page.locator('input[type=file]').setInputFiles([item, item]);
     if (route === 'video-merger') await page.locator('input[type=file]').setInputFiles([item, item]);
     if (route === 'video-compressor') { await page.getByLabel('Target size (optional)').fill('20'); await page.getByLabel('Size unit').selectOption('KB'); }

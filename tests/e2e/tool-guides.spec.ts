@@ -26,14 +26,14 @@ test('compressor Word content, illustrations and local download work together', 
     buffer: readFileSync(new URL('../../public/uploads/image-compressor/feature-quality-control.webp', import.meta.url)),
   });
   await page.getByRole('slider').fill('0.35');
-  await page.getByRole('button', { name: 'Start queue', exact: true }).click();
-  const save = page.locator('.batch-list a[download]');
+  await page.getByRole('button', { name: 'Compress locally', exact: true }).click();
+  const save = page.locator('.local-media-actions a[download]');
   await expect(save).toBeVisible();
-  await expect(page.getByAltText('Processed result')).toHaveJSProperty('naturalWidth', 1672);
+  await expect(page.getByAltText('Processed image preview')).toHaveJSProperty('naturalWidth', 1672);
   const downloadPromise = page.waitForEvent('download');
   await save.click();
   const download = await downloadPromise;
-  expect(download.suggestedFilename()).toBe('1-source-compressed.webp');
+  expect(download.suggestedFilename()).toBe('compressed.webp');
   expect(await download.failure()).toBeNull();
   const bytes = readFileSync((await download.path())!);
   expect(bytes.subarray(0, 4).toString()).toBe('RIFF');

@@ -78,7 +78,7 @@ test('pricing and account surfaces describe current entitlements without enablin
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', 'noindex, follow');
 });
 
-test('background remover expands into the shared workspace after image selection', async ({ page }) => {
+test('background remover opens the single editor after one image selection', async ({ page }) => {
   await page.goto('/background-remover');
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Remove an image');
   await page.locator('input[type=file]').setInputFiles({
@@ -87,8 +87,8 @@ test('background remover expands into the shared workspace after image selection
     buffer: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M/wHwAF/gL+Av7+WQAAAABJRU5ErkJggg==', 'base64'),
   });
   await expect(page.locator('[data-workspace="true"]')).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Start queue', exact: true })).toBeVisible();
-  await expect(page.locator('.batch-preview')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Start queue', exact: true })).toHaveCount(0);
+  await expect(page.locator('.background-canvas')).toBeVisible();
 });
 
 test('utilities mode remains usable on a mobile viewport', async ({ page }) => {

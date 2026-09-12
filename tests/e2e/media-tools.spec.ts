@@ -1,10 +1,9 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
-// Keep explicit coverage of the retained single-file editor alongside the default shared workspace.
+// A single upload opens the editor without asking the user to choose a mode.
 async function singleEditor(page: import('@playwright/test').Page) {
-  page.once('dialog', dialog => dialog.accept());
-  await page.getByRole('button', { name: 'Back to single file', exact: true }).click();
+  await expect(page.locator('.batch-workspace')).toHaveCount(0);
 }
 
 const tinyWebm = Buffer.from('GkXfo59ChoEBQveBAULygQRC84EIQoKEd2VibUKHgQJChYECGFOAZwEAAAAAAANXEU2bdLpNu4tTq4QVSalmU6yBoU27i1OrhBZUrmtTrIHYTbuMU6uEElTDZ1OsggElTbuMU6uEHFO7a1OsggNB7AEAAAAAAABZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVSalmsirXsYMPQkBNgI1MYXZmNjIuMTMuMTAyV0GNTGF2ZjYyLjEzLjEwMkSJiEBxgAAAAAAAFlSua8iuAQAAAAAAAD/XgQFzxYghnd5Mt4yKdZyBACK1nIN1bmSIgQCGhVZfVlA4g4EBI+ODhAJiWgDgkLCBoLqBWpqBAlWwhFW5gQESVMNn/HNzoGPAgGfImkWjh0VOQ09ERVJEh41MYXZmNjIuMTMuMTAyc3PWY8CLY8WIIZ3eTLeMinVnyKFFo4dFTkNPREVSRIeUTGF2YzYyLjMwLjEwMCBsaWJ2cHhnyKFFo4hEVVJBVElPTkSHkzAwOjAwOjAwLjI4MDAwMDAwMAAfQ7Z1QZXngQCj1oEAAIAwBgCdASqgAFoAAEcIhYWImYSIAgICdaoD+AP6AgbKlqTnr0ZeI569GXiOevRl4jnr0ZeI569GXiOUAP7+wOv/8KVkoB7/wpr/6OJYrSZ/6LgAo7SBACgAsQMABRCsABgHT/gagfMNAAVsCsAFYAKwAVgArABWACD+8DhD22bZtjP/q7UOjRYAo7KBAFAAcQMABRCsABgAGLf0DAAEGgALAAWAAsABYACwAFf4/vA4Q9tm2bYz/6u1Do0WAKOygQB4AHEDAAUQrAAYABi39AwABBoACwAFgALAAWAAsABX+P7wOEPbZtm2M/+rtQ6NFgCjsoEAoABxAwAFEKwAGAAYt/QMAAQaAAsABYACwAFgALAAV/j+8DhD22bZtjP/q7UOjRYAo7KBAMgAcQMABRCsABgAGLf0DAAEGgALAAWAAsABYACwAFf4/vA4Q9tm2bYz/6u1Do0WAKOygQDwAHEDAAUQrAAYABi39AwABBoACwAFgALAAWAAsABX+P7wOEPbZtm2M/+rtQ6NFgAcU7trkbuPs4EAt4r3gQHxggGm8IED', 'base64');

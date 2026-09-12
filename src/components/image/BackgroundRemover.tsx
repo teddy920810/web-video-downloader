@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ChangeEvent, type DragEvent } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { DownloadSimpleIcon } from '@phosphor-icons/react/DownloadSimple';
 import { ImageIcon } from '@phosphor-icons/react/Image';
 import { ShieldCheckIcon } from '@phosphor-icons/react/ShieldCheck';
@@ -63,21 +63,16 @@ export default function BackgroundRemover({ copy }: { copy: BackgroundRemoverCop
     setResultUrl(null);
     setMessage(null);
     setPhase('selected');
-    setBatch([next]);
   }
 
-  function onInput(event: ChangeEvent<HTMLInputElement>) {
-    if ((event.target.files?.length ?? 0) > 1) { setBatch(Array.from(event.target.files!)); return; }
-    const selected = event.target.files?.[0];
-    if (selected) choose(selected);
-  }
-
-  function onDrop(event: DragEvent<HTMLLabelElement>) {
-    event.preventDefault();
-    if (busy) return;
-    if (event.dataTransfer.files.length > 1) { setBatch(Array.from(event.dataTransfer.files)); return; }
-    const selected = event.dataTransfer.files?.[0];
-    if (selected) choose(selected);
+  function selectFiles(files: File[]) {
+    if (busy || !files.length) return;
+    if (files.length > 1) {
+      setFile(null); setPreviewUrl(null); setResultUrl(null); setMessage(null); setPhase('idle');
+      setBatch(files);
+      return;
+    }
+    choose(files[0]);
   }
 
   function reset() {
@@ -173,16 +168,15 @@ export default function BackgroundRemover({ copy }: { copy: BackgroundRemoverCop
   </section>;
 
   return (
-    <section className="background-remover-tool" data-workspace={selected ? 'true' : 'false'} aria-labelledby="background-tool-title" onDragOver={e => e.preventDefault()} onDrop={e => { e.preventDefault(); if (!busy && e.dataTransfer.files.length) setBatch(Array.from(e.dataTransfer.files)); }}>
-      <button className="button button-ghost" type="button" disabled={busy} onClick={() => setBatch(file ? [file] : [])}>Batch processing</button>
+    <section className="background-remover-tool" data-workspace={selected ? 'true' : 'false'} aria-labelledby="background-tool-title" onDragOver={e => e.preventDefault()} onDrop={e => { e.preventDefault(); selectFiles(Array.from(e.dataTransfer.files)); }}>
       {!selected ? (
-        <label className="background-dropzone" onDragOver={(event) => event.preventDefault()} onDrop={e => { e.stopPropagation(); onDrop(e); }}>
+        <label className="background-dropzone">
           <ImageIcon size={44} aria-hidden="true" />
           <strong id="background-tool-title">{copy.dropHeading}</strong>
           <span>{copy.dropIntro}</span>
           <span className="button button-primary"><UploadSimpleIcon size={18} />{copy.uploadLabel}</span>
           <small>{copy.formatHelp}</small>
-          <input ref={inputRef} type="file" accept="image/jpeg,image/png,image/webp" multiple disabled={busy} onChange={onInput} />
+          <input ref={inputRef} type="file" accept="image/jpeg,image/png,image/webp" multiple disabled={busy} onChange={e => { selectFiles(Array.from(e.target.files ?? [])); e.target.value = ''; }} />
         </label>
       ) : (
         <div className="background-workspace">
@@ -204,7 +198,7 @@ export default function BackgroundRemover({ copy }: { copy: BackgroundRemoverCop
               {resultUrl ? <button className="button button-primary" type="button" disabled={busy} onClick={downloadResult}><DownloadSimpleIcon size={18} />{copy.downloadLabel}</button> : null}
               <button className="button button-ghost" type="button" disabled={busy} onClick={() => inputRef.current?.click()}>{copy.chooseAnotherLabel}</button>
             </div>
-            <input ref={inputRef} className="sr-only" type="file" accept="image/jpeg,image/png,image/webp" multiple disabled={busy} onChange={onInput} />
+            <input ref={inputRef} className="sr-only" type="file" accept="image/jpeg,image/png,image/webp" multiple disabled={busy} onChange={e => { selectFiles(Array.from(e.target.files ?? [])); e.target.value = ''; }} />
             <p className="local-media-privacy"><ShieldCheckIcon size={20} />{copy.privacyLabel}</p>
           </aside>
         </div>

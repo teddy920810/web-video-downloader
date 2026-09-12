@@ -20,6 +20,13 @@ const validInput = {
 };
 
 describe('site content validation', () => {
+  it('accepts existing SVG tool and refund policy routes without allowing missing pages', () => {
+    expect(collectSiteValidationIssues({
+      ...validInput,
+      contentDocuments: [{ path: 'links.json', value: ['/svg-to-image', '/refund-policy', '/missing-page'] }],
+    })).toEqual(['links.json: internal link /missing-page does not match a public route.']);
+  });
+
   it('accepts a coherent forked-site configuration', () => {
     expect(collectSiteValidationIssues(validInput)).toEqual([]);
   });
