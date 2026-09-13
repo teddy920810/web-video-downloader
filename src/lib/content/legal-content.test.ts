@@ -34,7 +34,9 @@ describe('Streamnest legal content', () => {
     expect(terms).toContain('Acceptable use');
     expect(terms).toContain('Refund Policy');
     expect(refund).toContain('Paid checkout is not currently available');
-    expect(refund).toMatch(/unused credits/i);
+    expect(refund).toContain('none of the credits granted by that payment have been consumed');
+    expect(refund).toContain('7 calendar days');
+    expect(refund).toContain('including renewals');
     expect(`${privacy}\n${terms}\n${refund}`).not.toMatch(/HitPaw|30-day money-back|Suite 902/i);
   });
 });

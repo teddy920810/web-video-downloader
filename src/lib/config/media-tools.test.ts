@@ -143,6 +143,6 @@ describe('browser-local media tools', () => {
     expect(utilities).toContain("SITE_MODE: 'utilities'");
     expect(utilities).toContain('127.0.0.1:4392');
     expect(utilities).toContain('reuseExistingServer: false');
-    expect(utilities).toContain("testMatch: ['utilities-mode.spec.ts', 'clarity-design.spec.ts']");
+    expect(utilities).toContain("testMatch: ['utilities-mode.spec.ts', 'clarity-design.spec.ts', 'pricing-readiness.spec.ts']");
   });
 });

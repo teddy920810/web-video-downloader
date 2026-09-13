@@ -6,9 +6,11 @@ eyebrow: Terms of use
 heading: Use Streamnest tools responsibly
 ---
 
-**Last updated: September 2, 2026**
+**Last updated: September 13, 2026**
 
 These Terms govern your access to Streamnest's website, accounts, browser-local media tools, cloud AI features, and future paid services. By using Streamnest, you agree to these Terms and the [Privacy Policy](/privacy). If you do not agree, do not use the service.
+
+Streamnest is operated by **Shi Yao**, an individual developer based in mainland China. Contact [support@streamnest.io](mailto:support@streamnest.io) for product, account, or billing assistance. We respond to support requests within 3 business days.
 
 ## Eligibility and accounts
 
@@ -30,7 +32,12 @@ A successful Background Remover task consumes the AI credit amount shown before 
 
 ## Pricing, credits, and paid services
 
-Paid checkout is not currently available. **Coming Soon** labels do not create a subscription, purchase, renewal, license, or paid entitlement. If paid plans or credit packs launch, the price, billing period, included benefits, renewal terms, and cancellation controls will be shown before purchase.
+Paid checkout is not currently available. Viewing the [Pricing page](/pricing) or selecting a pack does not create a subscription, purchase, renewal, license, or paid entitlement. The following launch terms will apply when purchases open; the total price and applicable taxes will be shown before payment.
+
+- **Free tools:** all current browser-local media tools remain free. Background Remover currently uses 1 credit per successful image; no other current tool consumes credits. Future credit-based features will disclose their cost before processing.
+- **Pro:** USD $4.99 per month, with 500 credits for each paid billing month. Subscriptions renew automatically until cancelled. Unused monthly credits expire at the end of the paid billing period and do not roll over.
+- **Credit Packs:** USD $4.50 for 300 credits, $15 for 1,000, $30 for 2,000, or $150 for 10,000. Each is a one-time purchase at $0.015 per credit, valid for 24 calendar months from that purchase. A new purchase does not extend an older pack. For more than 10,000 credits, contact support.
+- **Cancellation:** when subscriptions launch, you will be able to stop future renewals from your account. Ordinary cancellation takes effect at the end of the current paid period and does not automatically refund it. Separate credit packs retain their original expiration dates. A refund of the current subscription payment ends that period, revokes its credits, and stops future renewals.
 
 AI credits are a limited service entitlement, not cash, cryptocurrency, or transferable property. They may expire or be limited as disclosed with the plan. Refund eligibility is governed by the [Refund Policy](/refund-policy), the checkout terms, and applicable law.
 
@@ -60,6 +67,6 @@ To the extent permitted by law, Streamnest disclaims implied warranties of merch
 
 Nothing in these Terms excludes rights or liability that cannot legally be excluded. Where liability may lawfully be limited, Streamnest's aggregate liability for a paid claim will not exceed the amount you paid for the affected service during the three months before the event giving rise to the claim.
 
-## Changes, disputes, and contact readiness
+## Changes, disputes, and contact
 
-We may update these Terms and will change the date above when we do. Continued use after an effective update means you accept the revised Terms. Applicable mandatory consumer law remains unaffected. Before paid checkout is enabled, Streamnest will publish a monitored support contact and any required operator, governing-law, and dispute information in the footer and purchase flow.
+We may update these Terms and will change the date above when we do. Continued use after an effective update means you accept the revised Terms. Applicable mandatory consumer law remains unaffected. For questions or disputes, contact Shi Yao at [support@streamnest.io](mailto:support@streamnest.io) so we can investigate. This contact process does not limit your mandatory rights or access to any legally available dispute process.

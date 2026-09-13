@@ -6,9 +6,11 @@ eyebrow: Privacy policy
 heading: Clear data boundaries for every Streamnest tool
 ---
 
-**Last updated: September 5, 2026**
+**Last updated: September 13, 2026**
 
 This Privacy Policy explains what Streamnest collects, why it is used, how media tools process files, and the choices available to you. It applies to the Streamnest website, account, browser-local tools, and cloud AI features.
+
+Streamnest is operated by **Shi Yao**, an individual developer based in mainland China responsible for the processing described in this policy. Send privacy questions and data requests to [support@streamnest.io](mailto:support@streamnest.io).
 
 ## Information we process
 
@@ -29,7 +31,7 @@ Video conversion, compression, trimming, merging, audio extraction, video-to-GIF
 
 Background Remover is a cloud feature. The image you choose is transferred over encrypted connections through Streamnest's Vercel and Google Cloud Run services, stored privately in Cloudflare R2 when needed for task delivery, and sent to the Replicate-hosted processing model to perform the requested background removal. These providers process the data needed to operate, secure, and deliver the task under their own service and privacy terms.
 
-Streamnest does not use submitted images to train its own AI models. Temporary access links expire. Input and result objects are scheduled for deletion after the published retention period, currently 24 hours, unless a shorter period applies or limited retention is required for security, dispute resolution, or law.
+Streamnest does not use submitted images to train its own AI models. Temporary access links expire. Background-removal inputs and results in our R2 storage are configured to expire after one day and enter automatic cleanup. Deletion is asynchronous and may occur after the expiration time; link expiry is not proof that a stored object has been deleted. Processing providers also apply their own retention policies. Limited retention may be required for security, dispute resolution, or law.
 
 ## Accounts, credits, and authentication
 
@@ -57,6 +59,6 @@ Depending on applicable law, you may request access, correction, deletion, restr
 
 Streamnest is not directed to children under 13 and does not knowingly collect personal information from children under 13. A minor who is permitted to use the service must do so with the involvement of a parent or legal guardian where required by law.
 
-## Changes and contact readiness
+## Changes and contact
 
-We may update this policy as the product, providers, or law changes. The date above identifies the current version. Before paid checkout is enabled, Streamnest will publish a monitored privacy and support contact in the site footer and account or purchase flow. Purchase receipts will also identify the applicable support route.
+We may update this policy as the product, providers, or law changes. The date above identifies the current version. Contact [support@streamnest.io](mailto:support@streamnest.io) to request access, correction, or deletion of your account data, or to ask a privacy question. We respond within 3 business days; completing a request may require identity verification and additional time under applicable law. Do not email passwords, full payment details, or sensitive media files.

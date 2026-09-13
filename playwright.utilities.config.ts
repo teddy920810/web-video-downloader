@@ -2,7 +2,7 @@ import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
   testDir: './tests/e2e',
-  testMatch: ['utilities-mode.spec.ts', 'clarity-design.spec.ts'],
+  testMatch: ['utilities-mode.spec.ts', 'clarity-design.spec.ts', 'pricing-readiness.spec.ts'],
   fullyParallel: true,
   workers: 2,
   expect: { timeout: 15_000 },

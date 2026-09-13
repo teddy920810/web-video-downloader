@@ -53,7 +53,7 @@ export const PRODUCT_PLANS = {
   pro: {
     id: 'pro',
     label: 'Pro',
-    monthlyCredits: 100,
+    monthlyCredits: 500,
     maxLocalFileBytes: 1024 * 1024 * 1024,
     checkoutEnabled: false,
   },

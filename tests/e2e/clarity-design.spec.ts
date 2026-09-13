@@ -55,7 +55,7 @@ test('tools and pricing share the light palette, readable inputs and stable auth
   await expect(page.getByRole('button', { name: 'Sign in with Google', exact: true })).toBeVisible();
   expect((await page.locator('.header-auth').boundingBox())!.width).toBe(before!.width);
   await page.goto('/pricing');
-  await expect(page.locator('.pricing-grid article').first()).toHaveCSS('color', 'rgb(10, 10, 10)');
+  await expect(page.locator('.plan-card').first()).toHaveCSS('color', 'rgb(10, 10, 10)');
 });
 
 test('account remains accessible across breakpoints and with larger text', async ({ page }) => {
