@@ -10,7 +10,7 @@ heading: Clear data boundaries for every Streamnest tool
 
 This Privacy Policy explains what Streamnest collects, why it is used, how media tools process files, and the choices available to you. It applies to the Streamnest website, account, browser-local tools, and cloud AI features.
 
-Streamnest is operated by **Shi Yao**, an individual developer based in mainland China responsible for the processing described in this policy. Send privacy questions and data requests to [support@streamnest.io](mailto:support@streamnest.io).
+Streamnest is operated by **Yao Shi**, an individual developer based in mainland China responsible for the processing described in this policy. Send privacy questions and data requests to [support@streamnest.io](mailto:support@streamnest.io).
 
 ## Information we process
 
