@@ -1,14 +1,44 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
-import { PRODUCT_PLANS } from '../lib/product/catalog';
+import { getEntry } from 'astro:content';
+import CreditPackSelector from '../components/products/CreditPackSelector';
+import { PRO_OFFER, creditCount, usd } from '../lib/product/pricing';
+import { buildWebPageSchema } from '../lib/content/seo-schema';
+import '../styles/pricing.css';
 export const prerender = false;
+const accountSettings = (await getEntry('accountSettings', 'account'))!.data;
+const site = (await getEntry('siteSettings', 'site'))!.data;
+const description = 'Free local media tools, Pro at $4.99/month with 500 credits, and one-time credit packs from $4.50. Purchases are not open yet.';
+const schema = buildWebPageSchema({ canonicalOrigin: site.canonicalOrigin, path: '/pricing', name: 'Streamnest Pro and Credit Packs', description });
 ---
-<SiteLayout siteMode={Astro.locals.siteMode} title="Streamnest plans and AI credits" description="Use Streamnest browser tools free and learn how Pro AI credits will work when paid plans become available.">
-  <main class="utility-page pricing-page">
-    <section class="account-hero"><span class="eyebrow">Simple plans</span><h1>Local tools stay free.<br /><em>AI work uses credits.</em></h1><p>Paid checkout is coming soon. Nothing on this page starts a subscription or charges a card.</p></section>
-    <section class="pricing-grid" aria-label="Plans">
-      <article><span class="eyebrow">Available now</span><h2>{PRODUCT_PLANS.free.label}</h2><strong>$0</strong><ul><li>Browser-local video and image tools</li><li>Up to 250 MB per local file</li><li>{PRODUCT_PLANS.free.monthlyCredits} welcome AI credit</li></ul><a class="button button-primary" href="/account">View free account</a></article>
-      <article><span class="eyebrow">Coming soon</span><h2>{PRODUCT_PLANS.pro.label}</h2><strong>Not yet for sale</strong><ul><li>Higher local file allowance</li><li>{PRODUCT_PLANS.pro.monthlyCredits} AI credits per plan period</li><li>Credit packs for occasional AI work</li></ul><button class="button button-ghost" type="button" disabled>Checkout coming soon</button></article>
+<SiteLayout siteMode={Astro.locals.siteMode} title="Pro and Credit Packs | Streamnest" description={description} schema={schema}>
+  <div class="streamnest-pricing">
+    <section class="plan-intro"><p class="eyebrow">Free tools. Flexible credits.</p><h1>Your tools, your pace.</h1><p>Keep everyday media tools free. Choose monthly credits or a one-time pack for cloud processing.</p><p class="launch-notice">Purchases are not open yet. These are our launch prices; no subscription or charge can start here.</p></section>
+    <section class="plan-grid" aria-label="Compare plans">
+      <article class="plan-card plan-free">
+        <p class="eyebrow">Everyday essentials</p><h2>Free</h2><p class="plan-description">Convert, compress and edit files right in your browser.</p>
+        <div class="plan-price">$0<span>forever</span></div><p class="plan-note">No subscription needed</p>
+        <ul><li>All current browser-local tools</li><li>Image, video and audio utilities</li><li>Batch processing and ZIP export</li><li>Your local files stay on your device</li></ul>
+        <p class="plan-detail">Cloud background removal uses credits. Free tools do not.</p><a class="button button-secondary plan-bottom" href="/#tools">Explore free tools</a>
+      </article>
+      <article class="plan-card plan-pro">
+        <span class="plan-badge">Lowest price per credit</span><p class="eyebrow">For regular use</p><h2>Pro</h2><p class="plan-description">A fresh monthly credit allowance for your cloud tools.</p>
+        <div class="plan-price">{usd(PRO_OFFER.priceCents)}<span>/ month</span></div><p class="plan-note">Billed monthly · Renews automatically</p>
+        <div class="plan-allowance"><div><span class="eyebrow">Every billing month</span><strong>{creditCount(PRO_OFFER.credits)} <small>credits</small></strong></div><span>$0.00998<br /><small>per credit</small></span></div>
+        <ul><li>{PRO_OFFER.credits} credits each paid billing month</li><li>Monthly credits expire at period end</li><li>Unused monthly credits do not roll over</li><li>Cancel renewal anytime</li></ul>
+        <p class="plan-detail">About 33.5% less per credit than a credit pack. No change to your free tools.</p><button class="button button-primary plan-bottom" type="button" disabled>Purchases not open yet</button>
+      </article>
+      <CreditPackSelector supportEmail={accountSettings.supportEmail} client:load />
     </section>
-  </main>
+    <p class="plan-disclosure">Prices in USD. Any applicable taxes will be shown before you pay when checkout opens.</p>
+    <section class="plan-usage"><div><p class="eyebrow">What credits cover today</p><h2>One successful background removal.<br />One credit.</h2></div><p><a href="/background-remover">Background Remover</a> is currently our only credit-based tool. Provider failures return the reserved credit. Other current tools are free. Any future cloud tool will show its credit cost before you start.</p></section>
+    <section class="plan-faq"><h2>A few things to know</h2>
+      <details><summary>Can I use Pro and credit packs together?</summary><p>When purchases open, you will be able to hold monthly Pro credits and purchased pack credits in the same account. Each paid batch keeps its own expiration date. Buying another pack will not extend an older pack.</p></details>
+      <details><summary>What happens when I cancel Pro?</summary><p>Cancellation stops the next renewal. Your current monthly credits remain available until the end of the paid billing period. Your separately purchased pack credits keep their original 24-month expiration. If the current subscription payment is refunded, that period ends and its credits are revoked.</p></details>
+      <details><summary>Do Pro credits roll over?</summary><p>No. Each paid billing month includes 500 credits. Unused monthly credits expire at the end of that period. Credit packs remain valid for 24 months from their purchase date.</p></details>
+      <details><summary>What is the refund policy?</summary><p>You can request a full refund within 7 calendar days of each payment, including a renewal, if none of that payment’s credits have been consumed. Other exceptions and mandatory consumer rights are explained in our <a href="/refund-policy">Refund Policy</a>.</p></details>
+      <details><summary>Can I buy credits now?</summary><p>Purchases are not open yet. Selecting a pack only shows its price. No action on this page can charge you or start a subscription.</p></details>
+    </section>
+    <p class="plan-disclosure">Read our <a href="/terms">Terms of Use</a>, <a href="/privacy">Privacy Policy</a> and <a href="/refund-policy">Refund Policy</a>.</p>
+  </div>
 </SiteLayout>

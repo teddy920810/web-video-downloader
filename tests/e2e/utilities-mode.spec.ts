@@ -66,10 +66,11 @@ test('utilities discovery files and legal pages exclude downloader content', asy
 test('pricing and account surfaces describe current entitlements without enabling checkout', async ({ page }) => {
   await useAnonymousSession(page);
   await page.goto('/pricing');
-  await expect(page.getByRole('heading', { level: 1 })).toContainText('Local tools stay free');
-  await expect(page.locator('.account-hero p')).toHaveCSS('color', 'rgb(90, 90, 92)');
+  await expect(page.getByRole('heading', { level: 1 })).toContainText('Your tools, your pace');
+  await expect(page.locator('.plan-intro .launch-notice')).toHaveCSS('color', 'rgb(90, 90, 92)');
   await expect(page.getByRole('heading', { level: 2, name: 'Free' })).toHaveCSS('color', 'rgb(10, 10, 10)');
-  await expect(page.getByRole('button', { name: 'Checkout coming soon' })).toBeDisabled();
+  await expect(page.getByRole('button', { name: 'Purchases not open yet' })).toHaveCount(2);
+  await expect(page.getByRole('button', { name: 'Purchases not open yet' }).first()).toBeDisabled();
   await page.goto('/account');
   await expect(page.getByRole('heading', { level: 1 })).toContainText('tools, plan, and credits');
   await expect(page.locator('.account-hero p')).toHaveCSS('color', 'rgb(90, 90, 92)');

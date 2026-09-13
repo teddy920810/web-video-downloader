@@ -1,10 +1,12 @@
 {
-  "supportEmail": "",
+  "supportEmail": "support@streamnest.io",
   "faq": [
     { "category": "Account", "question": "How do I sign in?", "answer": "Use your Google account. Your email and Google profile remain read-only; you can save a separate nickname in Profile." },
     { "category": "Tools", "question": "Are my files uploaded?", "answer": "Browser-local video and image utilities process files on your device. Background Remover uses cloud AI processing and uploads the selected image when you start the job." },
     { "category": "Credits", "question": "When are AI credits used?", "answer": "Background Remover reserves one credit when processing starts. A successful result consumes the reservation; a provider failure refunds it. Browser-local tools do not use AI credits." },
     { "category": "Credits", "question": "How do reward codes work?", "answer": "Enter a valid code in Redeem Code. Each account can redeem a code once, before its expiry and while uses remain. Rewards add promotional credits, not cash or a subscription." },
-    { "category": "Subscription", "question": "Can I buy a subscription now?", "answer": "Paid checkout is not available yet. No action in this account center starts a subscription or charges a card." }
+    { "category": "Subscription", "question": "Can I buy a subscription now?", "answer": "Purchases are not open yet. Launch pricing is $4.99/month for 500 Pro credits, or one-time credit packs from $4.50 for 300 credits. No action here starts a subscription or charges a card." },
+    { "category": "Credits", "question": "How long will purchased credits last?", "answer": "Pro credits expire at the end of each paid billing month and do not roll over. Each separately purchased credit pack lasts 24 months from its purchase date. A new purchase does not extend older packs." },
+    { "category": "Subscription", "question": "What are the cancellation and refund rules?", "answer": "Cancellation stops the next Pro renewal and does not affect separate credit packs. Within 7 calendar days of each payment, including renewal, you can request a full refund if that payment's credits have not been consumed. See the Refund Policy for exceptions and mandatory rights." }
   ]
 }

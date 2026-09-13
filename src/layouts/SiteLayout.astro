@@ -20,13 +20,15 @@ interface Props {
   siteMode?: SiteMode;
 }
 
-const [siteEntries, allPosts] = await Promise.all([
+const [siteEntries, allPosts, accountEntries] = await Promise.all([
   getCollection('siteSettings'),
   getCollection('blog'),
+  getCollection('accountSettings'),
 ]);
 const [siteEntry] = siteEntries;
 if (!siteEntry) throw new Error('Site settings CMS content is missing.');
 const site = siteEntry.data;
+const supportEmail = accountEntries[0]?.data.supportEmail;
 
 const {
   title = site.defaultTitle,
@@ -203,6 +205,7 @@ const schemas = schema ? (Array.isArray(schema) ? schema : [schema]) : [defaultS
     <main><slot /></main>
     <footer class="site-footer">
       <div class="footer-brand"><a class="brand" href="/"><img class="brand-logo" src={site.logo} alt="" /><span>{displayName}</span></a><p>{footerTagline}</p>
+        {supportEmail && <p><a href={`mailto:${supportEmail}`}>{supportEmail}</a></p>}
         {site.footer.socialLinks.length > 0 && <div class="footer-social-links" aria-label="Social media">
           {site.footer.socialLinks.map((social) => <a href={social.href} aria-label={social.label} title={social.label} target="_blank" rel="noreferrer"><SocialIcon platform={social.platform} /></a>)}
         </div>}
