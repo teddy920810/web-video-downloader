@@ -43,6 +43,8 @@ AI credits are a limited service entitlement, not cash, cryptocurrency, or trans
 
 ## Acceptable use
 
+You must not upload, submit, or process NSFW, adult, pornographic, or sexually explicit content through Streamnest's AI background removal workflow.
+
 You may not use Streamnest to:
 
 - process unlawful content or violate another person's intellectual-property, privacy, publicity, or contractual rights;
