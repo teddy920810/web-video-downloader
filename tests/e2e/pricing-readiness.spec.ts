@@ -43,7 +43,7 @@ test('exposes the operator, support and agreed refund terms on public pages', as
     await expect(page.locator('.site-footer').getByRole('link', { name: 'support@streamnest.io', exact: true })).toHaveAttribute('href', 'mailto:support@streamnest.io');
   }
   await page.goto('/refund-policy');
-  await expect(page.locator('main')).toContainText('Shi Yao');
+  await expect(page.locator('main')).toContainText('Yao Shi');
   await expect(page.locator('main')).toContainText('7 calendar days');
   await expect(page.locator('main')).toContainText('including renewals');
   await expect(page.locator('main')).toContainText('3 business days');

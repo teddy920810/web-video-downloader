@@ -10,7 +10,7 @@ heading: A clear policy for paid Streamnest services
 
 Paid checkout is not currently available on Streamnest. Selecting a plan or credit pack does not create a charge, subscription, renewal, or paid entitlement. The purchase rules below will apply when payments open.
 
-Streamnest is operated by **Shi Yao**, an individual developer based in mainland China. For billing or refund assistance, contact [support@streamnest.io](mailto:support@streamnest.io).
+Streamnest is operated by **Yao Shi**, an individual developer based in mainland China. For billing or refund assistance, contact [support@streamnest.io](mailto:support@streamnest.io).
 
 ## Before purchasing
 

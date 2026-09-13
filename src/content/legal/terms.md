@@ -10,7 +10,7 @@ heading: Use Streamnest tools responsibly
 
 These Terms govern your access to Streamnest's website, accounts, browser-local media tools, cloud AI features, and future paid services. By using Streamnest, you agree to these Terms and the [Privacy Policy](/privacy). If you do not agree, do not use the service.
 
-Streamnest is operated by **Shi Yao**, an individual developer based in mainland China. Contact [support@streamnest.io](mailto:support@streamnest.io) for product, account, or billing assistance. We respond to support requests within 3 business days.
+Streamnest is operated by **Yao Shi**, an individual developer based in mainland China. Contact [support@streamnest.io](mailto:support@streamnest.io) for product, account, or billing assistance. We respond to support requests within 3 business days.
 
 ## Eligibility and accounts
 
@@ -71,4 +71,4 @@ Nothing in these Terms excludes rights or liability that cannot legally be exclu
 
 ## Changes, disputes, and contact
 
-We may update these Terms and will change the date above when we do. Continued use after an effective update means you accept the revised Terms. Applicable mandatory consumer law remains unaffected. For questions or disputes, contact Shi Yao at [support@streamnest.io](mailto:support@streamnest.io) so we can investigate. This contact process does not limit your mandatory rights or access to any legally available dispute process.
+We may update these Terms and will change the date above when we do. Continued use after an effective update means you accept the revised Terms. Applicable mandatory consumer law remains unaffected. For questions or disputes, contact Yao Shi at [support@streamnest.io](mailto:support@streamnest.io) so we can investigate. This contact process does not limit your mandatory rights or access to any legally available dispute process.
