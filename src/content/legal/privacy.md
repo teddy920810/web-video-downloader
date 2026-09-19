@@ -6,7 +6,7 @@ eyebrow: Privacy policy
 heading: Clear data boundaries for every Streamnest tool
 ---
 
-**Last updated: September 13, 2026**
+**Last updated: September 19, 2026**
 
 This Privacy Policy explains what Streamnest collects, why it is used, how media tools process files, and the choices available to you. It applies to the Streamnest website, account, browser-local tools, and cloud AI features.
 
@@ -21,7 +21,7 @@ Depending on the feature you use, Streamnest may process:
 - service logs such as request time, route, status, IP address, browser or device information, and security events; and
 - the image and processing parameters you deliberately submit to a cloud AI tool.
 
-Streamnest does not store Google access or refresh tokens in its application database. Payment-card and bank details will be handled by the selected payment provider when paid checkout becomes available, rather than stored by Streamnest.
+Streamnest does not store Google access or refresh tokens in its application database. Creem handles payment-card and billing details at checkout; Streamnest does not store full card or bank details. To create checkout, we send Creem your account email, selected product, and an internal order reference. We receive payment, customer, subscription, and refund identifiers and statuses to issue credits, manage renewals, and resolve billing requests.
 
 ## Browser-local tools
 
@@ -45,7 +45,7 @@ When Google Analytics is configured, Streamnest uses Google Consent Mode with an
 
 ## Service providers and international processing
 
-Streamnest uses service providers for hosting, authentication, database storage, object storage, AI processing, monitoring, and—when launched—payments. This currently includes Google, Vercel, Neon, Cloudflare R2, Google Cloud Run, and Replicate. Data may be processed in countries other than your own. We limit provider access to the information reasonably needed for the requested service.
+Streamnest uses service providers for hosting, authentication, database storage, object storage, AI processing, monitoring, and payments. This currently includes Google, Vercel, Neon, Cloudflare R2, Google Cloud Run, Replicate, and Creem. Data may be processed in countries other than your own. We limit provider access to the information reasonably needed for the requested service.
 
 ## Retention and security
 

@@ -6,9 +6,9 @@ eyebrow: Refund policy
 heading: A clear policy for paid Streamnest services
 ---
 
-**Last updated: September 13, 2026**
+**Last updated: September 19, 2026**
 
-Paid checkout is not currently available on Streamnest. Selecting a plan or credit pack does not create a charge, subscription, renewal, or paid entitlement. The purchase rules below will apply when payments open.
+This policy applies to paid Streamnest purchases completed through Creem. Selecting a plan or credit pack alone does not create a charge, subscription, renewal, or paid entitlement. Checkout availability is shown on the Pricing page for your account.
 
 Streamnest is operated by **Yao Shi**, an individual developer based in mainland China. For billing or refund assistance, contact [support@streamnest.io](mailto:support@streamnest.io).
 
@@ -40,7 +40,7 @@ Background Remover reserves a credit before processing. Successful processing co
 
 ## Subscriptions and cancellation
 
-When subscriptions become available, you will be able to cancel future renewals from your account. Ordinary cancellation takes effect at the end of the current paid billing period and does not automatically refund that period. Monthly credits remain available until that period ends and do not roll over.
+You can cancel future renewals from Subscription & Credits in your account. Ordinary cancellation takes effect at the end of the current paid billing period and does not automatically refund that period. Monthly credits remain available until that period ends and do not roll over.
 
 If we refund the current subscription payment, that period ends, its credits are revoked, and future renewals are cancelled. Separately purchased credit packs keep their original 24-month expiration dates unless separately refunded.
 

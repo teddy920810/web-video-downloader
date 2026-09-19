@@ -1,4 +1,5 @@
 import { getSecret } from 'astro:env/server';
+import { accountDatabaseUrl } from '../billing/runtime';
 import { neon } from '@neondatabase/serverless';
 import type { CreditReservation, CreditStore, ToolAccount, UsageRecord } from './credit-service';
 import type { ToolId } from '../product/catalog';
@@ -15,9 +16,7 @@ type AccountRow = {
 };
 
 function database() {
-  const databaseUrl = getSecret('DATABASE_URL');
-  if (!databaseUrl) throw new Error('DATABASE_URL is not configured.');
-  return neon(databaseUrl);
+  return neon(accountDatabaseUrl());
 }
 
 function accountFrom(row: AccountRow): ToolAccount {
@@ -40,12 +39,14 @@ export class PostgresCreditStore implements CreditStore {
           avatar_url = EXCLUDED.avatar_url, updated_at = NOW()`,
       sql`INSERT INTO credit_wallets(user_id) VALUES (${profile.id}) ON CONFLICT (user_id) DO NOTHING`,
     ]);
+    if (['test', 'live'].includes(getSecret('BILLING_MODE') ?? '')) await sql`SELECT refresh_credit_wallet(${profile.id})`;
     const rows = await sql.query(accountSelection + ' WHERE a.user_id = $1 LIMIT 1', [profile.id]);
     if (!rows[0]) throw new Error('Unable to create the account wallet.');
     return accountFrom(rows[0] as AccountRow);
   }
 
   async getAccount(userId: string): Promise<ToolAccount | null> {
+    if (['test', 'live'].includes(getSecret('BILLING_MODE') ?? '')) await database()`SELECT refresh_credit_wallet(${userId})`;
     const rows = await database().query(accountSelection + ' WHERE a.user_id = $1 LIMIT 1', [userId]);
     return rows[0] ? accountFrom(rows[0] as AccountRow) : null;
   }

@@ -33,7 +33,9 @@ describe('Streamnest legal content', () => {
     expect(terms).toContain('AI credits');
     expect(terms).toContain('Acceptable use');
     expect(terms).toContain('Refund Policy');
-    expect(refund).toContain('Paid checkout is not currently available');
+    expect(refund).toContain('Creem');
+    expect(privacy).toContain('Creem');
+    expect(`${privacy}\n${terms}\n${refund}`).not.toMatch(/Paid checkout is not currently available|when paid checkout becomes available|when subscriptions launch/i);
     expect(refund).toContain('none of the credits granted by that payment have been consumed');
     expect(refund).toContain('7 calendar days');
     expect(refund).toContain('including renewals');
