@@ -4,6 +4,7 @@ import type { AccountSettings } from '../../lib/account/settings';
 import { accountRequest } from './account-request';
 import { accountSections, dateLabel, type AccountPayload, type AccountSection } from './account-types';
 import RewardCodes from './RewardCodes';
+import BillingPanel from './BillingPanel';
 
 export default function AccountCenter({ section, settings }: { section: AccountSection; settings: AccountSettings }) {
   const { data: session, isPending } = authClient.useSession();
@@ -55,7 +56,7 @@ export default function AccountCenter({ section, settings }: { section: AccountS
           </section>
           {section === 'overview' && <section className="account-panel"><h2>Recent AI activity</h2>{payload.usage.length ? <ul className="account-list">{payload.usage.map((item, index) => <li key={index}><span>{item.toolId.replaceAll('-', ' ')}</span><span>{item.status === 'failed' ? 'Failed · credits refunded' : `Succeeded · ${item.credits} credit used`}</span></li>)}</ul> : <p>No AI tool activity yet.</p>}<div className="account-actions"><a className="button button-primary" href="/background-remover">Background Remover</a><a href="/video-converter">Video Converter</a></div></section>}
           {section === 'credits' && <>
-            <section className="account-panel"><h2>Your subscription</h2><p>Purchases are not open yet. No action here starts a subscription or charges a card.</p><p>Pro launch pricing is $4.99/month for 500 credits, valid until the end of each paid billing period without rollover. One-time credit packs start at $4.50 for 300 credits and remain valid for 24 months.</p><p>Local browser tools remain free. Promotional codes add free-wallet credits; they do not activate Pro.</p><a className="button button-primary" href="/pricing">View plans</a><p><a href="/refund-policy">Refund and cancellation rules</a></p></section>
+            <BillingPanel supportEmail={settings.supportEmail} reloadAccount={() => setRefresh(value => value + 1)} />
             <section className="account-panel"><h2>Credit history</h2><p>Latest 50 ledger entries. Reservations reduce the available balance; consumption confirms a reservation without charging again. Welcome balance may predate the ledger.</p>{payload.ledger.length ? <div className="account-table-scroll"><table><thead><tr><th>Date</th><th>Event</th><th>Free / promotional</th><th>Paid</th></tr></thead><tbody>{payload.ledger.map((item) => <tr key={item.id}><td>{dateLabel(item.createdAt)}</td><td>{item.eventType}</td><td>{item.freeDelta > 0 ? '+' : ''}{item.freeDelta}</td><td>{item.paidDelta > 0 ? '+' : ''}{item.paidDelta}</td></tr>)}</tbody></table></div> : <p>No credit transactions yet.</p>}</section>
           </>}
         </>}

@@ -1,14 +1,14 @@
 ---
 slug: terms
 title: Terms of Use | Streamnest
-description: Terms governing Streamnest browser-local media tools, Google accounts, cloud AI processing, credits, and future paid services.
+description: Terms governing Streamnest browser-local media tools, Google accounts, cloud AI processing, credits, and paid services.
 eyebrow: Terms of use
 heading: Use Streamnest tools responsibly
 ---
 
-**Last updated: September 13, 2026**
+**Last updated: September 19, 2026**
 
-These Terms govern your access to Streamnest's website, accounts, browser-local media tools, cloud AI features, and future paid services. By using Streamnest, you agree to these Terms and the [Privacy Policy](/privacy). If you do not agree, do not use the service.
+These Terms govern your access to Streamnest's website, accounts, browser-local media tools, cloud AI features, and paid services. By using Streamnest, you agree to these Terms and the [Privacy Policy](/privacy). If you do not agree, do not use the service.
 
 Streamnest is operated by **Yao Shi**, an individual developer based in mainland China. Contact [support@streamnest.io](mailto:support@streamnest.io) for product, account, or billing assistance. We respond to support requests within 3 business days.
 
@@ -32,12 +32,12 @@ A successful Background Remover task consumes the AI credit amount shown before 
 
 ## Pricing, credits, and paid services
 
-Paid checkout is not currently available. Viewing the [Pricing page](/pricing) or selecting a pack does not create a subscription, purchase, renewal, license, or paid entitlement. The following launch terms will apply when purchases open; the total price and applicable taxes will be shown before payment.
+Paid purchases, when enabled for your account on the [Pricing page](/pricing), are completed through Creem. Viewing prices or selecting a pack alone does not create a charge or paid entitlement. The total price, applicable taxes, and any recurring payment terms are shown before you confirm payment.
 
 - **Free tools:** all current browser-local media tools remain free. Background Remover currently uses 1 credit per successful image; no other current tool consumes credits. Future credit-based features will disclose their cost before processing.
 - **Pro:** USD $4.99 per month, with 500 credits for each paid billing month. Subscriptions renew automatically until cancelled. Unused monthly credits expire at the end of the paid billing period and do not roll over.
 - **Credit Packs:** USD $4.50 for 300 credits, $15 for 1,000, $30 for 2,000, or $150 for 10,000. Each is a one-time purchase at $0.015 per credit, valid for 24 calendar months from that purchase. A new purchase does not extend an older pack. For more than 10,000 credits, contact support.
-- **Cancellation:** when subscriptions launch, you will be able to stop future renewals from your account. Ordinary cancellation takes effect at the end of the current paid period and does not automatically refund it. Separate credit packs retain their original expiration dates. A refund of the current subscription payment ends that period, revokes its credits, and stops future renewals.
+- **Cancellation:** you can stop future renewals from Subscription & Credits in your account. Ordinary cancellation takes effect at the end of the current paid period and does not automatically refund it. Separate credit packs retain their original expiration dates. A refund of the current subscription payment ends that period, revokes its credits, and stops future renewals.
 
 AI credits are a limited service entitlement, not cash, cryptocurrency, or transferable property. They may expire or be limited as disclosed with the plan. Refund eligibility is governed by the [Refund Policy](/refund-policy), the checkout terms, and applicable law.
 

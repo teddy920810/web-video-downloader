@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
+import CheckoutButton from './CheckoutButton';
 import { CREDIT_PACKS, creditCount, usd } from '../../lib/product/pricing';
 
-export default function CreditPackSelector({ supportEmail }: { supportEmail: string }) {
+export default function CreditPackSelector({ supportEmail, billingEnabled = false, billingMode = 'test' }: { supportEmail: string; billingEnabled?: boolean; billingMode?: 'test' | 'live' }) {
   const [selected, setSelected] = useState<number>(300);
   const [ready, setReady] = useState(false);
   useEffect(() => setReady(true), []);
@@ -19,7 +20,7 @@ export default function CreditPackSelector({ supportEmail }: { supportEmail: str
       </label>)}
     </div></fieldset>
     <p className="plan-detail">No recurring charge. Buying a pack does not start a Pro subscription.</p>
-    <button className="button button-primary plan-bottom" type="button" disabled>Purchases not open yet</button>
+    <CheckoutButton offer={`pack-${pack.credits}`} enabled={billingEnabled} mode={billingMode} />
     {supportEmail && <a className="plan-contact" href={`mailto:${supportEmail}?subject=Streamnest%20custom%20credit%20pack`}>Need more than 10,000 credits? Contact us</a>}
   </article>;
 }

@@ -16,7 +16,7 @@ export default defineConfig({
   },
   projects: [{ name: 'utilities-chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: {
-    command: 'node ./node_modules/astro/bin/astro.mjs dev --host 127.0.0.1 --port 4392',
+    command: 'node ./node_modules/astro/bin/astro.mjs dev --ignore-lock --host 127.0.0.1 --port 4392',
     url: 'http://127.0.0.1:4392',
     reuseExistingServer: false,
     timeout: 120_000,
@@ -24,6 +24,7 @@ export default defineConfig({
       SITE_URL: 'http://127.0.0.1:4392',
       SITE_MODE: 'utilities',
       ASTRO_DEV_BACKGROUND: '1',
+      BILLING_MODE: 'disabled',
     },
   },
 });

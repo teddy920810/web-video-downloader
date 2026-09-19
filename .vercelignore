@@ -1,4 +1,5 @@
 S3-info.txt
+.secrets/
 .env
 .env.*
 !.env.example

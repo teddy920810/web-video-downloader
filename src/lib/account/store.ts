@@ -1,10 +1,10 @@
 import { randomBytes } from 'node:crypto';
 import { neon } from '@neondatabase/serverless';
-import { getSecret } from 'astro:env/server';
+import { accountDatabaseUrl } from '../billing/runtime';
 import { hashRewardCode } from './contracts';
 
 function database() {
-  const url = getSecret('DATABASE_URL');
+  const url = accountDatabaseUrl();
   if (!url) throw new Error('Account database unavailable.');
   return neon(url);
 }

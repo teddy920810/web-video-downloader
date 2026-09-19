@@ -74,6 +74,7 @@ export class CreditService {
     if (amount === 0) return { id: idempotencyKey, status: 'consumed', amount: 0, freeCredits: 0, paidCredits: 0, userId, toolId } as const;
     const reservation = await this.store.reserve(userId, toolId, amount, idempotencyKey);
     if (!reservation) throw new InsufficientCreditsError();
+    if (reservation.status === 'refunded') throw new Error('Start a new job to retry this refunded request.');
     return { ...reservation, userId, toolId };
   }
 

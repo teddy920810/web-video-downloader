@@ -60,7 +60,7 @@ test('utilities discovery files and legal pages exclude downloader content', asy
   expect(terms).toContain('Acceptable use');
   const refund = await request.get('/refund-policy');
   expect(refund.status()).toBe(200);
-  expect(await refund.text()).toContain('Paid checkout is not currently available');
+  expect(await refund.text()).toContain('paid Streamnest purchases completed through Creem');
 });
 
 test('pricing and account surfaces describe current entitlements without enabling checkout', async ({ page }) => {

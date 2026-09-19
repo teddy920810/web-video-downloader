@@ -60,4 +60,8 @@ describe('credit service', () => {
     await expect(service.grantTestCredits(account.userId, 1, 'grant-key')).resolves.toMatchObject({ freeCredits: 1 });
     expect(store.grantTestCredits).toHaveBeenCalledWith(account.userId, 1, 'grant-key');
   });
+  it('does not let a refunded reservation process again without paying', async () => {
+    store.reserve = vi.fn().mockResolvedValue({ id:'refunded',status:'refunded',amount:1,freeCredits:0,paidCredits:1 });
+    await expect(service.reserve(account.userId,'background-remover','job-refunded')).rejects.toThrow('new job');
+  });
 });
