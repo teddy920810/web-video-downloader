@@ -52,12 +52,12 @@ describe('live billing boundary', () => {
   });
   it('allows approved live checkout, rejects test URLs and enforces closure before creating any order', async () => {
     const query = vi.fn().mockResolvedValue([{ id: uuid, status: 'pending' }]);
-    const request = vi.fn().mockResolvedValue({ id: 'ch_live', mode: 'prod', checkout_url: 'https://www.creem.io/payment/ch_live' });
+    const request = vi.fn().mockResolvedValue({ id: 'ch_live', mode: 'prod', checkout_url: 'https://www.creem.io/checkout/prod_pack/ch_live' });
     const service = (config: BillingConfig) => new BillingService({ query }, { request }, config);
     await expect(service(live()).checkout(user, 'pack-300', uuid, 'https://www.streamnest.io')).rejects.toThrow();
     expect(query).not.toHaveBeenCalled();
     const config = live({ BILLING_CHECKOUT_ACCESS: 'validation', BILLING_VALIDATION_EMAILS: user.email });
-    await expect(service(config).checkout(user, 'pack-300', uuid, 'https://www.streamnest.io')).resolves.toEqual({ url: 'https://www.creem.io/payment/ch_live' });
+    await expect(service(config).checkout(user, 'pack-300', uuid, 'https://www.streamnest.io')).resolves.toEqual({ url: 'https://www.creem.io/checkout/prod_pack/ch_live' });
     for (const checkout_url of ['https://creem.io/test/payment/ch_live', 'https://test-checkout.creem.io/payment/ch_live', 'https://evil.test/payment/ch_live']) {
       request.mockResolvedValue({ id: 'ch_live', mode: 'prod', checkout_url });
       await expect(service(config).checkout(user, 'pack-300', uuid, 'https://www.streamnest.io')).rejects.toThrow();

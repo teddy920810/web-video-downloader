@@ -62,7 +62,8 @@ function hostedUrl(value: unknown, mode: BillingConfig['mode'], checkout = false
     url.password
   )
     throw new Error('Invalid payment URL.');
-  if ((checkout && (mode === 'test' ? !url.pathname.startsWith('/test/') : !url.pathname.startsWith('/payment/'))) ||
+  // Current live API returns /checkout/{product}/{checkout}; retain legacy /payment links.
+  if ((checkout && (mode === 'test' ? !url.pathname.startsWith('/test/') : !/^\/(checkout|payment)\//.test(url.pathname))) ||
     (mode === 'live' && (url.hostname.startsWith('test-') || url.pathname.startsWith('/test/'))))
     throw new Error('Checkout URL environment mismatch.');
   return url.href;
