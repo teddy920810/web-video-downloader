@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { authClient } from '../auth/auth-client';
 
+const intentKey = 'streamnest-checkout-intent';
+
 export default function CheckoutButton({
   offer,
   enabled = false,
@@ -19,17 +21,46 @@ export default function CheckoutButton({
   const key = useRef<{ offer: string; userId: string; id: string } | null>(
     null,
   );
+  const inFlight = useRef(false);
+  useEffect(() => {
+    if (!ready || isPending || !session?.user) return;
+    const url = new URL(window.location.href);
+    if (url.searchParams.get('checkout') !== 'resume' || url.searchParams.get('offer') !== offer) return;
+    // A URL alone cannot initiate checkout; require this tab's recent explicit purchase intent.
+    let pending;
+    try {
+      pending = JSON.parse(sessionStorage.getItem(intentKey) ?? 'null');
+      if (pending?.offer !== offer) return;
+      sessionStorage.removeItem(intentKey);
+    } catch { return; }
+    url.searchParams.delete('checkout');
+    url.searchParams.delete('offer');
+    window.history.replaceState(window.history.state, '', url);
+    if (typeof pending.createdAt !== 'number' || Date.now() - pending.createdAt > 30 * 60 * 1000 || pending.createdAt > Date.now() ||
+      typeof pending.id !== 'string' || !/^[0-9a-f-]{36}$/i.test(pending.id)) return;
+    if (!enabled) { setError('Purchases are not available for this account yet.'); return; }
+    key.current = { offer, userId: session.user.id, id: pending.id };
+    void checkout();
+  }, [ready, isPending, session?.user?.id, enabled, offer]);
   async function checkout() {
-    if (busy || !enabled) return;
+    if (inFlight.current || !enabled) return;
+    inFlight.current = true;
     setBusy(true);
     setError('');
     try {
       if (!session?.user) {
+        sessionStorage.setItem(intentKey, JSON.stringify({ offer, id: crypto.randomUUID(), createdAt: Date.now() }));
+        const callback = new URL('/pricing', window.location.origin);
+        callback.searchParams.set('checkout', 'resume');
+        callback.searchParams.set('offer', offer);
         const result = await authClient.signIn.social({
           provider: 'google',
-          callbackURL: window.location.href,
+          callbackURL: callback.href,
         });
-        if (result.error) throw new Error('Unable to start Google sign-in.');
+        if (result.error) {
+          sessionStorage.removeItem(intentKey);
+          throw new Error('Unable to start Google sign-in.');
+        }
         return;
       }
       if (
@@ -59,6 +90,7 @@ export default function CheckoutButton({
         reason instanceof Error ? reason.message : 'Please retry checkout.',
       );
     } finally {
+      inFlight.current = false;
       setBusy(false);
     }
   }
@@ -74,11 +106,13 @@ export default function CheckoutButton({
           ? 'Purchases not open yet'
           : busy
             ? 'Opening checkout…'
+            : mode === 'live'
+              ? offer === 'pro-monthly-500' ? 'Subscribe to Pro' : 'Buy this credit pack'
             : ready && session?.user
               ? offer === 'pro-monthly-500'
-                ? mode === 'live' ? 'Subscribe to Pro' : 'Test Pro subscription'
-                : mode === 'live' ? 'Buy this credit pack' : 'Test this credit pack'
-              : mode === 'live' ? 'Sign in to purchase' : 'Sign in to test checkout'}
+                ? 'Test Pro subscription'
+                : 'Test this credit pack'
+              : 'Sign in to test checkout'}
       </button>
       {error && (
         <p role="alert">

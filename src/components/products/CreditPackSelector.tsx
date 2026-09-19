@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import CheckoutButton from './CheckoutButton';
 import { CREDIT_PACKS, creditCount, usd } from '../../lib/product/pricing';
 
-export default function CreditPackSelector({ supportEmail, billingEnabled = false, billingMode = 'test' }: { supportEmail: string; billingEnabled?: boolean; billingMode?: 'test' | 'live' }) {
-  const [selected, setSelected] = useState<number>(300);
+export default function CreditPackSelector({ supportEmail, billingEnabled = false, billingMode = 'test', initialCredits = 300 }: { supportEmail: string; billingEnabled?: boolean; billingMode?: 'test' | 'live'; initialCredits?: number }) {
+  const [selected, setSelected] = useState<number>(CREDIT_PACKS.some(pack => pack.credits === initialCredits) ? initialCredits : 300);
   const [ready, setReady] = useState(false);
   useEffect(() => setReady(true), []);
   const pack = CREDIT_PACKS.find((item) => item.credits === selected)!;
