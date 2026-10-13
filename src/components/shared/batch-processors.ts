@@ -73,7 +73,7 @@ export async function processLocalVideo(files: File[], mode: VideoMode, options:
     : buildGifPlanAttempts(file.name, { startSeconds: options.start ?? 0, durationSeconds: options.duration ?? 5, width: options.width ?? 640 }, risk);
   try { return { blob: await run(plans), name: plans[0].outputName }; }
   catch (error) {
-    if (mode === 'audio' && !hooks.cancelled()) throw new Error('Could not extract readable audio. This file may have no audio track or use an unsupported codec. Try another file.');
+    if (mode === 'audio' && !hooks.cancelled()) throw new Error('Could not extract readable audio. This file may have no audio track or use an unsupported codec. Try another file.', { cause: error });
     throw error;
   }
 }

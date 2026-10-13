@@ -1,5 +1,7 @@
 # Creem registration readiness — 2026-09-13
 
+> Historical stage record. Its disabled-checkout and unimplemented-billing statements describe 2026-09-13, not current capability. See [billing integration](billing-integration.md) for the implemented system and [payment change evidence](payment-change-checklist.md) for future changes. This notice does not independently verify current merchant approval or live order acceptance.
+
 Status: local website changes ready for review; production publication and real product acceptance are pending. Do not label the merchant approved or the whole site registration-ready from this document.
 
 ## Confirmed business facts

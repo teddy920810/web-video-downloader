@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": ">=22.19.0 <25"
+    "node": ">=24.16.0 <25"
   },
   "scripts": {
     "prepare:ffmpeg": "node scripts/prepare-ffmpeg-assets.mjs",
@@ -27,10 +27,13 @@
     "site:init": "node scripts/initialize-site.mjs",
     "site:validate": "node scripts/validate-site.mjs",
     "verify:deploy": "npm run site:validate && npm run test:coverage && npm run lint && npm run build",
-    "verify": "npm run test:coverage && npm run lint && npm run build && npm run test:e2e && npm run test:e2e:utilities && npm run test:e2e:billing",
+    "verify": "npm run test:workflow && npm run test:coverage && npm run lint && npm run build && npm run test:e2e && npm run test:e2e:utilities && npm run test:e2e:billing",
     "test:e2e:billing": "playwright test --config playwright.billing.config.ts && playwright test --config playwright.billing-live.config.ts",
     "db:migrate:billing-test": "node scripts/migrate-billing-test.mjs",
-    "db:migrate:billing-live": "node scripts/migrate-billing-live.mjs"
+    "db:migrate:billing-live": "node scripts/migrate-billing-live.mjs",
+    "test:workflow": "node --test scripts/public-smoke.test.mjs scripts/release-verify.test.mjs",
+    "test:smoke:public": "node scripts/public-smoke.mjs",
+    "release:verify": "node scripts/release-verify.mjs"
   },
   "dependencies": {
     "@astrojs/react": "^6.0.2",
@@ -63,12 +66,13 @@
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
     "@vitest/coverage-v8": "^4.1.11",
-    "eslint": "^9.33.0",
-    "eslint-plugin-astro": "^1.3.1",
+    "eslint": "10.12.0",
+    "eslint-plugin-astro": "2.1.1",
     "typescript": "^5.9.2",
-    "typescript-eslint": "^8.39.1",
+    "typescript-eslint": "8.61.0",
     "vitest": "^4.1.11",
-    "yaml": "^2.9.0"
+    "yaml": "^2.9.0",
+    "@eslint/js": "10.0.1"
   },
   "overrides": {
     "path-to-regexp": "6.3.0",
