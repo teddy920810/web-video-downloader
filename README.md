@@ -31,7 +31,7 @@ The browser never receives database, object-storage, or internal service credent
 
 ## Local development
 
-Requires Node.js 22 or later.
+Requires Node.js >=24.16.0 <25; CI uses Node.js 24.19.0.
 
 ```sh
 npm ci
@@ -47,8 +47,11 @@ The companion backend is [media-download-service](https://github.com/teddy920810
 ## Verification
 
 ```sh
-npm run verify
-npm run db:verify
+npm run release:verify
+# Optional public HTTP checks after an authorized deployment:
+npm run test:smoke:public
 ```
+
+`release:verify` runs dependency audit, site validation and the complete local test suite. It rejects a live production migration environment. Database credit verification (`npm run db:verify`) is a separate integration operation that can write ledger data; do not run it as a routine non-consuming check.
 
 Production deployment uses Vercel for the Astro application and Google Cloud Run for the containerized media service.

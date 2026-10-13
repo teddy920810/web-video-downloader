@@ -8,7 +8,7 @@
 - Do not commit `S3-info.txt`, `.env`, or `.env.*` files.
 - Write or update tests before implementing behavior changes.
 - Before handing off changes, run `npm run verify`; it includes coverage, lint, build, and browser E2E.
-- Run `npm run test:smoke:production` after production environment, domain, R2, CORS, or deployment changes. It writes temporary objects to the real bucket, so do not run it speculatively or in a loop.
+- After authorized deployment, use `npm run test:smoke:public` for fixed public GET checks without credentials or business writes. It does not validate OAuth, payment, R2 or processing. Changes to those capabilities still require separate, authorized acceptance; never substitute public HTTP checks for real-flow validation.
 
 ## Project startup and delivery
 

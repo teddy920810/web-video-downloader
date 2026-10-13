@@ -1,5 +1,7 @@
 # Creem billing integration
 
+For changes to products, prices, operator, domains, providers or payment platforms, record scope and dated evidence in [payment-change-checklist.md](payment-change-checklist.md). Keep local, sandbox and real-payment acceptance separate; do not repeat completed integration from an obsolete readiness document.
+
 The integration supports isolated sandbox billing and gated live billing. Merchant verification is handled in the separate certification task. Sandbox acceptance supports submitting merchant review; actual monthly renewal and deploying live billing are not documented prerequisites for submitting that review.
 
 ## Confirmed offers
