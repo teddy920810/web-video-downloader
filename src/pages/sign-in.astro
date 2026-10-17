@@ -1,0 +1,14 @@
+---
+import SignInPanel from '../components/auth/SignInPanel.astro';
+export const prerender=false;
+Astro.response.headers.set('Cache-Control','no-store');
+Astro.response.headers.set('Referrer-Policy','no-referrer');
+let returnTo='/account';
+const candidate=new URL(Astro.url.searchParams.get('returnTo')??returnTo,Astro.url.origin);
+if(candidate.origin===Astro.url.origin)returnTo=candidate.pathname+candidate.search;
+---
+<!doctype html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width"/><meta name="robots" content="noindex,nofollow"/><title>Sign in · Streamnest</title></head>
+<body><main><a href="/" class="brand">Streamnest</a><h1>Welcome back</h1><p>Sign in to your Streamnest account.</p><SignInPanel returnTo={returnTo}/></main></body></html>
+<style is:global>
+  body{margin:0;background:#f7f8fa;color:#182328;font:16px/1.6 system-ui,sans-serif}main{max-width:420px;margin:8vh auto;padding:32px;background:white;border:1px solid #e2e7e9;border-radius:20px}.brand{color:#12674f;font-weight:700;text-decoration:none}h1{font-size:28px}button{font:inherit;cursor:pointer;background:#12674f;color:white;border:0;border-radius:9px;padding:12px 20px;width:100%;margin:10px 0}button:disabled{opacity:.6;cursor:wait}label{display:block;margin:12px 0}input{display:block;box-sizing:border-box;width:100%;padding:11px;border:1px solid #b5c2c6;border-radius:8px;font:inherit}#login-status{min-height:26px}@media(max-width:520px){main{margin:24px 16px;padding:24px}}
+</style>

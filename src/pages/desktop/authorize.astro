@@ -1,0 +1,52 @@
+---
+import { getSecret } from 'astro:env/server';
+import { getSession } from '../../lib/auth';
+import SignInPanel from '../../components/auth/SignInPanel.astro';
+import { sharedAuthEnabled } from '../../lib/account-auth/runtime';
+export const prerender=false;
+Astro.response.headers.set('Cache-Control','no-store');
+Astro.response.headers.set('Referrer-Policy','no-referrer');
+const id=Astro.url.searchParams.get('request')??'';
+let details:{deviceName:string;platform:string;arch:string}|null=null;
+let session=null;
+try{
+  const origin=getSecret('DESKTOP_SERVICE_ORIGIN');
+  if(sharedAuthEnabled()&&origin&&/^[a-f0-9-]{36}$/i.test(id)){
+    const response=await fetch(new URL(`/oauth/request/${id}`,origin),{signal:AbortSignal.timeout(10000),redirect:'error'});
+    if(response.ok){details=await response.json();session=await getSession(Astro.request);}
+  }
+}catch{/* Show a recoverable error without revealing provider or connection details. */}
+---
+<!doctype html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width"/><meta name="robots" content="noindex,nofollow"/><title>Authorize desktop · Streamnest</title></head>
+<body><main><a href="/" class="brand">Streamnest</a>
+  <h1>Connect Streamnest Desktop</h1>
+  {!details?<p>This request is unavailable or has expired. Return to the desktop app and start sign-in again.</p>:
+    <><p>Connect <strong>{details.deviceName}</strong> to your Streamnest account.</p>
+      <p class="muted">{details.platform} · {details.arch}</p>
+      {!session?.user.emailVerified?<SignInPanel returnTo={Astro.url.pathname+Astro.url.search}/>:
+        <section id="desktop-consent" data-request-id={id}>
+          <p>Signed in as <strong>{session.user.email}</strong></p>
+          <p>The app can read your subscription and shared AI balance, and manage its device authorization. Activating a device uses one of your two PC seats.</p>
+          <button id="authorize-desktop" type="button">Authorize desktop</button>
+          <button id="cancel-desktop" class="secondary" type="button">Cancel</button>
+          <p id="authorization-status" role="status" aria-live="polite"></p>
+        </section>}
+    </>}
+</main></body></html>
+<script>
+  const consent=document.querySelector<HTMLElement>('#desktop-consent');
+  const authorize=document.querySelector<HTMLButtonElement>('#authorize-desktop');
+  const status=document.querySelector<HTMLElement>('#authorization-status');
+  authorize?.addEventListener('click',async()=>{
+    authorize.disabled=true;status!.textContent='Connecting your desktop…';
+    try{
+      const result=await fetch('/api/desktop/approve',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({requestId:consent!.dataset.requestId})});
+      const body=await result.json();if(!result.ok)throw new Error(body.error);
+      status!.textContent='Authorized. Returning to Streamnest Desktop…';window.location.assign(body.redirectUri);
+    }catch(e){status!.textContent=e instanceof Error?e.message:'Please start sign-in again.';authorize.disabled=false;}
+  });
+  document.querySelector('#cancel-desktop')?.addEventListener('click',()=>{consent!.innerHTML='<p>Authorization canceled. You can close this page and return to the desktop app.</p>';});
+</script>
+<style is:global>
+  body{margin:0;background:#f7f8fa;color:#182328;font:16px/1.6 system-ui,sans-serif}main{max-width:480px;margin:8vh auto;padding:32px;background:white;border:1px solid #e2e7e9;border-radius:20px}.brand{color:#12674f;font-weight:700;text-decoration:none}h1{font-size:27px}.muted{color:#617178}button{font:inherit;cursor:pointer;background:#12674f;color:white;border:0;border-radius:9px;padding:12px 20px;width:100%;margin:10px 0}.secondary{color:#293d38;background:#eef2f0}button:disabled{opacity:.6;cursor:wait}label{display:block;margin:12px 0}input{display:block;box-sizing:border-box;width:100%;padding:11px;border:1px solid #b5c2c6;border-radius:8px;font:inherit}@media(max-width:560px){main{margin:24px 16px;padding:24px}}
+</style>

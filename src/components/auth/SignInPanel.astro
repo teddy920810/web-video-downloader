@@ -1,0 +1,53 @@
+---
+import { emailAvailable } from '../../lib/account-auth/runtime';
+const { returnTo='/' }=Astro.props;
+const enabled=emailAvailable();
+---
+<section id="sign-in-panel" data-return-to={returnTo}>
+  <button id="google-login" type="button">Continue with Google</button>
+  {enabled && <form id="email-login">
+    <p>or sign in with your email</p>
+    <label>Email address<input name="email" type="email" autocomplete="email" required maxlength="254" /></label>
+    <button id="send-code" type="submit">Send sign-in code</button>
+    <div id="code-entry" hidden>
+      <label>Verification code<input name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" /></label>
+      <button id="verify-code" type="button">Verify and continue</button>
+    </div>
+  </form>}
+  <p id="login-status" role="status" aria-live="polite"></p>
+</section>
+<script>
+  const panel=document.querySelector<HTMLElement>('#sign-in-panel');
+  if(panel){
+    const candidate=new URL(panel.dataset.returnTo??'/',window.location.origin);
+    const returnTo=candidate.origin===window.location.origin?candidate.href:window.location.origin;
+    const status=panel.querySelector<HTMLElement>('#login-status')!;
+    let challengeId='',busy=false;
+    async function api(path:string,body:unknown){
+      const r=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+      const data=await r.json();if(!r.ok)throw new Error(data.error??'Sign-in is unavailable.');return data;
+    }
+    async function act(work:()=>Promise<void>){
+      if(busy)return;busy=true;panel!.querySelectorAll<HTMLButtonElement>('button').forEach(b=>b.disabled=true);
+      status.textContent='Connecting…';
+      try{await work();}catch(e){status.textContent=e instanceof Error?e.message:'Please try again.';}
+      finally{busy=false;panel!.querySelectorAll<HTMLButtonElement>('button').forEach(b=>b.disabled=false);}
+    }
+    panel.querySelector('#google-login')?.addEventListener('click',()=>act(async()=>{
+      const result=await api('/api/auth/sign-in/social',{provider:'google',callbackURL:returnTo});
+      const url=new URL(result.url);if(url.protocol!=='https:'||url.hostname!=='accounts.google.com')throw new Error('Unable to connect to Google.');
+      window.location.assign(url.href);
+    }));
+    const form=panel.querySelector<HTMLFormElement>('#email-login');
+    form?.addEventListener('submit',event=>{event.preventDefault();void act(async()=>{
+      const email=new FormData(form).get('email');const result=await api('/api/account-auth/send-code',{email});challengeId=result.challengeId;
+      panel.querySelector<HTMLElement>('#code-entry')!.hidden=false;
+      status.textContent='A sign-in code has been sent. Check your inbox and spam folder.';
+      panel.querySelector<HTMLInputElement>('[name="code"]')!.focus();
+    });});
+    panel.querySelector('#verify-code')?.addEventListener('click',()=>act(async()=>{
+      const code=panel.querySelector<HTMLInputElement>('[name="code"]')!.value;
+      await api('/api/account-auth/verify-code',{challengeId,code});window.location.assign(returnTo);
+    }));
+  }
+</script>

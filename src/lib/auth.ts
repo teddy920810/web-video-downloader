@@ -1,5 +1,6 @@
 import { getSecret } from 'astro:env/server';
 import { betterAuth } from 'better-auth';
+import { accountAuth, emailToken, sharedAuthEnabled } from './account-auth/runtime';
 
 export const auth = betterAuth({
   baseURL: getSecret('BETTER_AUTH_URL'),
@@ -12,6 +13,19 @@ export const auth = betterAuth({
   },
 });
 
-export function getSession(request: Request) {
-  return auth.api.getSession({ headers: request.headers });
+export async function getSession(request: Request) {
+  const google = await auth.api.getSession({ headers: request.headers });
+  if (!sharedAuthEnabled()) return google;
+  const shared = accountAuth();
+  const token = emailToken(request);
+  if (token) {
+    const emailSession = await shared.session(token);
+    if (emailSession) return emailSession;
+  }
+  if (google?.user.emailVerified) {
+    const canonical = await shared.canonical(google.user.email);
+    if (canonical) return { ...google, user: { ...google.user, id: canonical }, session: { ...google.session, userId: canonical } };
+    return google;
+  }
+  return google;
 }

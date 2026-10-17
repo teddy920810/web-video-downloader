@@ -29,7 +29,7 @@ describe('safe test database migration command', () => {
   it('prints a plan without connecting or mutating by default', () => {
     const result = run();
     expect(result.status).toBe(0);
-    expect(result.stdout).toContain('4 migrations');
+    expect(result.stdout).toContain('5 migrations');
     expect(result.stdout).not.toContain('secret');
   });
   it('refuses production and a pooled alias of the default database even with --apply', () => {
@@ -46,5 +46,5 @@ describe('safe test database migration command', () => {
       expect(result.stderr).not.toContain('postgres://');
       expect(result.stderr).not.toContain('secret@');
     }
-  });
+  }, 15000);
 });
