@@ -45,6 +45,26 @@ describe('shared verified identity and email sessions', () => {
     await auth.verify(next.challengeId,sent[1].code);
     await expect(auth.verify(next.challengeId,sent[1].code)).rejects.toThrow();
   });
+  it('selects an internally entitled account over a newer free Google account without moving balances', async () => {
+    await pg.exec(`INSERT INTO tool_accounts(user_id,email,plan_id) VALUES('gifted','one@example.test','pro'),('google-new','one@example.test','free');
+      INSERT INTO credit_wallets(user_id,free_credits,paid_credits) VALUES('gifted',0,500),('google-new',1,0);`);
+    await pg.query(`INSERT INTO credit_batches(user_id,mode,payment_key,kind,granted,remaining,price_cents,paid_at,starts_at,expires_at)
+      VALUES('gifted','live','internal:fixture','pro',500,500,0,now(),now(),now()+interval '30 days')`);
+    expect(await auth.link({id:'google-new',email:'ONE@example.test',emailVerified:true})).toBe('gifted');
+    expect(await auth.canonical('one@example.test')).toBe('gifted');
+    expect(await auth.link({id:'another-google-id',email:'one@example.test',emailVerified:true})).toBe('gifted');
+    expect((await pg.query('SELECT user_id,free_credits,paid_credits FROM credit_wallets ORDER BY user_id')).rows).toEqual([
+      {user_id:'gifted',free_credits:0,paid_credits:500}, {user_id:'google-new',free_credits:1,paid_credits:0},
+    ]);
+  });
+  it('requires review when two same-email accounts have active monthly entitlements', async () => {
+    await pg.exec(`INSERT INTO tool_accounts(user_id,email) VALUES('first','one@example.test'),('second','one@example.test');
+      INSERT INTO credit_wallets(user_id) VALUES('first'),('second');`);
+    for (const user of ['first','second']) await pg.query(`INSERT INTO credit_batches(user_id,mode,payment_key,kind,granted,remaining,paid_at,starts_at,expires_at)
+      VALUES($1,'live',$2,'pro',500,500,now(),now(),now()+interval '30 days')`, [user,'internal:'+user]);
+    await expect(auth.link({id:'second',email:'one@example.test',emailVerified:true})).rejects.toThrow('account_link_review_required');
+    expect(await auth.canonical('one@example.test')).toBeNull();
+  });
   it('limits resends and expires/revokes real sessions on the server', async () => {
     const {challengeId}=await auth.send('one@example.test','127.0.0.1');
     await expect(auth.send('one@example.test','127.0.0.1')).rejects.toThrow('rate_limited');

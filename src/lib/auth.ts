@@ -23,9 +23,8 @@ export async function getSession(request: Request) {
     if (emailSession) return emailSession;
   }
   if (google?.user.emailVerified) {
-    const canonical = await shared.canonical(google.user.email);
-    if (canonical) return { ...google, user: { ...google.user, id: canonical }, session: { ...google.session, userId: canonical } };
-    return google;
+    const canonical = await shared.link(google.user);
+    return { ...google, user: { ...google.user, id: canonical }, session: { ...google.session, userId: canonical } };
   }
   return google;
 }

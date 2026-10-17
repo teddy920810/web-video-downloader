@@ -82,3 +82,45 @@ test('unauthenticated mutations and admin routes fail closed on the real local A
   expect((await request.post('/api/account/redeem', { data: { code: 'A'.repeat(32) } })).status()).toBe(403);
   expect((await request.get('/account/billing')).status()).toBe(404);
 });
+
+test('account entry lives in the right avatar menu with working links, keyboard dismissal and explicit sign-out', async ({ page }) => {
+  await accountFixture(page);
+  let signedOut = false;
+  await page.route('**/api/auth/sign-out', route => { signedOut = true; return route.fulfill({ json: { success: true } }); });
+  await page.goto('/account');
+  await expect(page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link', { name: 'Account', exact: true })).toHaveCount(0);
+  const trigger = page.getByRole('button', { name: 'Account menu', exact: true });
+  await trigger.click();
+  const menu = page.getByRole('menu', { name: 'Your account' });
+  await expect(menu).toBeVisible();
+  await expect(menu.getByText('qa@example.test', { exact: true })).toBeVisible();
+  await expect(menu.getByRole('menuitem', { name: 'Subscription & Credits' })).toHaveAttribute('href', '/account/credits');
+  expect(signedOut).toBe(false);
+  await page.keyboard.press('Escape');
+  await expect(menu).toHaveCount(0);
+  await expect(trigger).toBeFocused();
+  await trigger.press('ArrowDown');
+  await expect(page.getByRole('menuitem', { name: 'Account Center' })).toBeFocused();
+  await page.keyboard.press('ArrowDown');
+  await expect(page.getByRole('menuitem', { name: 'Personal Information' })).toBeFocused();
+  await page.getByRole('menuitem', { name: 'Personal Information' }).click();
+  await expect(page).toHaveURL(/\/account\/profile$/);
+  await page.getByRole('button', { name: 'Account menu', exact: true }).click();
+  await page.getByRole('menuitem', { name: 'Sign out', exact: true }).click();
+  await expect.poll(() => signedOut).toBe(true);
+});
+
+test('avatar menu fits mobile and closes after an outside click', async ({ page }) => {
+  await accountFixture(page);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/account');
+  await page.getByRole('button', { name: 'Account menu', exact: true }).click();
+  const menu = page.getByRole('menu', { name: 'Your account' });
+  await expect(menu.getByRole('menuitem', { name: 'Help & Support' })).toBeVisible();
+  const bounds = await menu.boundingBox();
+  expect(bounds!.x).toBeGreaterThanOrEqual(0);
+  expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(390);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.getByRole('heading', { name: 'Your tools, plan, and credits.' }).click({ position: { x: 2, y: 2 } });
+  await expect(menu).toHaveCount(0);
+});

@@ -41,7 +41,7 @@ test('mobile account exposes every section without a horizontal navigation strip
   await toggle.press('Escape');
   await expect(toggle).toHaveAttribute('aria-expanded', 'false');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-  await expect(page.locator('.header-account small')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Account menu', exact: true })).toBeVisible();
 });
 
 test('tools and pricing share the light palette, readable inputs and stable auth column', async ({ page }) => {

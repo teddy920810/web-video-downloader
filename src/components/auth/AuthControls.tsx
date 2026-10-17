@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { authClient } from './auth-client';
+import AccountMenu from './AccountMenu';
 
 export default function AuthControls() {
   const { data: session, isPending } = authClient.useSession();
   const [actionPending, setActionPending] = useState(false);
+  const [error, setError] = useState('');
 
   async function signIn() {
     setActionPending(true);
@@ -15,10 +17,14 @@ export default function AuthControls() {
   }
 
   async function signOut() {
+    setError('');
     setActionPending(true);
     try {
-      await authClient.signOut();
+      const result = await authClient.signOut();
+      if (result.error) throw new Error('Unable to sign out. Please try again.');
       window.location.reload();
+    } catch {
+      setError('Unable to sign out. Please try again.');
     } finally {
       setActionPending(false);
     }
@@ -29,13 +35,7 @@ export default function AuthControls() {
   }
 
   if (session?.user) {
-    return (
-      <button className="header-account" type="button" onClick={signOut} disabled={actionPending} title="Sign out">
-        {session.user.image ? <img src={session.user.image} alt="" referrerPolicy="no-referrer" /> : null}
-        <span>{session.user.name}</span>
-        <small>{actionPending ? 'Signing out…' : 'Sign out'}</small>
-      </button>
-    );
+    return <AccountMenu user={session.user} onSignOut={signOut} pending={actionPending} error={error} />;
   }
 
   return (

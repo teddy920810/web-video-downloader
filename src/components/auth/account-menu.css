@@ -1,0 +1,20 @@
+.header-account-menu { position: relative; width: 100%; }
+.header-account-chevron { flex-shrink: 0; transition: transform .16s; }
+.header-account[aria-expanded="true"] .header-account-chevron { transform: rotate(180deg); }
+.clarity-site .header-account .header-avatar-fallback { display: grid; place-items: center; flex: 0 0 32px; width: 32px; height: 32px; max-width: none; border-radius: 50%; background: #e7f5ef; color: #007963; font-size: 14px; }
+.header-account-panel { position: absolute; z-index: 60; top: calc(100% + 12px); right: 0; width: min(288px, calc(100vw - 32px)); max-height: calc(100dvh - 100px); overflow-y: auto; padding: 8px; color: #1c1c1e; background: #fff; border: 1px solid #e3e5e4; border-radius: 16px; box-shadow: 0 12px 40px #0000001a; text-align: left; }
+.header-account-details { display: grid; gap: 3px; padding: 12px 12px 16px; margin-bottom: 6px; border-bottom: 1px solid #ebedec; overflow-wrap: anywhere; }
+.header-account-details strong { font-size: 14px; font-weight: 600; }
+.header-account-details small { color: #606864; font-size: 12px; }
+.header-account-panel :is(a, button) { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 44px; padding: 10px 12px; border: 0; border-radius: 8px; font-size: 14px; font-weight: 500; font-family: inherit; line-height: 1.4; color: inherit; background: transparent; cursor: pointer; text-decoration: none; text-align: left; }
+.header-account-panel :is(a, button) svg { flex-shrink: 0; }
+.header-account-panel :is(a, button):hover { color: #007963; background: #e7f5ef; }
+.header-account-panel :is(a, button):focus-visible { color: #007963; background: #e7f5ef; outline-offset: -2px; }
+.header-account-panel button:disabled { cursor: wait; opacity: .6; }
+.header-account-divider { height: 1px; margin: 6px 12px; background: #ebedec; }
+.header-account-error { margin: 8px 12px; color: #b42318; font-size: 13px; }
+@media (max-width: 620px) {
+  .clarity-site .header-account .header-account-name { display: none; }
+  .clarity-site .header-account { width: auto; margin-left: auto; gap: 6px; }
+  .header-account-panel { top: calc(100% + 10px); }
+}

@@ -53,15 +53,13 @@ const toolsMenu: NavigationItem = { label: 'Tools', href: '/#tools', groups: TOO
 const navigation: NavigationItem[] = utilitiesMode ? [
   toolsMenu,
   { label: 'Pricing', href: '/pricing' },
-  { label: 'Account', href: '/account' },
   ...(hasVisibleBlogPosts ? [{ label: 'Guides', href: '/blog' }] : []),
   { label: 'Desktop App', href: '/#desktop-app' },
   { label: 'Privacy', href: '/privacy' },
 ] : [
-  ...site.header.navigation,
+  ...site.header.navigation.filter(item => item.href !== '/account'),
   toolsMenu,
   { label: 'Pricing', href: '/pricing' },
-  { label: 'Account', href: '/account' },
 ];
 const footerResources = [
   ...site.footer.links,
